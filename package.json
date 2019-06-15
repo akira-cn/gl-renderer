@@ -7,6 +7,7 @@
     "start": "webpack-dev-server --env.server=examples --watch-poll",
     "build:dev": "webpack",
     "build": "webpack --env.production=true",
+    "prepublishOnly": "npm run build",
     "lint": "eslint 'src/**/*.js' --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

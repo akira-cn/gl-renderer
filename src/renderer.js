@@ -10,6 +10,7 @@ const _textures = Symbol('textures');
 const _enableTextures = Symbol('enableTextures');
 const _samplerMap = Symbol('samplerMap');
 const _renderFrameID = Symbol('renderFrameID');
+const _events = Symbol('events');
 
 async function fetchShader(url) {
   const res = await fetch(url);
@@ -102,6 +103,7 @@ export default class Renderer {
       delete this[_renderFrameID];
     }
     this.uniforms = {};
+    this[_events] = {};
 
     this[_enableTextures] = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
     if(fragmentShader == null) fragmentShader = DEFAULT_FRAG;
@@ -306,21 +308,62 @@ export default class Renderer {
     }
   }
 
+  on(type, handler) {
+    if(!this[_events]) {
+      throw new Error('Must load shader first.');
+    }
+    this[_events][type] = this[_events][type] || [];
+    this[_events][type].push(handler);
+  }
+
+  once(type, handler) {
+    this.on(type, function f(...args) {
+      this.off(type, f);
+      return handler.apply(this, args);
+    });
+    return this;
+  }
+
+  off(type, handler) {
+    if(!this[_events]) {
+      throw new Error('Must load shader first.');
+    }
+    if(handler && this[_events][type]) {
+      const idx = this[_events][type].indexOf(handler);
+
+      if(idx >= 0) {
+        this[_events][type].splice(idx, 1);
+      }
+    } else {
+      delete this[_events][type];
+    }
+  }
+
+  trigger(type, eventArgs = {}) {
+    if(!this[_events]) {
+      throw new Error('Must load shader first.');
+    }
+    const handlers = this[_events][type] || [];
+    handlers.forEach((handler) => {
+      handler.call(this, Object.assign({target: this, type}, eventArgs));
+    });
+  }
+
   render() {
     this.startRender = true;
+    this.trigger('beforeRender');
     const gl = this.gl;
     if(!this.program) this.setProgram();
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawElements(gl.TRIANGLES, this.cells.length * 3, gl.UNSIGNED_BYTE, 0);
+    this[_renderFrameID] = null;
+    this.trigger('rendered');
   }
 
   update() {
     if(!this.startRender) return;
     if(this[_renderFrameID] == null) {
-      this[_renderFrameID] = requestAnimationFrame(() => {
-        this[_renderFrameID] = null;
-        this.render();
-      });
+      this[_renderFrameID] = requestAnimationFrame(this.render.bind(this));
     }
   }
 }
