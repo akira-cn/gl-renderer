@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/js/gl-renderer.js"></script>
+</head>
+<body>
+  <canvas id="glDoodle" width="512" height="512"></canvas>
+  <script>
+    (async function () {
+      const doodle = new GlRenderer(glDoodle);
+      window.doodle = doodle;
+
+      // await doodle.loadTextures(
+      //   'https://p4.ssl.qhimg.com/t012170360e1552ce17.png'
+      // );
+      await doodle.load('./test.glsl');
+      const texture = await doodle.loadTexture('https://p4.ssl.qhimg.com/t012170360e1552ce17.png');
+      doodle.uniforms.samplerTest = texture;
+      doodle.uniforms.color = [1.0, 0, 0];
+      // doodle.declareUniforms({
+      //   abc: '1iv',
+      // });
+      // doodle.uniforms.abc = [[1.0], [3.0]];
+      // doodle.uniforms['abc[0]'] = 1.0;
+      // doodle.uniforms['abc[1]'] = 1.0;
+
+      doodle.render();
+    }());
+  </script>
+</body>
+</html>
