@@ -1,6 +1,5 @@
-# glsl-doodle
+# gl-renderer
 
-Drawing patterns with glsl shaders on modern browsers.
+A lightweight webgl renderer.
 
-https://doodle.webgl.group/
-
+The underlying Library of [glsl-doodle](https://doodle.webgl.group/).
