@@ -4,7 +4,11 @@ precision mediump float;
 
 attribute vec4 a_position;
 attribute vec2 a_vertexTextureCoord;
+
+attribute vec3 a_color;
+
 varying mediump vec2 vTextureCoord;
+varying vec3 vColor;
 
 void main() {
   gl_PointSize = 1.0;
@@ -14,4 +18,5 @@ void main() {
   gl_Position.w = 1.0;
 
   vTextureCoord = a_vertexTextureCoord;
+  vColor = a_color;
 }

@@ -12,20 +12,32 @@ const _samplerMap = Symbol('samplerMap');
 const _renderFrameID = Symbol('renderFrameID');
 const _events = Symbol('events');
 const _uniforms = Symbol('uniforms');
+const _buffers = Symbol('buffers');
 
 async function fetchShader(url) {
   const res = await fetch(url);
-  let content;
-  if(res.status === 404) {
-    content = DEFAULT_FRAG;
-  } else {
-    content = await res.text();
+  if(res.status >= 200 && res.status < 300) {
+    const content = await res.text();
+    return content;
   }
-  return content;
+  return null;
+}
+
+function mergeMeshes(data) {
+  return data.reduce((a, b) => {
+    const offset = a.positions.length;
+    return {
+      positions: [...a.positions, ...b.positions],
+      cells: [...a.cells, ...b.cells.map(c => c.map(i => i + offset))],
+    };
+  });
 }
 
 const uniformTypeMap = {
   int: '1i',
+  ivec2: '2i',
+  ivec3: '3i',
+  ivec4: '4i',
   float: '1f',
   vec2: '2f',
   vec3: '3f',
@@ -39,14 +51,43 @@ const uniformTypeMap = {
 export default class Renderer {
   static defaultOptions = {
     preserveDrawingBuffer: true,
+    vertexPosition: 'a_vertexPosition',
+    vertexTextureCoord: 'a_vertexTextureCoord',
   }
 
   static addLibs(libs = {}) {
     Object.assign(GLSL_LIBS, libs);
   }
 
+  static FLOAT(points) {
+    return pointsToBuffer(points);
+  }
+
+  static UNSIGNED_BYTE(points) {
+    return pointsToBuffer(points, Uint8Array);
+  }
+
+  static UNSIGNED_SHORT(points) {
+    return pointsToBuffer(points, Uint16Array);
+  }
+
+  static BYTE(points) {
+    return pointsToBuffer(points, Int8Array);
+  }
+
+  static SHORT(points) {
+    return pointsToBuffer(points, Int16Array);
+  }
+
+  static UBYTE = Renderer.UNSIGNED_BYTE;
+
+  static USHORT = Renderer.UNSIGNED_SHORT;
+
+  static fetchShader = fetchShader;
+
   constructor(canvas, opts = {}) {
-    this.options = Object.assign(opts, Renderer.defaultOptions);
+    this.options = Object.assign({}, Renderer.defaultOptions, opts);
+
     this.canvas = canvas;
 
     this[_samplerMap] = {};
@@ -57,10 +98,7 @@ export default class Renderer {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-    this.verticesBuffer = gl.createBuffer();
-    this.cellsBuffer = gl.createBuffer();
-
-    this.vertices = [
+    this.positions = [
       [-1.0, -1.0, 0.0],
       [1.0, -1.0, 0.0],
       [1.0, 1.0, 0.0],
@@ -71,6 +109,8 @@ export default class Renderer {
       [0, 1, 3],
       [3, 1, 2],
     ];
+
+    this[_buffers] = {};
   }
 
   get enableTextures() {
@@ -84,32 +124,81 @@ export default class Renderer {
     return this[_uniforms];
   }
 
+  clearBuffers() {
+    const buffers = this[_buffers];
+    Object.values(buffers).forEach((buffer) => {
+      this.gl.deleteBuffer(buffer);
+    });
+    this[_buffers] = {};
+  }
+
   deleteProgram() {
     if(this.program) {
+      this.startRender = false;
+      if(this[_renderFrameID]) {
+        cancelAnimationFrame(this[_renderFrameID]);
+        delete this[_renderFrameID];
+      }
+      this.clearBuffers();
+      this.clearTextures();
       this.gl.deleteProgram(this.program);
       this.program = null;
     }
   }
 
-  clip({vertices, cells}) {
+  setMeshData(data) {
+    if(Array.isArray(data)) {
+      data = mergeMeshes(data);
+    }
+    const {positions, cells} = data;
     const gl = this.gl;
+    this.verticesBuffer = this.verticesBuffer || gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(vertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(positions), gl.STATIC_DRAW);
+    this.cellsBuffer = this.cellsBuffer || gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cellsBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, pointsToBuffer(cells, Uint8Array), gl.STATIC_DRAW);
-    this.vertices = vertices;
+    this.positions = positions;
     this.cells = cells;
+    if(this[_enableTextures] && this.texCoordBuffer) {
+      this.setTextureCoordinate();
+    }
+    this.update();
+  }
+
+  setTextureCoordinate(texVertexData) {
+    const gl = this.gl;
+    texVertexData = texVertexData || this.positions.map(v => [0.5 * (v[0] + 1), 0.5 * (v[1] + 1)]);
+    // texture coordinate data
+    this.texCoordBuffer = this.texCoordBuffer || gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(texVertexData), gl.STATIC_DRAW);
+  }
+
+  setAttribute(name, bufferData, normalize = false) {
+    const gl = this.gl;
+    this[_buffers][name] = this[_buffers][name] || gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this[_buffers][name]);
+    gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+    const attrib = gl.getAttribLocation(this.program, name);
+    let type = gl.FLOAT;
+    if(bufferData instanceof Uint8Array) {
+      type = gl.UNSIGNED_BYTE;
+    } else if(bufferData instanceof Uint16Array) {
+      type = gl.UNSIGNED_SHORT;
+    } else if(bufferData instanceof Int8Array) {
+      type = gl.BYTE;
+    } else if(bufferData instanceof Int16Array) {
+      type = gl.SHORT;
+    }
+    gl.vertexAttribPointer(attrib, 3, type, normalize, 0, 0);
+    gl.enableVertexAttribArray(attrib);
+    this.update();
   }
 
   setProgram(fragmentShader, vertexShader) {
-    this.clearTextures();
     this.deleteProgram();
 
-    this.startRender = false;
-    if(this[_renderFrameID]) {
-      cancelAnimationFrame(this[_renderFrameID]);
-      delete this[_renderFrameID];
-    }
     this[_uniforms] = {};
     this[_events] = {};
 
@@ -126,30 +215,33 @@ export default class Renderer {
     gl.useProgram(program);
     this.program = program;
 
-    this.clip({vertices: this.vertices, cells: this.cells});
+    this.setMeshData({positions: this.positions, cells: this.cells});
 
-    const vPosition = gl.getAttribLocation(program, 'a_position');
+    const vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
     gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
-    if(this[_enableTextures]) this.setTextureCoordinate();
+    if(this[_enableTextures]) {
+      this.setTextureCoordinate();
+      const vTexCoord = gl.getAttribLocation(this.program, this.options.vertexTextureCoord);
+      gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(vTexCoord);
+    }
 
     const uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
     let matched = vertexShader.match(uniformPattern) || [];
     matched = matched.concat(fragmentShader.match(uniformPattern) || []);
 
-    if(matched) {
-      matched.forEach((m) => {
-        const _matched = m.match(/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/);
-        let [type, name, isTypeV] = _matched.slice(1);
-        type = uniformTypeMap[type];
-        isTypeV = !!isTypeV;
-        if(type.indexOf('Matrix') !== 0 && isTypeV) {
-          type += 'v';
-        }
-        this.declareUniform(name, type);
-      });
-    }
+    matched.forEach((m) => {
+      const _matched = m.match(/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/);
+      let [type, name, isTypeV] = _matched.slice(1);
+      type = uniformTypeMap[type];
+      isTypeV = !!isTypeV;
+      if(type.indexOf('Matrix') !== 0 && isTypeV) {
+        type += 'v';
+      }
+      this.declareUniform(name, type);
+    });
 
     this.program = program;
     return program;
@@ -206,7 +298,7 @@ export default class Renderer {
   }
 
   async load(frag, vert = null) {
-    frag = await fetchShader(frag);
+    frag = await fetchShader(frag) || DEFAULT_FRAG;
     if(vert) vert = await fetchShader(vert);
     return this.compile(frag, vert);
   }
@@ -242,22 +334,6 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
     return texture;
-  }
-
-  setTextureCoordinate() {
-    const gl = this.gl;
-
-    const texVertexData = this.vertices.map(v => [0.5 * (v[0] + 1), 0.5 * (v[1] + 1)]);
-
-    // texture coordinate data
-    const trianglesTexCoordBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, trianglesTexCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(texVertexData), gl.STATIC_DRAW);
-
-    // set texture coordinate attribute
-    const vertexTexCoordAttribute = gl.getAttribLocation(this.program, 'a_vertexTextureCoord');
-    gl.enableVertexAttribArray(vertexTexCoordAttribute);
-    gl.vertexAttribPointer(vertexTexCoordAttribute, 2, gl.FLOAT, false, 0, 0);
   }
 
   loadTexture(source) {

@@ -11,6 +11,7 @@ module.exports = function (env = {}) {
       publicPath: '/js/',
       library: ['GlRenderer'],
       libraryTarget: 'umd',
+      libraryExport: 'default',
     },
     // resolve: {
     //

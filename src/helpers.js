@@ -85,6 +85,8 @@ export function createProgram(gl, vertex, fragment) {
 }
 
 export function pointsToBuffer(points, Type = Float32Array) {
+  if(points instanceof Type) return points;
+  if(!('length' in points)) return new Type(points);
   const deminsion = points[0].length;
   const len = points.length;
   const buffer = new Type(deminsion * len);

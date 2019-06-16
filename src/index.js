@@ -1,1 +1,3 @@
-module.exports = require('./renderer').default;
+import GlRenderer from './renderer';
+
+export default GlRenderer;
