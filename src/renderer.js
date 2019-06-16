@@ -11,6 +11,7 @@ const _enableTextures = Symbol('enableTextures');
 const _samplerMap = Symbol('samplerMap');
 const _renderFrameID = Symbol('renderFrameID');
 const _events = Symbol('events');
+const _uniforms = Symbol('uniforms');
 
 async function fetchShader(url) {
   const res = await fetch(url);
@@ -76,6 +77,13 @@ export default class Renderer {
     return !!this[_enableTextures];
   }
 
+  get uniforms() {
+    if(!this[_uniforms]) {
+      throw Error('Must load shader first.');
+    }
+    return this[_uniforms];
+  }
+
   deleteProgram() {
     if(this.program) {
       this.gl.deleteProgram(this.program);
@@ -102,7 +110,7 @@ export default class Renderer {
       cancelAnimationFrame(this[_renderFrameID]);
       delete this[_renderFrameID];
     }
-    this.uniforms = {};
+    this[_uniforms] = {};
     this[_events] = {};
 
     this[_enableTextures] = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
@@ -273,7 +281,7 @@ export default class Renderer {
     if(type === 'sampler2D') {
       const samplerID = this[_samplerMap][name];
       const textures = this[_textures] || [];
-      Object.defineProperty(this.uniforms, name, {
+      Object.defineProperty(this[_uniforms], name, {
         get() {
           return value;
         },
@@ -289,7 +297,7 @@ export default class Renderer {
         enumerable: true,
       });
     } else {
-      Object.defineProperty(this.uniforms, name, {
+      Object.defineProperty(this[_uniforms], name, {
         get() {
           return value;
         },

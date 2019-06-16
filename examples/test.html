@@ -17,6 +17,7 @@
       // await doodle.loadTextures(
       //   'https://p4.ssl.qhimg.com/t012170360e1552ce17.png'
       // );
+      // doodle.uniforms.abc = 1.0;
       await doodle.load('./test.glsl');
       const texture = await doodle.loadTexture('https://p4.ssl.qhimg.com/t012170360e1552ce17.png');
       doodle.uniforms.samplerTest = texture;
