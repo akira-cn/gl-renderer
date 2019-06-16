@@ -248,6 +248,8 @@ export default class Renderer {
   }
 
   async compile(frag, vert) {
+    frag = frag || DEFAULT_FRAG;
+
     const loaded = {};
 
     async function _compile(content) {
@@ -298,7 +300,7 @@ export default class Renderer {
   }
 
   async load(frag, vert = null) {
-    frag = await fetchShader(frag) || DEFAULT_FRAG;
+    frag = await fetchShader(frag);
     if(vert) vert = await fetchShader(vert);
     return this.compile(frag, vert);
   }
