@@ -17,30 +17,37 @@
       window.doodle = doodle;
 
       // doodle.uniforms.abc = 1.0;
-      await doodle.load('./test.glsl', './vert.glsl');
+      const program = await doodle.load('./test.glsl', './vert.glsl');
+      window.program2 = await doodle.load('./test2.glsl', './vert2.glsl');
+      doodle.useProgram(program);
+
       const texture = await doodle.loadTexture('https://p4.ssl.qhimg.com/t012170360e1552ce17.png');
+      window.texture2 = await doodle.loadTexture('http://res.junyux.com/images/course1/body-h1-nomargin.jpg');
       doodle.uniforms.samplerTest = texture;
       doodle.uniforms.color = [1.0, 0, 0];
-
-      doodle.setMeshData([
-        {
-          positions: [[-1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
-          cells: [[0, 1, 2]],
-        },
-        {
-          positions: [[0.5, 0.5, 0], [-0.5, 0.8, 0], [1, -1, 0]],
-          cells: [[0, 1, 2]],
-        },
-      ]);
 
       const vertexColors = [
         [255, 0, 0],
         [255, 0, 0],
         [255, 255, 0],
       ];
-      const bufferData = GlRenderer.UBYTE([...vertexColors, ...vertexColors]);
-      doodle.setAttribute('a_color', bufferData, true);
 
+      doodle.setMeshData([
+        {
+          positions: [[-1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
+          cells: [[0, 1, 2]],
+          attributes: {
+            a_color: {data: vertexColors, type: 'UNSIGNED_BYTE', normalize: true},
+          },
+        },
+        {
+          positions: [[0.5, 0.5, 0], [-0.5, 0.8, 0], [1, -1, 0]],
+          cells: [[0, 1, 2]],
+          attributes: {
+            a_color: {data: vertexColors, type: 'UNSIGNED_BYTE', normalize: true},
+          },
+        },
+      ]);
       doodle.render();
     }());
   </script>

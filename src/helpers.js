@@ -80,13 +80,15 @@ export function createProgram(gl, vertex, fragment) {
     console.error(msg);
     return -1;
   }
-
+  gl.deleteShader(vertShdr);
+  gl.deleteShader(fragShdr);
   return program;
 }
 
 export function pointsToBuffer(points, Type = Float32Array) {
+  if(points == null) return points;
   if(points instanceof Type) return points;
-  if(!('length' in points)) return new Type(points);
+  if(points[0] == null || points[0].length == null) return new Type(points);
   const deminsion = points[0].length;
   const len = points.length;
   const buffer = new Type(deminsion * len);

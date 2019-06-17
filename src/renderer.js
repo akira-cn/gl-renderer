@@ -6,31 +6,19 @@ import DEFAULT_FEEDBACK_VERT from './default_feeback_vert.glsl';
 
 const GLSL_LIBS = {};
 
-const _textures = Symbol('textures');
 const _enableTextures = Symbol('enableTextures');
-const _samplerMap = Symbol('samplerMap');
 const _renderFrameID = Symbol('renderFrameID');
-const _events = Symbol('events');
-const _uniforms = Symbol('uniforms');
-const _buffers = Symbol('buffers');
 
+const shaderCache = {};
 async function fetchShader(url) {
+  if(shaderCache[url]) return shaderCache[url];
   const res = await fetch(url);
   if(res.status >= 200 && res.status < 300) {
     const content = await res.text();
+    shaderCache[url] = content;
     return content;
   }
   return null;
-}
-
-function mergeMeshes(data) {
-  return data.reduce((a, b) => {
-    const offset = a.positions.length;
-    return {
-      positions: [...a.positions, ...b.positions],
-      cells: [...a.cells, ...b.cells.map(c => c.map(i => i + offset))],
-    };
-  });
 }
 
 const uniformTypeMap = {
@@ -90,27 +78,15 @@ export default class Renderer {
 
     this.canvas = canvas;
 
-    this[_samplerMap] = {};
-
     const gl = setupWebGL(canvas, this.options);
     this.gl = gl;
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-    this.positions = [
-      [-1.0, -1.0, 0.0],
-      [1.0, -1.0, 0.0],
-      [1.0, 1.0, 0.0],
-      [-1.0, 1.0, 0.0],
-    ];
-
-    this.cells = [
-      [0, 1, 3],
-      [3, 1, 2],
-    ];
-
-    this[_buffers] = {};
+    this.textures = [];
+    this.programs = [];
+    this._events = {};
   }
 
   get enableTextures() {
@@ -118,116 +94,188 @@ export default class Renderer {
   }
 
   get uniforms() {
-    if(!this[_uniforms]) {
-      throw Error('Must load shader first.');
+    const program = this.program;
+    if(!program || !program.uniforms) {
+      throw Error('No avaliable program.');
     }
-    return this[_uniforms];
+    return program.uniforms;
   }
 
-  clearBuffers() {
-    const buffers = this[_buffers];
+  clearBuffers(program) {
+    const buffers = program._buffers;
     Object.values(buffers).forEach((buffer) => {
       this.gl.deleteBuffer(buffer);
     });
-    this[_buffers] = {};
+    program._buffers = {};
   }
 
-  deleteProgram() {
-    if(this.program) {
+  deleteProgram(program) {
+    if(this.program === program) {
       this.startRender = false;
       if(this[_renderFrameID]) {
         cancelAnimationFrame(this[_renderFrameID]);
         delete this[_renderFrameID];
       }
-      this.clearBuffers();
-      this.clearTextures();
-      this.gl.deleteProgram(this.program);
-      this.program = null;
+      this.gl.useProgram(null);
     }
+
+    const idx = this.programs.indexOf(program);
+    if(idx >= 0) {
+      this.programs.splice(idx, 1);
+    }
+
+    this.clearBuffers(program);
+    this.gl.deleteProgram(program);
   }
 
-  setMeshData(data) {
-    if(Array.isArray(data)) {
-      data = mergeMeshes(data);
-    }
-    const {positions, cells} = data;
+  clearTextures() {
     const gl = this.gl;
-    this.verticesBuffer = this.verticesBuffer || gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(positions), gl.STATIC_DRAW);
-    this.cellsBuffer = this.cellsBuffer || gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cellsBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, pointsToBuffer(cells, Uint8Array), gl.STATIC_DRAW);
-    this.positions = positions;
-    this.cells = cells;
-    if(this[_enableTextures] && this.texCoordBuffer) {
-      this.setTextureCoordinate();
+    this.textures.forEach((texture) => {
+      gl.deleteTexture(texture);
+    });
+    this.textures = [];
+  }
+
+  deleteTexture(texture) {
+    const textures = this.textures;
+    const idx = textures.indexOf(texture);
+    if(idx >= 0) {
+      textures.splice(idx, 1);
+      this.gl.deleteTexture(texture);
     }
+    return texture;
+  }
+
+  /**
+    [{
+      positions: ...
+      cells: ...
+      textureCoord: ...
+      attributes: {name: {data:..., normalize: true}},
+      uniforms: ...
+    }]
+   */
+  setMeshData(data) {
+    if(!Array.isArray(data)) {
+      data = [data];
+    }
+
+    const program = this.program;
+
+    program.meshData = data.map(({positions, cells, attributes, uniforms, textureCoord}) => {
+      const meshData = {
+        positions: Renderer.FLOAT(positions),
+        cells: Renderer.USHORT(cells),
+        uniforms,
+        textureCoord: Renderer.FLOAT(textureCoord),
+      };
+      if(attributes) {
+        Object.entries(attributes).forEach(([key, value]) => {
+          let buffer,
+            size,
+            type = 'FLOAT',
+            normalize = false;
+          if(value.data) {
+            buffer = value.data;
+            normalize = !!value.normalize;
+            type = value.type || 'FLOAT';
+            size = value.size;
+          } else {
+            buffer = value;
+          }
+          if(size == null) size = buffer[0].length || 1;
+          if(type === 'UBYTE') type = 'UNSIGNED_BYTE';
+          if(type === 'USHORT') type = 'UNSIGNED_SHORT';
+          if(Array.isArray(buffer)) {
+            buffer = Renderer[type](buffer);
+          }
+          attributes[key] = {data: buffer, type, size, normalize};
+        });
+        meshData.attributes = attributes;
+      }
+      return meshData;
+    });
+
     this.update();
+  }
+
+  draw() {
+    const program = this.program;
+
+    program.meshData.forEach((meshData, meshIndex) => {
+      this.trigger('beforedraw', {meshData, meshIndex});
+      const {positions, cells, attributes, uniforms, textureCoord} = meshData;
+
+      const gl = this.gl;
+      gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+
+      if(attributes) {
+        Object.entries(attributes).forEach(([key, value]) => {
+          this.setAttribute(key, value.data, value.type, value.size, value.normalize);
+        });
+      }
+
+      if(uniforms) {
+        Object.entries(uniforms).forEach(([key, value]) => {
+          this.uniforms[key] = value;
+        });
+      }
+
+      if(this[_enableTextures] && program.texCoordBuffer) {
+        const texVertexData = textureCoord || this.mapTextureCoordinate(positions);
+        this.setTextureCoordinate(texVertexData);
+      }
+      gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+      this.trigger('afterdraw', {meshData, meshIndex});
+    });
+  }
+
+  mapTextureCoordinate(positions) {
+    const texVertexData = [];
+    const len = positions.length;
+    for(let i = 0; i < len; i++) {
+      if(i % 3 !== 2) texVertexData.push(0.5 * (positions[i] + 1));
+    }
+    return texVertexData;
   }
 
   setTextureCoordinate(texVertexData) {
     const gl = this.gl;
-    texVertexData = texVertexData || this.positions.map(v => [0.5 * (v[0] + 1), 0.5 * (v[1] + 1)]);
-    // texture coordinate data
-    this.texCoordBuffer = this.texCoordBuffer || gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, pointsToBuffer(texVertexData), gl.STATIC_DRAW);
+    const program = this.program;
+    gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
   }
 
-  setAttribute(name, bufferData, normalize = false) {
+  setAttribute(name, data, type, size, normalize = false) {
     const gl = this.gl;
-    this[_buffers][name] = this[_buffers][name] || gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this[_buffers][name]);
-    gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
-    const attrib = gl.getAttribLocation(this.program, name);
-    let type = gl.FLOAT;
-    if(bufferData instanceof Uint8Array) {
-      type = gl.UNSIGNED_BYTE;
-    } else if(bufferData instanceof Uint16Array) {
-      type = gl.UNSIGNED_SHORT;
-    } else if(bufferData instanceof Int8Array) {
-      type = gl.BYTE;
-    } else if(bufferData instanceof Int16Array) {
-      type = gl.SHORT;
-    }
-    gl.vertexAttribPointer(attrib, 3, type, normalize, 0, 0);
+    const program = this.program;
+    program._buffers[name] = program._buffers[name] || gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    const attrib = gl.getAttribLocation(program, name);
+    gl.vertexAttribPointer(attrib, size, gl[type], normalize, 0, 0);
     gl.enableVertexAttribArray(attrib);
-    this.update();
   }
 
-  setProgram(fragmentShader, vertexShader) {
-    this.deleteProgram();
-
-    this[_uniforms] = {};
-    this[_events] = {};
+  createProgram(fragmentShader, vertexShader) {
+    // this.deleteProgram();
+    // this._events = {};
 
     this[_enableTextures] = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
     if(fragmentShader == null) fragmentShader = DEFAULT_FRAG;
     if(vertexShader == null) vertexShader = this[_enableTextures] ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
 
-    this.fragmentShader = fragmentShader;
-    this.vertexShader = vertexShader;
-
     const gl = this.gl;
 
     const program = createProgram(gl, vertexShader, fragmentShader);
-    gl.useProgram(program);
-    this.program = program;
-
-    this.setMeshData({positions: this.positions, cells: this.cells});
-
-    const vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
-    gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(vPosition);
-
-    if(this[_enableTextures]) {
-      this.setTextureCoordinate();
-      const vTexCoord = gl.getAttribLocation(this.program, this.options.vertexTextureCoord);
-      gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(vTexCoord);
-    }
-
+    program.shaderText = {vertexShader, fragmentShader};
+    program._buffers = {};
+    program.uniforms = {};
+    program._samplerMap = {};
+    program._bindTextures = [];
     const uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
     let matched = vertexShader.match(uniformPattern) || [];
     matched = matched.concat(fragmentShader.match(uniformPattern) || []);
@@ -240,10 +288,58 @@ export default class Renderer {
       if(type.indexOf('Matrix') !== 0 && isTypeV) {
         type += 'v';
       }
-      this.declareUniform(name, type);
+      this.declareUniform(program, name, type);
     });
 
+    program.verticesBuffer = gl.createBuffer();
+    program.cellsBuffer = gl.createBuffer();
+
+    this.programs.push(program);
+
+    return program;
+  }
+
+  useProgram(program) {
+    this.startRender = false;
+    if(this[_renderFrameID]) {
+      cancelAnimationFrame(this[_renderFrameID]);
+      delete this[_renderFrameID];
+    }
+
+    const gl = this.gl;
+
+    gl.useProgram(program);
     this.program = program;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+    const vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
+    gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vPosition);
+
+    if(this[_enableTextures]) {
+      program.texCoordBuffer = program.texCoordBuffer || gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
+      const vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
+      gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(vTexCoord);
+    }
+
+    if(!program.meshData) {
+      const positions = [
+        [-1.0, -1.0, 0.0],
+        [1.0, -1.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [-1.0, 1.0, 0.0],
+      ];
+
+      const cells = [
+        [0, 1, 3],
+        [3, 1, 2],
+      ];
+
+      this.setMeshData({positions, cells});
+    }
+
     return program;
   }
 
@@ -294,7 +390,7 @@ export default class Renderer {
 
     const fragmentShader = await _compile(frag);
     const vertexShader = vert ? await _compile(vert) : null;
-    const program = this.setProgram(fragmentShader, vertexShader);
+    const program = this.createProgram(fragmentShader, vertexShader);
 
     return program;
   }
@@ -305,41 +401,34 @@ export default class Renderer {
     return this.compile(frag, vert);
   }
 
-  clearTextures() {
-    const gl = this.gl;
-    if(this[_textures]) {
-      this[_textures].forEach((texture) => {
-        gl.deleteTexture(texture);
-      });
-      this[_textures] = null;
-    }
-    this[_samplerMap] = {};
+  bindTextures(textures) {
+    return textures.map(this.bindTexture.bind(this));
   }
 
-  bindTextures(sources) {
-    return sources.map(this.bindTexture.bind(this));
-  }
-
-  bindTexture(source, i) {
+  bindTexture(texture, i) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0 + i);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    return texture;
+  }
+
+  async loadTexture(source) {
+    const img = await loadImage(source);
+    const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE0);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
     // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     // Prevents s-coordinate wrapping (repeating).
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     // Prevents t-coordinate wrapping (repeating).
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
+    this.textures.push(texture);
     return texture;
-  }
-
-  loadTexture(source) {
-    return loadImage(source);
   }
 
   loadTextures(...sources) {
@@ -348,34 +437,37 @@ export default class Renderer {
 
   // WebGLRenderingContext.uniform[1234][fi][v]()
   // WebGLRenderingContext.uniformMatrix[234]fv()
-  declareUniform(name, type = '1f') {
+  declareUniform(program, name, type = '1f') {
     const gl = this.gl;
-    const uniform = gl.getUniformLocation(this.program, name);
+    const uniform = gl.getUniformLocation(program, name);
     let value;
     type = type.replace(/^m/, 'Matrix');
 
     const isTypeV = /v$/.test(type);
     const that = this;
     if(type === 'sampler2D') {
-      const samplerID = this[_samplerMap][name];
-      const textures = this[_textures] || [];
-      Object.defineProperty(this[_uniforms], name, {
+      const samplerMap = program._samplerMap;
+      const textures = program._bindTextures;
+      Object.defineProperty(program.uniforms, name, {
         get() {
           return value;
         },
         set(v) {
           value = v;
-          const idx = samplerID || textures.length;
+          const idx = samplerMap[name] || textures.length;
           textures[idx] = v;
           that.bindTexture(v, idx);
-          if(samplerID == null) that[_samplerMap][name] = idx;
+          if(!samplerMap[name]) {
+            samplerMap[name] = idx;
+            gl.uniform1i(uniform, idx);
+          }
           that.update();
         },
         configurable: false,
         enumerable: true,
       });
     } else {
-      Object.defineProperty(this[_uniforms], name, {
+      Object.defineProperty(program.uniforms, name, {
         get() {
           return value;
         },
@@ -395,11 +487,8 @@ export default class Renderer {
   }
 
   on(type, handler) {
-    if(!this[_events]) {
-      throw new Error('Must load shader first.');
-    }
-    this[_events][type] = this[_events][type] || [];
-    this[_events][type].push(handler);
+    this._events[type] = this._events[type] || [];
+    this._events[type].push(handler);
   }
 
   once(type, handler) {
@@ -411,25 +500,19 @@ export default class Renderer {
   }
 
   off(type, handler) {
-    if(!this[_events]) {
-      throw new Error('Must load shader first.');
-    }
-    if(handler && this[_events][type]) {
-      const idx = this[_events][type].indexOf(handler);
+    if(handler && this._events[type]) {
+      const idx = this._events[type].indexOf(handler);
 
       if(idx >= 0) {
-        this[_events][type].splice(idx, 1);
+        this._events[type].splice(idx, 1);
       }
     } else {
-      delete this[_events][type];
+      delete this._events[type];
     }
   }
 
   trigger(type, eventArgs = {}) {
-    if(!this[_events]) {
-      throw new Error('Must load shader first.');
-    }
-    const handlers = this[_events][type] || [];
+    const handlers = this._events[type] || [];
     handlers.forEach((handler) => {
       handler.call(this, Object.assign({target: this, type}, eventArgs));
     });
@@ -439,9 +522,15 @@ export default class Renderer {
     this.startRender = true;
     this.trigger('beforeRender');
     const gl = this.gl;
-    if(!this.program) this.setProgram();
+    let program = this.program;
+    if(!program) {
+      program = this.createProgram();
+      this.useProgram(program);
+    }
+
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawElements(gl.TRIANGLES, this.cells.length * 3, gl.UNSIGNED_BYTE, 0);
+    this.draw();
+
     this[_renderFrameID] = null;
     this.trigger('rendered');
   }
