@@ -412,8 +412,16 @@ export default class Renderer {
     return texture;
   }
 
+  loadTextures(...sources) {
+    return Promise.all(sources.map(loadImage));
+  }
+
   async loadTexture(source) {
     const img = await loadImage(source);
+    return this.addTexture(img);
+  }
+
+  addTexture(img) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0);
     const texture = gl.createTexture();
@@ -429,10 +437,6 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     this.textures.push(texture);
     return texture;
-  }
-
-  loadTextures(...sources) {
-    return Promise.all(sources.map(loadImage));
   }
 
   // WebGLRenderingContext.uniform[1234][fi][v]()
