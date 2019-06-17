@@ -418,12 +418,14 @@ export default class Renderer {
 
   async loadTexture(source) {
     const img = await loadImage(source);
-    return this.addTexture(img);
+    const texture = this.createTexture(img);
+    this.textures.push(texture);
+    return texture;
   }
 
-  addTexture(img) {
+  createTexture(img) {
     const gl = this.gl;
-    gl.activeTexture(gl.TEXTURE0);
+    gl.activeTexture(gl.TEXTURE31);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -435,7 +437,6 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     // Prevents t-coordinate wrapping (repeating).
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    this.textures.push(texture);
     return texture;
   }
 
