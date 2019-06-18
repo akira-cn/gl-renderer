@@ -341,4 +341,4 @@ void main() {
 
 ### renderer.update()
 
-Cause canvas to clear and re-draw in the next frame. Change **uniforms** or set meshData will force renderer update automatically.
+Cause canvas to clear and re-draw in next frame. Change **uniforms** or set meshData will force renderer update automatically.
