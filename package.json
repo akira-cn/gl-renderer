@@ -1,6 +1,6 @@
 {
   "name": "gl-renderer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Drawing patterns with glsl shaders on modern browsers.",
   "main": "src/index.js",
   "scripts": {

@@ -9,11 +9,6 @@ const GLSL_LIBS = {};
 const _enableTextures = Symbol('enableTextures');
 const _renderFrameID = Symbol('renderFrameID');
 
-const _draw = Symbol('draw');
-const _declareUniform = Symbol('declareUniform');
-const _setAttribute = Symbol('setAttribute');
-const _setTextureCoordinate = Symbol('setTextureCoordinate');
-
 const shaderCache = {};
 async function fetchShader(url) {
   if(shaderCache[url]) return shaderCache[url];
@@ -117,7 +112,7 @@ export default class Renderer {
     this._events = {};
   }
 
-  [_setAttribute](name, data, type, size, normalize = false) {
+  _setAttribute(name, data, type, size, normalize = false) {
     const gl = this.gl;
     const program = this.program;
     program._buffers[name] = program._buffers[name] || gl.createBuffer();
@@ -128,7 +123,7 @@ export default class Renderer {
     gl.enableVertexAttribArray(attrib);
   }
 
-  [_setTextureCoordinate](texVertexData) {
+  _setTextureCoordinate(texVertexData) {
     const gl = this.gl;
     const program = this.program;
     gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
@@ -137,13 +132,11 @@ export default class Renderer {
 
   // WebGLRenderingContext.uniform[1234][fi][v]()
   // WebGLRenderingContext.uniformMatrix[234]fv()
-  [_declareUniform](program, name, type = '1f') {
+  _declareUniform(program, name, type = '1f') {
     const gl = this.gl;
     const uniform = gl.getUniformLocation(program, name);
     let value;
-    type = type.replace(/^m/, 'Matrix');
 
-    const isTypeV = /v$/.test(type);
     const that = this;
     if(type === 'sampler2D') {
       const samplerMap = program._samplerMap;
@@ -167,17 +160,21 @@ export default class Renderer {
         enumerable: true,
       });
     } else {
+      const isMatrix = type.indexOf('Matrix') === 0;
+      const isTypeV = !isMatrix && /v$/.test(type);
+      const setUniform = gl[`uniform${type}`].bind(gl);
       Object.defineProperty(program.uniforms, name, {
         get() {
           return value;
         },
         set(v) {
           value = v;
-          if(!Array.isArray(v)) {
+          if(typeof v === 'number') {
             v = [v];
           }
-          if(isTypeV) gl[`uniform${type}`](uniform, v);
-          else gl[`uniform${type}`](uniform, ...v);
+          if(isMatrix) setUniform(uniform, false, v);
+          else if(isTypeV) setUniform(uniform, v);
+          else setUniform(uniform, ...v);
           that.update();
         },
         configurable: false,
@@ -186,7 +183,7 @@ export default class Renderer {
     }
   }
 
-  [_draw]() {
+  _draw() {
     const program = this.program;
 
     program.meshData.forEach((meshData, meshIndex) => {
@@ -201,7 +198,7 @@ export default class Renderer {
 
       if(attributes) {
         Object.entries(attributes).forEach(([key, value]) => {
-          this[_setAttribute](key, value.data, value.type, value.size, value.normalize);
+          this._setAttribute(key, value.data, value.type, value.size, value.normalize);
         });
       }
 
@@ -213,7 +210,7 @@ export default class Renderer {
 
       if(this[_enableTextures] && program.texCoordBuffer) {
         const texVertexData = textureCoord || mapTextureCoordinate(positions);
-        this[_setTextureCoordinate](texVertexData);
+        this._setTextureCoordinate(texVertexData);
       }
       gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
       this.trigger('afterdraw', {meshData, meshIndex});
@@ -351,7 +348,7 @@ export default class Renderer {
       if(type.indexOf('Matrix') !== 0 && isTypeV) {
         type += 'v';
       }
-      this[_declareUniform](program, name, type);
+      this._declareUniform(program, name, type);
     });
 
     program.verticesBuffer = gl.createBuffer();
@@ -532,7 +529,7 @@ export default class Renderer {
     }
 
     gl.clear(gl.COLOR_BUFFER_BIT);
-    this[_draw]();
+    this._draw();
 
     this[_renderFrameID] = null;
     this.trigger('rendered');
