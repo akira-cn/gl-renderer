@@ -116,7 +116,7 @@ void main() {
 
 It depends whether you use texture samplers in your fragment shader or not.
 
-### async renderer.compile(fragment[, vertex])
+### _async_ renderer.compile(fragment[, vertex])
 
 gl-render allows you to use `#pragma include` statment to load and include other shaders.
 
@@ -150,7 +150,7 @@ const program = await render.compile(fragmentShader);
 renderer.useProgram(program);
 ```
 
-### async renderer.load(fragmentURL[, vertexURL])
+### _async_ renderer.load(fragmentURL[, vertexURL])
 
 Load fragment shader and vertex shader from url.
 
