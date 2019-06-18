@@ -2,12 +2,13 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = function (env = {}) {
+  const filename = env.production ? 'gl-renderer.min.js' : 'gl-renderer.js';
   return {
     mode: env.production ? 'production' : 'none',
     entry: './src/index',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'gl-renderer.js',
+      filename,
       publicPath: '/js/',
       library: ['GlRenderer'],
       libraryTarget: 'umd',

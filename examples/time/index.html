@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/js/gl-renderer.js"></script>
+</head>
+<body>
+  <canvas id="gl-canvas" width="512" height="512"></canvas>
+  <script>
+  (async function () {
+    const glCanvas = document.getElementById('gl-canvas');
+    const renderer = new GlRenderer(glCanvas);
+
+    const program = await renderer.load('./index.frag');
+    renderer.useProgram(program);
+
+    const startTime = Date.now();
+
+    renderer.uniforms.u_time = 0;
+
+    requestAnimationFrame(function update() {
+      renderer.uniforms.u_time = Date.now() - startTime;
+      requestAnimationFrame(update);
+    });
+
+    renderer.render();
+  }());
+  </script>
+</body>
+</html>

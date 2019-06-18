@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/js/gl-renderer.js"></script>
+</head>
+<body>
+  <canvas id="gl-canvas" width="512" height="512"></canvas>
+  <script>
+  (async function () {
+    const glCanvas = document.getElementById('gl-canvas');
+    const renderer = new GlRenderer(glCanvas);
+
+    // load fragment shader and createProgram
+    const program = await renderer.load('./index.frag');
+    renderer.useProgram(program);
+
+    // set color to RED
+    renderer.uniforms.color = [1, 0, 0];
+
+    renderer.render();
+
+    setTimeout(() => {
+      renderer.uniforms.color = [0, 0, 1];
+    }, 2000);
+  }());
+  </script>
+</body>
+</html>

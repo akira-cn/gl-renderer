@@ -9,6 +9,11 @@ const GLSL_LIBS = {};
 const _enableTextures = Symbol('enableTextures');
 const _renderFrameID = Symbol('renderFrameID');
 
+const _draw = Symbol('draw');
+const _declareUniform = Symbol('declareUniform');
+const _setAttribute = Symbol('setAttribute');
+const _setTextureCoordinate = Symbol('setTextureCoordinate');
+
 const shaderCache = {};
 async function fetchShader(url) {
   if(shaderCache[url]) return shaderCache[url];
@@ -19,6 +24,29 @@ async function fetchShader(url) {
     return content;
   }
   return null;
+}
+
+function mapTextureCoordinate(positions) {
+  const texVertexData = [];
+  const len = positions.length;
+  for(let i = 0; i < len; i++) {
+    if(i % 3 !== 2) texVertexData.push(0.5 * (positions[i] + 1));
+  }
+  return texVertexData;
+}
+
+function clearBuffers(gl, program) {
+  const buffers = program._buffers;
+  Object.values(buffers).forEach((buffer) => {
+    gl.deleteBuffer(buffer);
+  });
+  program._buffers = {};
+}
+
+function bindTexture(gl, texture, i) {
+  gl.activeTexture(gl.TEXTURE0 + i);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  return texture;
 }
 
 const uniformTypeMap = {
@@ -89,6 +117,109 @@ export default class Renderer {
     this._events = {};
   }
 
+  [_setAttribute](name, data, type, size, normalize = false) {
+    const gl = this.gl;
+    const program = this.program;
+    program._buffers[name] = program._buffers[name] || gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    const attrib = gl.getAttribLocation(program, name);
+    gl.vertexAttribPointer(attrib, size, gl[type], normalize, 0, 0);
+    gl.enableVertexAttribArray(attrib);
+  }
+
+  [_setTextureCoordinate](texVertexData) {
+    const gl = this.gl;
+    const program = this.program;
+    gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
+  }
+
+  // WebGLRenderingContext.uniform[1234][fi][v]()
+  // WebGLRenderingContext.uniformMatrix[234]fv()
+  [_declareUniform](program, name, type = '1f') {
+    const gl = this.gl;
+    const uniform = gl.getUniformLocation(program, name);
+    let value;
+    type = type.replace(/^m/, 'Matrix');
+
+    const isTypeV = /v$/.test(type);
+    const that = this;
+    if(type === 'sampler2D') {
+      const samplerMap = program._samplerMap;
+      const textures = program._bindTextures;
+      Object.defineProperty(program.uniforms, name, {
+        get() {
+          return value;
+        },
+        set(v) {
+          value = v;
+          const idx = samplerMap[name] || textures.length;
+          textures[idx] = v;
+          bindTexture(gl, v, idx);
+          if(!samplerMap[name]) {
+            samplerMap[name] = idx;
+            gl.uniform1i(uniform, idx);
+          }
+          that.update();
+        },
+        configurable: false,
+        enumerable: true,
+      });
+    } else {
+      Object.defineProperty(program.uniforms, name, {
+        get() {
+          return value;
+        },
+        set(v) {
+          value = v;
+          if(!Array.isArray(v)) {
+            v = [v];
+          }
+          if(isTypeV) gl[`uniform${type}`](uniform, v);
+          else gl[`uniform${type}`](uniform, ...v);
+          that.update();
+        },
+        configurable: false,
+        enumerable: true,
+      });
+    }
+  }
+
+  [_draw]() {
+    const program = this.program;
+
+    program.meshData.forEach((meshData, meshIndex) => {
+      this.trigger('beforedraw', {meshData, meshIndex});
+      const {positions, cells, attributes, uniforms, textureCoord} = meshData;
+
+      const gl = this.gl;
+      gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+
+      if(attributes) {
+        Object.entries(attributes).forEach(([key, value]) => {
+          this[_setAttribute](key, value.data, value.type, value.size, value.normalize);
+        });
+      }
+
+      if(uniforms) {
+        Object.entries(uniforms).forEach(([key, value]) => {
+          this.uniforms[key] = value;
+        });
+      }
+
+      if(this[_enableTextures] && program.texCoordBuffer) {
+        const texVertexData = textureCoord || mapTextureCoordinate(positions);
+        this[_setTextureCoordinate](texVertexData);
+      }
+      gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+      this.trigger('afterdraw', {meshData, meshIndex});
+    });
+  }
+
   get enableTextures() {
     return !!this[_enableTextures];
   }
@@ -101,22 +232,15 @@ export default class Renderer {
     return program.uniforms;
   }
 
-  clearBuffers(program) {
-    const buffers = program._buffers;
-    Object.values(buffers).forEach((buffer) => {
-      this.gl.deleteBuffer(buffer);
-    });
-    program._buffers = {};
-  }
-
   deleteProgram(program) {
+    const gl = this.gl;
     if(this.program === program) {
       this.startRender = false;
       if(this[_renderFrameID]) {
         cancelAnimationFrame(this[_renderFrameID]);
         delete this[_renderFrameID];
       }
-      this.gl.useProgram(null);
+      gl.useProgram(null);
     }
 
     const idx = this.programs.indexOf(program);
@@ -124,8 +248,8 @@ export default class Renderer {
       this.programs.splice(idx, 1);
     }
 
-    this.clearBuffers(program);
-    this.gl.deleteProgram(program);
+    clearBuffers(gl, program);
+    gl.deleteProgram(program);
   }
 
   clearTextures() {
@@ -199,67 +323,6 @@ export default class Renderer {
     this.update();
   }
 
-  draw() {
-    const program = this.program;
-
-    program.meshData.forEach((meshData, meshIndex) => {
-      this.trigger('beforedraw', {meshData, meshIndex});
-      const {positions, cells, attributes, uniforms, textureCoord} = meshData;
-
-      const gl = this.gl;
-      gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
-
-      if(attributes) {
-        Object.entries(attributes).forEach(([key, value]) => {
-          this.setAttribute(key, value.data, value.type, value.size, value.normalize);
-        });
-      }
-
-      if(uniforms) {
-        Object.entries(uniforms).forEach(([key, value]) => {
-          this.uniforms[key] = value;
-        });
-      }
-
-      if(this[_enableTextures] && program.texCoordBuffer) {
-        const texVertexData = textureCoord || this.mapTextureCoordinate(positions);
-        this.setTextureCoordinate(texVertexData);
-      }
-      gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
-      this.trigger('afterdraw', {meshData, meshIndex});
-    });
-  }
-
-  mapTextureCoordinate(positions) {
-    const texVertexData = [];
-    const len = positions.length;
-    for(let i = 0; i < len; i++) {
-      if(i % 3 !== 2) texVertexData.push(0.5 * (positions[i] + 1));
-    }
-    return texVertexData;
-  }
-
-  setTextureCoordinate(texVertexData) {
-    const gl = this.gl;
-    const program = this.program;
-    gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
-  }
-
-  setAttribute(name, data, type, size, normalize = false) {
-    const gl = this.gl;
-    const program = this.program;
-    program._buffers[name] = program._buffers[name] || gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    const attrib = gl.getAttribLocation(program, name);
-    gl.vertexAttribPointer(attrib, size, gl[type], normalize, 0, 0);
-    gl.enableVertexAttribArray(attrib);
-  }
-
   createProgram(fragmentShader, vertexShader) {
     // this.deleteProgram();
     // this._events = {};
@@ -288,7 +351,7 @@ export default class Renderer {
       if(type.indexOf('Matrix') !== 0 && isTypeV) {
         type += 'v';
       }
-      this.declareUniform(program, name, type);
+      this[_declareUniform](program, name, type);
     });
 
     program.verticesBuffer = gl.createBuffer();
@@ -401,28 +464,6 @@ export default class Renderer {
     return this.compile(frag, vert);
   }
 
-  bindTextures(textures) {
-    return textures.map(this.bindTexture.bind(this));
-  }
-
-  bindTexture(texture, i) {
-    const gl = this.gl;
-    gl.activeTexture(gl.TEXTURE0 + i);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    return texture;
-  }
-
-  loadTextures(...sources) {
-    return Promise.all(sources.map(loadImage));
-  }
-
-  async loadTexture(source) {
-    const img = await loadImage(source);
-    const texture = this.createTexture(img);
-    this.textures.push(texture);
-    return texture;
-  }
-
   createTexture(img) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE31);
@@ -441,55 +482,11 @@ export default class Renderer {
     return texture;
   }
 
-  // WebGLRenderingContext.uniform[1234][fi][v]()
-  // WebGLRenderingContext.uniformMatrix[234]fv()
-  declareUniform(program, name, type = '1f') {
-    const gl = this.gl;
-    const uniform = gl.getUniformLocation(program, name);
-    let value;
-    type = type.replace(/^m/, 'Matrix');
-
-    const isTypeV = /v$/.test(type);
-    const that = this;
-    if(type === 'sampler2D') {
-      const samplerMap = program._samplerMap;
-      const textures = program._bindTextures;
-      Object.defineProperty(program.uniforms, name, {
-        get() {
-          return value;
-        },
-        set(v) {
-          value = v;
-          const idx = samplerMap[name] || textures.length;
-          textures[idx] = v;
-          that.bindTexture(v, idx);
-          if(!samplerMap[name]) {
-            samplerMap[name] = idx;
-            gl.uniform1i(uniform, idx);
-          }
-          that.update();
-        },
-        configurable: false,
-        enumerable: true,
-      });
-    } else {
-      Object.defineProperty(program.uniforms, name, {
-        get() {
-          return value;
-        },
-        set(v) {
-          value = v;
-          if(!Array.isArray(v)) {
-            v = [v];
-          }
-          if(isTypeV) gl[`uniform${type}`](uniform, v);
-          else gl[`uniform${type}`](uniform, ...v);
-          that.update();
-        },
-        configurable: false,
-        enumerable: true,
-      });
-    }
+  async loadTexture(source) {
+    const img = await loadImage(source);
+    const texture = this.createTexture(img);
+    this.textures.push(texture);
+    return texture;
   }
 
   on(type, handler) {
@@ -535,7 +532,7 @@ export default class Renderer {
     }
 
     gl.clear(gl.COLOR_BUFFER_BIT);
-    this.draw();
+    this[_draw]();
 
     this[_renderFrameID] = null;
     this.trigger('rendered');
