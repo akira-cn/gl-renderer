@@ -1,8 +1,9 @@
 {
   "name": "gl-renderer",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Drawing patterns with glsl shaders on modern browsers.",
-  "main": "src/index.js",
+  "main": "dist/gl-renderer.min.js",
+  "module": "dist/gl-renderer.js",
   "scripts": {
     "start": "webpack-dev-server --env.server=examples --watch-poll",
     "build:dev": "webpack",
