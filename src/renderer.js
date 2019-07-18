@@ -529,9 +529,13 @@ export default class Renderer {
     }
 
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const lastFrameID = this[_renderFrameID];
     this._draw();
 
-    this[_renderFrameID] = null;
+    if(this[_renderFrameID] === lastFrameID) {
+      this[_renderFrameID] = null;
+    }
     this.trigger('rendered');
   }
 

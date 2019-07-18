@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "b89894a2a53258117a89";
+/******/ 	var hotCurrentHash = "64def5ac63c636026100";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1673,10 +1673,14 @@ function () {
       }
 
       gl.clear(gl.COLOR_BUFFER_BIT);
+      var lastFrameID = this[_renderFrameID];
 
       this._draw();
 
-      this[_renderFrameID] = null;
+      if (this[_renderFrameID] === lastFrameID) {
+        this[_renderFrameID] = null;
+      }
+
       this.trigger('rendered');
     }
   }, {
