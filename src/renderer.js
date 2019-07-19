@@ -21,11 +21,11 @@ async function fetchShader(url) {
   return null;
 }
 
-function mapTextureCoordinate(positions) {
+function mapTextureCoordinate(positions, size = 3) {
   const texVertexData = [];
   const len = positions.length;
   for(let i = 0; i < len; i++) {
-    if(i % 3 !== 2) texVertexData.push(0.5 * (positions[i] + 1));
+    if(i % size < 2) texVertexData.push(0.5 * (positions[i] + 1));
   }
   return texVertexData;
 }
@@ -209,7 +209,7 @@ export default class Renderer {
       }
 
       if(this[_enableTextures] && program.texCoordBuffer) {
-        const texVertexData = textureCoord || mapTextureCoordinate(positions);
+        const texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
         this._setTextureCoordinate(texVertexData);
       }
       gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
@@ -336,8 +336,16 @@ export default class Renderer {
     program.uniforms = {};
     program._samplerMap = {};
     program._bindTextures = [];
+
+    // console.log(vertexShader);
+    const pattern = new RegExp(`attribute vec(\\d) ${this.options.vertexPosition}`, 'im');
+    let matched = vertexShader.match(pattern);
+    if(matched) {
+      program._dimension = Number(matched[1]);
+    }
+
     const uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
-    let matched = vertexShader.match(uniformPattern) || [];
+    matched = vertexShader.match(uniformPattern) || [];
     matched = matched.concat(fragmentShader.match(uniformPattern) || []);
 
     matched.forEach((m) => {
@@ -371,9 +379,11 @@ export default class Renderer {
     gl.useProgram(program);
     this.program = program;
 
+    const dimension = program._dimension;
+
     gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
     const vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
-    gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
     if(this[_enableTextures]) {
@@ -386,10 +396,10 @@ export default class Renderer {
 
     if(!program.meshData) {
       const positions = [
-        [-1.0, -1.0, 0.0],
-        [1.0, -1.0, 0.0],
-        [1.0, 1.0, 0.0],
-        [-1.0, 1.0, 0.0],
+        [-1, -1, 0, 0].slice(0, dimension),
+        [1, -1, 0, 0].slice(0, dimension),
+        [1, 1, 0, 0].slice(0, dimension),
+        [-1, 1, 0, 0].slice(0, dimension),
       ];
 
       const cells = [
@@ -399,6 +409,55 @@ export default class Renderer {
 
       this.setMeshData({positions, cells});
     }
+
+    return program;
+  }
+
+  compileSync(frag, vert) {
+    frag = frag || DEFAULT_FRAG;
+
+    const loaded = {};
+
+    function _compile(content) {
+      content = content.replace(/^\s*/mg, '');
+
+      const includes = [];
+      const matched = content.match(/^#pragma\s+include\s+.*/mg);
+
+      if(matched) {
+        // console.log(matched, url);
+        for(let i = 0; i < matched.length; i++) {
+          const m = matched[i];
+          const _matched = m.match(/(?:<|")(.*)(?:>|")/);
+          if(_matched) {
+            const type = _matched[0].indexOf('<') === 0 ? 'lib' : 'link';
+            let name = _matched[1];
+            if(name === 'graph') name = 'graphics';
+            if(!loaded[name]) {
+              loaded[name] = true;
+              if(type === 'lib') {
+                const c = _compile(GLSL_LIBS[name]); // eslint-disable-line no-await-in-loop
+                includes.push(c);
+              } else if(type === 'link') {
+                throw new Error('Cannot load external links synchronously. Use compile instead of compileSync.');
+              }
+            } else {
+              includes.push(`/* included ${name} */`);
+            }
+          }
+        }
+
+        includes.forEach((inc) => {
+          content = content.replace(/^#pragma\s+include\s+.*/m, inc);
+        });
+      }
+
+      return content;
+    }
+
+    const fragmentShader = _compile(frag);
+    const vertexShader = vert ? _compile(vert) : null;
+    const program = this.createProgram(fragmentShader, vertexShader);
 
     return program;
   }

@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "64def5ac63c636026100";
+/******/ 	var hotCurrentHash = "64f15a20763c640fcc24";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -912,11 +912,12 @@ function _fetchShader() {
 }
 
 function mapTextureCoordinate(positions) {
+  var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
   var texVertexData = [];
   var len = positions.length;
 
   for (var i = 0; i < len; i++) {
-    if (i % 3 !== 2) texVertexData.push(0.5 * (positions[i] + 1));
+    if (i % size < 2) texVertexData.push(0.5 * (positions[i] + 1));
   }
 
   return texVertexData;
@@ -1125,7 +1126,7 @@ function () {
         }
 
         if (_this[_enableTextures] && program.texCoordBuffer) {
-          var texVertexData = textureCoord || mapTextureCoordinate(positions);
+          var texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
 
           _this._setTextureCoordinate(texVertexData);
         }
@@ -1279,9 +1280,17 @@ function () {
       program._buffers = {};
       program.uniforms = {};
       program._samplerMap = {};
-      program._bindTextures = [];
+      program._bindTextures = []; // console.log(vertexShader);
+
+      var pattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexPosition), 'im');
+      var matched = vertexShader.match(pattern);
+
+      if (matched) {
+        program._dimension = Number(matched[1]);
+      }
+
       var uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
-      var matched = vertexShader.match(uniformPattern) || [];
+      matched = vertexShader.match(uniformPattern) || [];
       matched = matched.concat(fragmentShader.match(uniformPattern) || []);
       matched.forEach(function (m) {
         var _matched = m.match(/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/);
@@ -1319,9 +1328,10 @@ function () {
       var gl = this.gl;
       gl.useProgram(program);
       this.program = program;
+      var dimension = program._dimension;
       gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
       var vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
-      gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(vPosition);
 
       if (this[_enableTextures]) {
@@ -1333,7 +1343,7 @@ function () {
       }
 
       if (!program.meshData) {
-        var positions = [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0], [1.0, 1.0, 0.0], [-1.0, 1.0, 0.0]];
+        var positions = [[-1, -1, 0, 0].slice(0, dimension), [1, -1, 0, 0].slice(0, dimension), [1, 1, 0, 0].slice(0, dimension), [-1, 1, 0, 0].slice(0, dimension)];
         var cells = [[0, 1, 3], [3, 1, 2]];
         this.setMeshData({
           positions: positions,
@@ -1341,6 +1351,60 @@ function () {
         });
       }
 
+      return program;
+    }
+  }, {
+    key: "compileSync",
+    value: function compileSync(frag, vert) {
+      frag = frag || _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default.a;
+      var loaded = {};
+
+      function _compile(content) {
+        content = content.replace(/^\s*/mg, '');
+        var includes = [];
+        var matched = content.match(/^#pragma\s+include\s+.*/mg);
+
+        if (matched) {
+          // console.log(matched, url);
+          for (var i = 0; i < matched.length; i++) {
+            var m = matched[i];
+
+            var _matched = m.match(/(?:<|")(.*)(?:>|")/);
+
+            if (_matched) {
+              var type = _matched[0].indexOf('<') === 0 ? 'lib' : 'link';
+              var name = _matched[1];
+              if (name === 'graph') name = 'graphics';
+
+              if (!loaded[name]) {
+                loaded[name] = true;
+
+                if (type === 'lib') {
+                  var c = _compile(GLSL_LIBS[name]); // eslint-disable-line no-await-in-loop
+
+
+                  includes.push(c);
+                } else if (type === 'link') {
+                  throw new Error('Cannot load external links synchronously. Use compile instead of compileSync.');
+                }
+              } else {
+                includes.push("/* included ".concat(name, " */"));
+              }
+            }
+          }
+
+          includes.forEach(function (inc) {
+            content = content.replace(/^#pragma\s+include\s+.*/m, inc);
+          });
+        }
+
+        return content;
+      }
+
+      var fragmentShader = _compile(frag);
+
+      var vertexShader = vert ? _compile(vert) : null;
+      var program = this.createProgram(fragmentShader, vertexShader);
       return program;
     }
   }, {

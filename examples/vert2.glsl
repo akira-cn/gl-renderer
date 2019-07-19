@@ -2,7 +2,7 @@
 precision mediump float;
 #endif
 
-attribute vec4 a_position;
+attribute vec3 a_position;
 attribute vec2 a_vertexTextureCoord;
 
 varying mediump vec2 vTextureCoord;
