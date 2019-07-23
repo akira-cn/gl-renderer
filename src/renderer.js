@@ -147,7 +147,7 @@ export default class Renderer {
         },
         set(v) {
           value = v;
-          const idx = samplerMap[name] || textures.length;
+          const idx = samplerMap[name] != null ? samplerMap[name] : textures.length;
           textures[idx] = v;
           bindTexture(gl, v, idx);
           if(!samplerMap[name]) {
@@ -541,6 +541,7 @@ export default class Renderer {
   async loadTexture(source) {
     const img = await loadImage(source);
     const texture = this.createTexture(img);
+    texture._img = img;
     this.textures.push(texture);
     return texture;
   }
@@ -580,7 +581,9 @@ export default class Renderer {
   render() {
     this.startRender = true;
     this.trigger('beforeRender');
+
     const gl = this.gl;
+
     let program = this.program;
     if(!program) {
       program = this.createProgram();

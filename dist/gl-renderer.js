@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "64f15a20763c640fcc24";
+/******/ 	var hotCurrentHash = "6276f58146cc57e1e897";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1045,7 +1045,7 @@ function () {
           },
           set: function set(v) {
             value = v;
-            var idx = samplerMap[name] || textures.length;
+            var idx = samplerMap[name] != null ? samplerMap[name] : textures.length;
             textures[idx] = v;
             bindTexture(gl, v, idx);
 
@@ -1658,10 +1658,11 @@ function () {
               case 2:
                 img = _context4.sent;
                 texture = this.createTexture(img);
+                texture._img = img;
                 this.textures.push(texture);
                 return _context4.abrupt("return", texture);
 
-              case 6:
+              case 7:
               case "end":
                 return _context4.stop();
             }
