@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "6276f58146cc57e1e897";
+/******/ 	var hotCurrentHash = "fad1cc5d9956893613f4";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -999,6 +999,7 @@ function () {
     this.gl = gl;
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     this.textures = [];
     this.programs = [];
     this._events = {};
@@ -1098,8 +1099,10 @@ function () {
             cells = meshData.cells,
             attributes = meshData.attributes,
             uniforms = meshData.uniforms,
-            textureCoord = meshData.textureCoord;
+            textureCoord = meshData.textureCoord,
+            enableBlend = meshData.enableBlend;
         var gl = _this.gl;
+        if (enableBlend) gl.enable(gl.BLEND);else gl.disable(gl.BLEND);
         gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
@@ -1209,11 +1212,13 @@ function () {
             cells = _ref5.cells,
             attributes = _ref5.attributes,
             uniforms = _ref5.uniforms,
-            textureCoord = _ref5.textureCoord;
+            textureCoord = _ref5.textureCoord,
+            enableBlend = _ref5.enableBlend;
         var meshData = {
           positions: Renderer.FLOAT(positions),
           cells: Renderer.USHORT(cells),
           uniforms: uniforms,
+          enableBlend: !!enableBlend,
           textureCoord: Renderer.FLOAT(textureCoord)
         };
 

@@ -106,6 +106,7 @@ export default class Renderer {
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     this.textures = [];
     this.programs = [];
@@ -188,9 +189,11 @@ export default class Renderer {
 
     program.meshData.forEach((meshData, meshIndex) => {
       this.trigger('beforedraw', {meshData, meshIndex});
-      const {positions, cells, attributes, uniforms, textureCoord} = meshData;
+      const {positions, cells, attributes, uniforms, textureCoord, enableBlend} = meshData;
 
       const gl = this.gl;
+      if(enableBlend) gl.enable(gl.BLEND);
+      else gl.disable(gl.BLEND);
       gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
@@ -283,11 +286,12 @@ export default class Renderer {
 
     const program = this.program;
 
-    program.meshData = data.map(({positions, cells, attributes, uniforms, textureCoord}) => {
+    program.meshData = data.map(({positions, cells, attributes, uniforms, textureCoord, enableBlend}) => {
       const meshData = {
         positions: Renderer.FLOAT(positions),
         cells: Renderer.USHORT(cells),
         uniforms,
+        enableBlend: !!enableBlend,
         textureCoord: Renderer.FLOAT(textureCoord),
       };
       if(attributes) {
