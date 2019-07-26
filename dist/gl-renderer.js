@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "b62d9eba944bd52749a5";
+/******/ 	var hotCurrentHash = "4e73489b15ab8671da10";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2873,8 +2873,17 @@ function loadImage(src) {
     img.crossOrigin = 'anonymous';
     imageCache[src] = new Promise(function (resolve) {
       img.onload = function () {
-        imageCache[src] = img;
-        resolve(img);
+        if (typeof createImageBitmap === 'function') {
+          createImageBitmap(img, {
+            imageOrientation: 'flipY'
+          }).then(function (bitmap) {
+            imageCache[src] = bitmap;
+            resolve(bitmap);
+          });
+        } else {
+          imageCache[src] = img;
+          resolve(img);
+        }
       };
 
       img.src = src;

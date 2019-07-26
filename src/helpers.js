@@ -108,8 +108,15 @@ export function loadImage(src) {
     img.crossOrigin = 'anonymous';
     imageCache[src] = new Promise((resolve) => {
       img.onload = function () {
-        imageCache[src] = img;
-        resolve(img);
+        if(typeof createImageBitmap === 'function') {
+          createImageBitmap(img, {imageOrientation: 'flipY'}).then((bitmap) => {
+            imageCache[src] = bitmap;
+            resolve(bitmap);
+          });
+        } else {
+          imageCache[src] = img;
+          resolve(img);
+        }
       };
       img.src = src;
     });
