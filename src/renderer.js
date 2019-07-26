@@ -62,6 +62,7 @@ const uniformTypeMap = {
 export default class Renderer {
   static defaultOptions = {
     preserveDrawingBuffer: true,
+    autoUpdate: true,
     vertexPosition: 'a_vertexPosition',
     vertexTextureCoord: 'a_vertexTextureCoord',
   }
@@ -155,7 +156,7 @@ export default class Renderer {
             samplerMap[name] = idx;
             gl.uniform1i(uniform, idx);
           }
-          that.update();
+          if(that.options.autoUpdate) that.update();
         },
         configurable: false,
         enumerable: true,
@@ -176,7 +177,7 @@ export default class Renderer {
           if(isMatrix) setUniform(uniform, false, v);
           else if(isTypeV) setUniform(uniform, v);
           else setUniform(uniform, ...v);
-          that.update();
+          if(that.options.autoUpdate) that.update();
         },
         configurable: false,
         enumerable: true,
@@ -321,7 +322,7 @@ export default class Renderer {
       return meshData;
     });
 
-    this.update();
+    if(this.options.autoUpdate) this.update();
   }
 
   createProgram(fragmentShader, vertexShader) {
@@ -400,10 +401,10 @@ export default class Renderer {
 
     if(!program.meshData) {
       const positions = [
-        [-1, -1, 0, 0].slice(0, dimension),
-        [1, -1, 0, 0].slice(0, dimension),
-        [1, 1, 0, 0].slice(0, dimension),
-        [-1, 1, 0, 0].slice(0, dimension),
+        [-1, -1, 0, 1].slice(0, dimension),
+        [1, -1, 0, 1].slice(0, dimension),
+        [1, 1, 0, 1].slice(0, dimension),
+        [-1, 1, 0, 1].slice(0, dimension),
       ];
 
       const cells = [

@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "fad1cc5d9956893613f4";
+/******/ 	var hotCurrentHash = "b62d9eba944bd52749a5";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1055,7 +1055,7 @@ function () {
               gl.uniform1i(uniform, idx);
             }
 
-            that.update();
+            if (that.options.autoUpdate) that.update();
           },
           configurable: false,
           enumerable: true
@@ -1076,7 +1076,7 @@ function () {
             }
 
             if (isMatrix) setUniform(uniform, false, v);else if (isTypeV) setUniform(uniform, v);else setUniform.apply(void 0, [uniform].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(v)));
-            that.update();
+            if (that.options.autoUpdate) that.update();
           },
           configurable: false,
           enumerable: true
@@ -1262,7 +1262,7 @@ function () {
 
         return meshData;
       });
-      this.update();
+      if (this.options.autoUpdate) this.update();
     }
   }, {
     key: "createProgram",
@@ -1348,7 +1348,7 @@ function () {
       }
 
       if (!program.meshData) {
-        var positions = [[-1, -1, 0, 0].slice(0, dimension), [1, -1, 0, 0].slice(0, dimension), [1, 1, 0, 0].slice(0, dimension), [-1, 1, 0, 0].slice(0, dimension)];
+        var positions = [[-1, -1, 0, 1].slice(0, dimension), [1, -1, 0, 1].slice(0, dimension), [1, 1, 0, 1].slice(0, dimension), [-1, 1, 0, 1].slice(0, dimension)];
         var cells = [[0, 1, 3], [3, 1, 2]];
         this.setMeshData({
           positions: positions,
@@ -1785,6 +1785,7 @@ function () {
 
 _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "defaultOptions", {
   preserveDrawingBuffer: true,
+  autoUpdate: true,
   vertexPosition: 'a_vertexPosition',
   vertexTextureCoord: 'a_vertexTextureCoord'
 });
@@ -2887,7 +2888,7 @@ function loadImage(src) {
 /* 17 */
 /***/ (function(module, exports) {
 
-module.exports = "attribute vec4 a_vertexPosition;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = a_vertexPosition;\n}\n"
+module.exports = "attribute vec3 a_vertexPosition;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = vec4(a_vertexPosition, 1);\n}\n"
 
 /***/ }),
 /* 18 */
