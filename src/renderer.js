@@ -527,7 +527,7 @@ export default class Renderer {
 
   createTexture(img) {
     const gl = this.gl;
-    gl.activeTexture(gl.TEXTURE31);
+    gl.activeTexture(gl.TEXTURE15);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 

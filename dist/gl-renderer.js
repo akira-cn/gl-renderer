@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "4e73489b15ab8671da10";
+/******/ 	var hotCurrentHash = "66dd3352b27a1a8a14ed";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1632,7 +1632,7 @@ function () {
     key: "createTexture",
     value: function createTexture(img) {
       var gl = this.gl;
-      gl.activeTexture(gl.TEXTURE31);
+      gl.activeTexture(gl.TEXTURE15);
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
