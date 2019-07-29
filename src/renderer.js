@@ -583,7 +583,7 @@ export default class Renderer {
     });
   }
 
-  render() {
+  render(clearBuffer = true) {
     this.startRender = true;
     this.trigger('beforeRender');
 
@@ -595,7 +595,7 @@ export default class Renderer {
       this.useProgram(program);
     }
 
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    if(clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
 
     const lastFrameID = this[_renderFrameID];
     this._draw();

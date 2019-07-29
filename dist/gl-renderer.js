@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "66dd3352b27a1a8a14ed";
+/******/ 	var hotCurrentHash = "4e7e10620abf5591f3a6";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1732,6 +1732,7 @@ function () {
   }, {
     key: "render",
     value: function render() {
+      var clearBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       this.startRender = true;
       this.trigger('beforeRender');
       var gl = this.gl;
@@ -1742,7 +1743,7 @@ function () {
         this.useProgram(program);
       }
 
-      gl.clear(gl.COLOR_BUFFER_BIT);
+      if (clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
       var lastFrameID = this[_renderFrameID];
 
       this._draw();
