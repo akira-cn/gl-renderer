@@ -296,9 +296,9 @@ void main() {
 }());
 ```
 
-### renderer.render()
+### renderer.render(clearBuffer = true)
 
-Clear and re-draw canvas.
+Clear and re-draw canvas. If clearBuffer set to true(default is true), renderer will automately clear color buffer before render.
 
 ### renderer.uniforms
 
