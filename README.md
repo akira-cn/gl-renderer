@@ -70,6 +70,17 @@ You will see a canvas 512 pixels wide and 512 pixels high in red.
 
 ## API Reference
 
+### constructor(canvas, options = {})
+
+Create renderer options with specified canvas element and options.
+
+The options:
+
+- autoUpdate: Force renderer to update when uniforms or meshdata changes. Default value is true.
+- vertexPosition: Attribute name of position in vertex shader. Default value is 'a_vertexPosition'.
+- vertexTextureCoord: Attribute name of texture coordinate in vertext shader. Default value is 'a_vertexTextureCoord'.
+- Other webgl context options: [See MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/getContext).
+
 ### renderer.createProgram(fragment[, vertex])
 
 Create a program with specified fragment shader and vertex shader.
