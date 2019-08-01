@@ -265,8 +265,12 @@ export default class Renderer {
     const textures = this.textures;
     const idx = textures.indexOf(texture);
     if(idx >= 0) {
+      const image = texture._img;
       textures.splice(idx, 1);
       this.gl.deleteTexture(texture);
+      if(typeof image.close === 'function') { // release ImageBitmap
+        image.close();
+      }
     }
     return texture;
   }
@@ -540,15 +544,15 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     // Prevents t-coordinate wrapping (repeating).
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    texture._img = img;
+    this.textures.push(texture);
     return texture;
   }
 
   async loadTexture(source) {
     const img = await loadImage(source);
-    const texture = this.createTexture(img);
-    texture._img = img;
-    this.textures.push(texture);
-    return texture;
+    return this.createTexture(img);
   }
 
   on(type, handler) {

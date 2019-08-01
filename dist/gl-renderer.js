@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "4e7e10620abf5591f3a6";
+/******/ 	var hotCurrentHash = "f6d0aa5339385f7c4958";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1183,8 +1183,14 @@ function () {
       var idx = textures.indexOf(texture);
 
       if (idx >= 0) {
+        var image = texture._img;
         textures.splice(idx, 1);
         this.gl.deleteTexture(texture);
+
+        if (typeof image.close === 'function') {
+          // release ImageBitmap
+          image.close();
+        }
       }
 
       return texture;
@@ -1644,6 +1650,8 @@ function () {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // Prevents t-coordinate wrapping (repeating).
 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      texture._img = img;
+      this.textures.push(texture);
       return texture;
     }
   }, {
@@ -1652,7 +1660,7 @@ function () {
       var _loadTexture = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(source) {
-        var img, texture;
+        var img;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -1662,12 +1670,9 @@ function () {
 
               case 2:
                 img = _context4.sent;
-                texture = this.createTexture(img);
-                texture._img = img;
-                this.textures.push(texture);
-                return _context4.abrupt("return", texture);
+                return _context4.abrupt("return", this.createTexture(img));
 
-              case 7:
+              case 4:
               case "end":
                 return _context4.stop();
             }
