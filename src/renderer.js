@@ -550,8 +550,8 @@ export default class Renderer {
     return texture;
   }
 
-  async loadTexture(source, {useBitmapImage = true} = {}) {
-    const img = await loadImage(source, useBitmapImage);
+  async loadTexture(source, {useImageBitmap = true} = {}) {
+    const img = await loadImage(source, useImageBitmap);
     return this.createTexture(img);
   }
 

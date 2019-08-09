@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "2499cfb4f54a189b6753";
+/******/ 	var hotCurrentHash = "1151e193e3f56fa46ec5";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1661,8 +1661,8 @@ function () {
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(source) {
         var _ref10,
-            _ref10$useBitmapImage,
-            useBitmapImage,
+            _ref10$useImageBitmap,
+            useImageBitmap,
             img,
             _args4 = arguments;
 
@@ -1670,9 +1670,9 @@ function () {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _ref10 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref10$useBitmapImage = _ref10.useBitmapImage, useBitmapImage = _ref10$useBitmapImage === void 0 ? true : _ref10$useBitmapImage;
+                _ref10 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref10$useImageBitmap = _ref10.useImageBitmap, useImageBitmap = _ref10$useImageBitmap === void 0 ? true : _ref10$useImageBitmap;
                 _context4.next = 3;
-                return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useBitmapImage);
+                return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useImageBitmap);
 
               case 3:
                 img = _context4.sent;
@@ -2883,14 +2883,14 @@ function pointsToBuffer(points) {
 }
 var imageCache = {};
 function loadImage(src) {
-  var useBitmapImage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var useImageBitmap = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
   if (!imageCache[src]) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
     imageCache[src] = new Promise(function (resolve) {
       img.onload = function () {
-        if (useBitmapImage && typeof createImageBitmap === 'function') {
+        if (useImageBitmap && typeof createImageBitmap === 'function') {
           createImageBitmap(img, {
             imageOrientation: 'flipY'
           }).then(function (bitmap) {
