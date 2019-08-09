@@ -547,6 +547,9 @@ export default class Renderer {
 
     texture._img = img;
     this.textures.push(texture);
+    texture.delete = () => {
+      this.deleteTexture(texture);
+    };
     return texture;
   }
 

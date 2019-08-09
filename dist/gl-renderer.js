@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "1151e193e3f56fa46ec5";
+/******/ 	var hotCurrentHash = "3f0006896d575d4c300e";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1637,6 +1637,8 @@ function () {
   }, {
     key: "createTexture",
     value: function createTexture(img) {
+      var _this3 = this;
+
       var gl = this.gl;
       gl.activeTexture(gl.TEXTURE15);
       var texture = gl.createTexture();
@@ -1652,6 +1654,11 @@ function () {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       texture._img = img;
       this.textures.push(texture);
+
+      texture.delete = function () {
+        _this3.deleteTexture(texture);
+      };
+
       return texture;
     }
   }, {
@@ -1729,13 +1736,13 @@ function () {
   }, {
     key: "trigger",
     value: function trigger(type) {
-      var _this3 = this;
+      var _this4 = this;
 
       var eventArgs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var handlers = this._events[type] || [];
       handlers.forEach(function (handler) {
-        handler.call(_this3, Object.assign({
-          target: _this3,
+        handler.call(_this4, Object.assign({
+          target: _this4,
           type: type
         }, eventArgs));
       });
