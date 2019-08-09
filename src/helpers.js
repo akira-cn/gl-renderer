@@ -102,13 +102,13 @@ export function pointsToBuffer(points, Type = Float32Array) {
 }
 
 const imageCache = {};
-export function loadImage(src) {
+export function loadImage(src, useBitmapImage = true) {
   if(!imageCache[src]) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     imageCache[src] = new Promise((resolve) => {
       img.onload = function () {
-        if(typeof createImageBitmap === 'function') {
+        if(useBitmapImage && typeof createImageBitmap === 'function') {
           createImageBitmap(img, {imageOrientation: 'flipY'}).then((bitmap) => {
             imageCache[src] = bitmap;
             resolve(bitmap);

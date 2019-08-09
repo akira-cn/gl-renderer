@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "f6d0aa5339385f7c4958";
+/******/ 	var hotCurrentHash = "2499cfb4f54a189b6753";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1660,19 +1660,25 @@ function () {
       var _loadTexture = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(source) {
-        var img;
+        var _ref10,
+            _ref10$useBitmapImage,
+            useBitmapImage,
+            img,
+            _args4 = arguments;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.next = 2;
-                return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source);
+                _ref10 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref10$useBitmapImage = _ref10.useBitmapImage, useBitmapImage = _ref10$useBitmapImage === void 0 ? true : _ref10$useBitmapImage;
+                _context4.next = 3;
+                return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useBitmapImage);
 
-              case 2:
+              case 3:
                 img = _context4.sent;
                 return _context4.abrupt("return", this.createTexture(img));
 
-              case 4:
+              case 5:
               case "end":
                 return _context4.stop();
             }
@@ -1737,7 +1743,10 @@ function () {
   }, {
     key: "render",
     value: function render() {
-      var clearBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref11$clearBuffer = _ref11.clearBuffer,
+          clearBuffer = _ref11$clearBuffer === void 0 ? true : _ref11$clearBuffer;
+
       this.startRender = true;
       this.trigger('beforeRender');
       var gl = this.gl;
@@ -2874,12 +2883,14 @@ function pointsToBuffer(points) {
 }
 var imageCache = {};
 function loadImage(src) {
+  var useBitmapImage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
   if (!imageCache[src]) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
     imageCache[src] = new Promise(function (resolve) {
       img.onload = function () {
-        if (typeof createImageBitmap === 'function') {
+        if (useBitmapImage && typeof createImageBitmap === 'function') {
           createImageBitmap(img, {
             imageOrientation: 'flipY'
           }).then(function (bitmap) {

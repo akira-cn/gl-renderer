@@ -550,8 +550,8 @@ export default class Renderer {
     return texture;
   }
 
-  async loadTexture(source) {
-    const img = await loadImage(source);
+  async loadTexture(source, {useBitmapImage = true} = {}) {
+    const img = await loadImage(source, useBitmapImage);
     return this.createTexture(img);
   }
 
@@ -587,7 +587,7 @@ export default class Renderer {
     });
   }
 
-  render(clearBuffer = true) {
+  render({clearBuffer = true} = {}) {
     this.startRender = true;
     this.trigger('beforeRender');
 
