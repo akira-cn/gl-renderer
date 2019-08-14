@@ -65,6 +65,7 @@ export default class Renderer {
     autoUpdate: true,
     vertexPosition: 'a_vertexPosition',
     vertexTextureCoord: 'a_vertexTextureCoord',
+    webgl2: false,
   }
 
   static addLibs(libs = {}) {
@@ -102,7 +103,12 @@ export default class Renderer {
 
     this.canvas = canvas;
 
-    const gl = setupWebGL(canvas, this.options);
+    let gl;
+    if(this.options.webgl2) {
+      gl = canvas.getContext('webgl2');
+    } else {
+      gl = setupWebGL(canvas, this.options);
+    }
     this.gl = gl;
 
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -112,24 +118,6 @@ export default class Renderer {
     this.textures = [];
     this.programs = [];
     this._events = {};
-  }
-
-  _setAttribute(name, data, type, size, normalize = false) {
-    const gl = this.gl;
-    const program = this.program;
-    program._buffers[name] = program._buffers[name] || gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    const attrib = gl.getAttribLocation(program, name);
-    gl.vertexAttribPointer(attrib, size, gl[type], normalize, 0, 0);
-    gl.enableVertexAttribArray(attrib);
-  }
-
-  _setTextureCoordinate(texVertexData) {
-    const gl = this.gl;
-    const program = this.program;
-    gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
   }
 
   // WebGLRenderingContext.uniform[1234][fi][v]()
@@ -189,20 +177,24 @@ export default class Renderer {
     const program = this.program;
 
     program.meshData.forEach((meshData, meshIndex) => {
-      this.trigger('beforedraw', {meshData, meshIndex});
-      const {positions, cells, attributes, uniforms, textureCoord, enableBlend} = meshData;
-
+      const {positions, cells, instanceCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
       if(enableBlend) gl.enable(gl.BLEND);
       else gl.disable(gl.BLEND);
-      gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
 
       if(attributes) {
-        Object.entries(attributes).forEach(([key, value]) => {
-          this._setAttribute(key, value.data, value.type, value.size, value.normalize);
+        Object.values(attributes).forEach(({name, data, divisor}) => {
+          gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+          gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+          if(divisor != null) {
+            const location = gl.getAttribLocation(program, name);
+            gl.enableVertexAttribArray(location);
+            gl.vertexAttribDivisor(location, divisor);
+          }
         });
       }
 
@@ -212,13 +204,21 @@ export default class Renderer {
         });
       }
 
-      if(this[_enableTextures] && program.texCoordBuffer) {
+      if(this[_enableTextures] && program._buffers.texCoordBuffer) {
         const texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
-        this._setTextureCoordinate(texVertexData);
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
       }
-      gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
-      this.trigger('afterdraw', {meshData, meshIndex});
+      if(instanceCount != null) {
+        gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+      } else {
+        gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+      }
     });
+  }
+
+  get isWebGL2() {
+    return typeof WebGL2RenderingContext !== 'undefined' && this.gl instanceof WebGL2RenderingContext;
   }
 
   get enableTextures() {
@@ -291,7 +291,7 @@ export default class Renderer {
 
     const program = this.program;
 
-    program.meshData = data.map(({positions, cells, attributes, uniforms, textureCoord, enableBlend}) => {
+    program.meshData = data.map(({positions, instanceCount, cells, attributes, uniforms, textureCoord, enableBlend}) => {
       const meshData = {
         positions: Renderer.FLOAT(positions),
         cells: Renderer.USHORT(cells),
@@ -299,27 +299,25 @@ export default class Renderer {
         enableBlend: !!enableBlend,
         textureCoord: Renderer.FLOAT(textureCoord),
       };
+      if(instanceCount != null) {
+        if(!this.isWebGL2) throw new Error('Cannot use instanceCount in webgl context, use webgl2 context instead.');
+        else meshData.instanceCount = instanceCount;
+      }
       if(attributes) {
         Object.entries(attributes).forEach(([key, value]) => {
-          let buffer,
-            size,
-            type = 'FLOAT',
-            normalize = false;
-          if(value.data) {
-            buffer = value.data;
-            normalize = !!value.normalize;
-            type = value.type || 'FLOAT';
-            size = value.size;
-          } else {
-            buffer = value;
-          }
-          if(size == null) size = buffer[0].length || 1;
-          if(type === 'UBYTE') type = 'UNSIGNED_BYTE';
-          if(type === 'USHORT') type = 'UNSIGNED_SHORT';
+          if(!program._attribute[key]) throw new Error(`Invalid attribute ${key}.`);
+          const {name, type} = program._attribute[key];
+
+          let buffer = value.data || value;
           if(Array.isArray(buffer)) {
             buffer = Renderer[type](buffer);
           }
-          attributes[key] = {data: buffer, type, size, normalize};
+
+          attributes[key] = {name, data: buffer};
+          if(value.divisor != null) {
+            if(!this.isWebGL2) throw new Error('Cannot use divisor in webgl context, use webgl2 context instead.');
+            else attributes[key].divisor = value.divisor;
+          }
         });
         meshData.attributes = attributes;
       }
@@ -342,6 +340,7 @@ export default class Renderer {
     const program = createProgram(gl, vertexShader, fragmentShader);
     program.shaderText = {vertexShader, fragmentShader};
     program._buffers = {};
+    program._attribute = {};
     program.uniforms = {};
     program._samplerMap = {};
     program._bindTextures = [];
@@ -351,6 +350,23 @@ export default class Renderer {
     let matched = vertexShader.match(pattern);
     if(matched) {
       program._dimension = Number(matched[1]);
+    }
+
+    const attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
+    matched = vertexShader.match(attributePattern);
+    if(matched) {
+      for(let i = 0; i < matched.length; i++) {
+        const patt = /^\s*attribute (\w+?)(\d*) (\w+)/im;
+        const _matched = matched[i].match(patt);
+        if(_matched && _matched[3] !== this.options.vertexPosition
+          && _matched[3] !== this.options.vertexTextureCoord) {
+          let [, type, size, name] = _matched;
+
+          if(type === 'mat') size **= 2;
+          program._buffers[name] = gl.createBuffer();
+          program._attribute[name] = {name, type, size: Number(size)};
+        }
+      }
     }
 
     const uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
@@ -368,15 +384,19 @@ export default class Renderer {
       this._declareUniform(program, name, type);
     });
 
-    program.verticesBuffer = gl.createBuffer();
-    program.cellsBuffer = gl.createBuffer();
+    program._buffers.verticesBuffer = gl.createBuffer();
+    program._buffers.cellsBuffer = gl.createBuffer();
+
+    if(this[_enableTextures]) {
+      program._buffers.texCoordBuffer = gl.createBuffer();
+    }
 
     this.programs.push(program);
 
     return program;
   }
 
-  useProgram(program) {
+  useProgram(program, attrOptions = {}) {
     this.startRender = false;
     if(this[_renderFrameID]) {
       cancelAnimationFrame(this[_renderFrameID]);
@@ -390,18 +410,40 @@ export default class Renderer {
 
     const dimension = program._dimension;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
     const vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
     gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
     if(this[_enableTextures]) {
-      program.texCoordBuffer = program.texCoordBuffer || gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
       const vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
       gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(vTexCoord);
     }
+
+    Object.entries(program._attribute).forEach(([name, item]) => {
+      const size = item.size;
+      const options = attrOptions[name] || {};
+      const normalize = !!options.normalize;
+      let bufferType = options.type || 'FLOAT';
+      const key = options.key || name;
+
+      if(bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
+      if(bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
+
+      item.type = bufferType;
+
+      if(key && key !== name) {
+        program._attribute[key] = item;
+      }
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+      const attrib = gl.getAttribLocation(program, name);
+      // console.log(size, gl[bufferType]);
+      gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+      gl.enableVertexAttribArray(attrib);
+    });
 
     if(!program.meshData) {
       const positions = [
@@ -558,41 +600,8 @@ export default class Renderer {
     return this.createTexture(img);
   }
 
-  on(type, handler) {
-    this._events[type] = this._events[type] || [];
-    this._events[type].push(handler);
-  }
-
-  once(type, handler) {
-    this.on(type, function f(...args) {
-      this.off(type, f);
-      return handler.apply(this, args);
-    });
-    return this;
-  }
-
-  off(type, handler) {
-    if(handler && this._events[type]) {
-      const idx = this._events[type].indexOf(handler);
-
-      if(idx >= 0) {
-        this._events[type].splice(idx, 1);
-      }
-    } else {
-      delete this._events[type];
-    }
-  }
-
-  trigger(type, eventArgs = {}) {
-    const handlers = this._events[type] || [];
-    handlers.forEach((handler) => {
-      handler.call(this, Object.assign({target: this, type}, eventArgs));
-    });
-  }
-
   render({clearBuffer = true} = {}) {
     this.startRender = true;
-    this.trigger('beforeRender');
 
     const gl = this.gl;
 
@@ -610,7 +619,6 @@ export default class Renderer {
     if(this[_renderFrameID] === lastFrameID) {
       this[_renderFrameID] = null;
     }
-    this.trigger('rendered');
   }
 
   update() {

@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "3f0006896d575d4c300e";
+/******/ 	var hotCurrentHash = "da64b09164db94830ab9";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -995,7 +995,14 @@ function () {
 
     this.options = Object.assign({}, Renderer.defaultOptions, opts);
     this.canvas = canvas;
-    var gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["setupWebGL"])(canvas, this.options);
+    var gl;
+
+    if (this.options.webgl2) {
+      gl = canvas.getContext('webgl2');
+    } else {
+      gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["setupWebGL"])(canvas, this.options);
+    }
+
     this.gl = gl;
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -1003,32 +1010,11 @@ function () {
     this.textures = [];
     this.programs = [];
     this._events = {};
-  }
+  } // WebGLRenderingContext.uniform[1234][fi][v]()
+  // WebGLRenderingContext.uniformMatrix[234]fv()
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(Renderer, [{
-    key: "_setAttribute",
-    value: function _setAttribute(name, data, type, size) {
-      var normalize = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-      var gl = this.gl;
-      var program = this.program;
-      program._buffers[name] = program._buffers[name] || gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
-      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      var attrib = gl.getAttribLocation(program, name);
-      gl.vertexAttribPointer(attrib, size, gl[type], normalize, 0, 0);
-      gl.enableVertexAttribArray(attrib);
-    }
-  }, {
-    key: "_setTextureCoordinate",
-    value: function _setTextureCoordinate(texVertexData) {
-      var gl = this.gl;
-      var program = this.program;
-      gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
-    } // WebGLRenderingContext.uniform[1234][fi][v]()
-    // WebGLRenderingContext.uniformMatrix[234]fv()
-
-  }, {
     key: "_declareUniform",
     value: function _declareUniform(program, name) {
       var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '1f';
@@ -1090,56 +1076,57 @@ function () {
 
       var program = this.program;
       program.meshData.forEach(function (meshData, meshIndex) {
-        _this.trigger('beforedraw', {
-          meshData: meshData,
-          meshIndex: meshIndex
-        });
-
         var positions = meshData.positions,
             cells = meshData.cells,
+            instanceCount = meshData.instanceCount,
             attributes = meshData.attributes,
             uniforms = meshData.uniforms,
             textureCoord = meshData.textureCoord,
             enableBlend = meshData.enableBlend;
         var gl = _this.gl;
         if (enableBlend) gl.enable(gl.BLEND);else gl.disable(gl.BLEND);
-        gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program.cellsBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
 
         if (attributes) {
-          Object.entries(attributes).forEach(function (_ref) {
-            var _ref2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref, 2),
-                key = _ref2[0],
-                value = _ref2[1];
+          Object.values(attributes).forEach(function (_ref) {
+            var name = _ref.name,
+                data = _ref.data,
+                divisor = _ref.divisor;
+            gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-            _this._setAttribute(key, value.data, value.type, value.size, value.normalize);
+            if (divisor != null) {
+              var location = gl.getAttribLocation(program, name);
+              gl.enableVertexAttribArray(location);
+              gl.vertexAttribDivisor(location, divisor);
+            }
           });
         }
 
         if (uniforms) {
-          Object.entries(uniforms).forEach(function (_ref3) {
-            var _ref4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref3, 2),
-                key = _ref4[0],
-                value = _ref4[1];
+          Object.entries(uniforms).forEach(function (_ref2) {
+            var _ref3 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref2, 2),
+                key = _ref3[0],
+                value = _ref3[1];
 
             _this.uniforms[key] = value;
           });
         }
 
-        if (_this[_enableTextures] && program.texCoordBuffer) {
+        if (_this[_enableTextures] && program._buffers.texCoordBuffer) {
           var texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
-
-          _this._setTextureCoordinate(texVertexData);
+          gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
         }
 
-        gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
-
-        _this.trigger('afterdraw', {
-          meshData: meshData,
-          meshIndex: meshIndex
-        });
+        if (instanceCount != null) {
+          gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+        } else {
+          gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+        }
       });
     }
   }, {
@@ -1208,18 +1195,21 @@ function () {
   }, {
     key: "setMeshData",
     value: function setMeshData(data) {
+      var _this2 = this;
+
       if (!Array.isArray(data)) {
         data = [data];
       }
 
       var program = this.program;
-      program.meshData = data.map(function (_ref5) {
-        var positions = _ref5.positions,
-            cells = _ref5.cells,
-            attributes = _ref5.attributes,
-            uniforms = _ref5.uniforms,
-            textureCoord = _ref5.textureCoord,
-            enableBlend = _ref5.enableBlend;
+      program.meshData = data.map(function (_ref4) {
+        var positions = _ref4.positions,
+            instanceCount = _ref4.instanceCount,
+            cells = _ref4.cells,
+            attributes = _ref4.attributes,
+            uniforms = _ref4.uniforms,
+            textureCoord = _ref4.textureCoord,
+            enableBlend = _ref4.enableBlend;
         var meshData = {
           positions: Renderer.FLOAT(positions),
           cells: Renderer.USHORT(cells),
@@ -1228,40 +1218,34 @@ function () {
           textureCoord: Renderer.FLOAT(textureCoord)
         };
 
+        if (instanceCount != null) {
+          if (!_this2.isWebGL2) throw new Error('Cannot use instanceCount in webgl context, use webgl2 context instead.');else meshData.instanceCount = instanceCount;
+        }
+
         if (attributes) {
-          Object.entries(attributes).forEach(function (_ref6) {
-            var _ref7 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref6, 2),
-                key = _ref7[0],
-                value = _ref7[1];
+          Object.entries(attributes).forEach(function (_ref5) {
+            var _ref6 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref5, 2),
+                key = _ref6[0],
+                value = _ref6[1];
 
-            var buffer,
-                size,
-                type = 'FLOAT',
-                normalize = false;
-
-            if (value.data) {
-              buffer = value.data;
-              normalize = !!value.normalize;
-              type = value.type || 'FLOAT';
-              size = value.size;
-            } else {
-              buffer = value;
-            }
-
-            if (size == null) size = buffer[0].length || 1;
-            if (type === 'UBYTE') type = 'UNSIGNED_BYTE';
-            if (type === 'USHORT') type = 'UNSIGNED_SHORT';
+            if (!program._attribute[key]) throw new Error("Invalid attribute ".concat(key, "."));
+            var _program$_attribute$k = program._attribute[key],
+                name = _program$_attribute$k.name,
+                type = _program$_attribute$k.type;
+            var buffer = value.data || value;
 
             if (Array.isArray(buffer)) {
               buffer = Renderer[type](buffer);
             }
 
             attributes[key] = {
-              data: buffer,
-              type: type,
-              size: size,
-              normalize: normalize
+              name: name,
+              data: buffer
             };
+
+            if (value.divisor != null) {
+              if (!_this2.isWebGL2) throw new Error('Cannot use divisor in webgl context, use webgl2 context instead.');else attributes[key].divisor = value.divisor;
+            }
           });
           meshData.attributes = attributes;
         }
@@ -1273,7 +1257,7 @@ function () {
   }, {
     key: "createProgram",
     value: function createProgram(fragmentShader, vertexShader) {
-      var _this2 = this;
+      var _this3 = this;
 
       // this.deleteProgram();
       // this._events = {};
@@ -1289,6 +1273,7 @@ function () {
         fragmentShader: fragmentShader
       };
       program._buffers = {};
+      program._attribute = {};
       program.uniforms = {};
       program._samplerMap = {};
       program._bindTextures = []; // console.log(vertexShader);
@@ -1298,6 +1283,32 @@ function () {
 
       if (matched) {
         program._dimension = Number(matched[1]);
+      }
+
+      var attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
+      matched = vertexShader.match(attributePattern);
+
+      if (matched) {
+        for (var i = 0; i < matched.length; i++) {
+          var patt = /^\s*attribute (\w+?)(\d*) (\w+)/im;
+
+          var _matched = matched[i].match(patt);
+
+          if (_matched && _matched[3] !== this.options.vertexPosition && _matched[3] !== this.options.vertexTextureCoord) {
+            var _matched2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_matched, 4),
+                type = _matched2[1],
+                size = _matched2[2],
+                name = _matched2[3];
+
+            if (type === 'mat') size = Math.pow(size, 2);
+            program._buffers[name] = gl.createBuffer();
+            program._attribute[name] = {
+              name: name,
+              type: type,
+              size: Number(size)
+            };
+          }
+        }
       }
 
       var uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
@@ -1319,16 +1330,22 @@ function () {
           type += 'v';
         }
 
-        _this2._declareUniform(program, name, type);
+        _this3._declareUniform(program, name, type);
       });
-      program.verticesBuffer = gl.createBuffer();
-      program.cellsBuffer = gl.createBuffer();
+      program._buffers.verticesBuffer = gl.createBuffer();
+      program._buffers.cellsBuffer = gl.createBuffer();
+
+      if (this[_enableTextures]) {
+        program._buffers.texCoordBuffer = gl.createBuffer();
+      }
+
       this.programs.push(program);
       return program;
     }
   }, {
     key: "useProgram",
     value: function useProgram(program) {
+      var attrOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.startRender = false;
 
       if (this[_renderFrameID]) {
@@ -1340,18 +1357,42 @@ function () {
       gl.useProgram(program);
       this.program = program;
       var dimension = program._dimension;
-      gl.bindBuffer(gl.ARRAY_BUFFER, program.verticesBuffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       var vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
       gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(vPosition);
 
       if (this[_enableTextures]) {
-        program.texCoordBuffer = program.texCoordBuffer || gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, program.texCoordBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
         var vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
         gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vTexCoord);
       }
+
+      Object.entries(program._attribute).forEach(function (_ref7) {
+        var _ref8 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref7, 2),
+            name = _ref8[0],
+            item = _ref8[1];
+
+        var size = item.size;
+        var options = attrOptions[name] || {};
+        var normalize = !!options.normalize;
+        var bufferType = options.type || 'FLOAT';
+        var key = options.key || name;
+        if (bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
+        if (bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
+        item.type = bufferType;
+
+        if (key && key !== name) {
+          program._attribute[key] = item;
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+        var attrib = gl.getAttribLocation(program, name); // console.log(size, gl[bufferType]);
+
+        gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+        gl.enableVertexAttribArray(attrib);
+      });
 
       if (!program.meshData) {
         var positions = [[-1, -1, 0, 1].slice(0, dimension), [1, -1, 0, 1].slice(0, dimension), [1, 1, 0, 1].slice(0, dimension), [-1, 1, 0, 1].slice(0, dimension)];
@@ -1430,7 +1471,7 @@ function () {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _compile3 = function _ref9() {
+                _compile3 = function _ref10() {
                   _compile3 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
                   /*#__PURE__*/
                   _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(content) {
@@ -1540,7 +1581,7 @@ function () {
                   return _compile3.apply(this, arguments);
                 };
 
-                _compile = function _ref8(_x4) {
+                _compile = function _ref9(_x4) {
                   return _compile3.apply(this, arguments);
                 };
 
@@ -1637,7 +1678,7 @@ function () {
   }, {
     key: "createTexture",
     value: function createTexture(img) {
-      var _this3 = this;
+      var _this4 = this;
 
       var gl = this.gl;
       gl.activeTexture(gl.TEXTURE15);
@@ -1656,7 +1697,7 @@ function () {
       this.textures.push(texture);
 
       texture.delete = function () {
-        _this3.deleteTexture(texture);
+        _this4.deleteTexture(texture);
       };
 
       return texture;
@@ -1667,8 +1708,8 @@ function () {
       var _loadTexture = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(source) {
-        var _ref10,
-            _ref10$useImageBitmap,
+        var _ref11,
+            _ref11$useImageBitmap,
             useImageBitmap,
             img,
             _args4 = arguments;
@@ -1677,7 +1718,7 @@ function () {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _ref10 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref10$useImageBitmap = _ref10.useImageBitmap, useImageBitmap = _ref10$useImageBitmap === void 0 ? true : _ref10$useImageBitmap;
+                _ref11 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref11$useImageBitmap = _ref11.useImageBitmap, useImageBitmap = _ref11$useImageBitmap === void 0 ? true : _ref11$useImageBitmap;
                 _context4.next = 3;
                 return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useImageBitmap);
 
@@ -1700,62 +1741,13 @@ function () {
       return loadTexture;
     }()
   }, {
-    key: "on",
-    value: function on(type, handler) {
-      this._events[type] = this._events[type] || [];
-
-      this._events[type].push(handler);
-    }
-  }, {
-    key: "once",
-    value: function once(type, handler) {
-      this.on(type, function f() {
-        this.off(type, f);
-
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        return handler.apply(this, args);
-      });
-      return this;
-    }
-  }, {
-    key: "off",
-    value: function off(type, handler) {
-      if (handler && this._events[type]) {
-        var idx = this._events[type].indexOf(handler);
-
-        if (idx >= 0) {
-          this._events[type].splice(idx, 1);
-        }
-      } else {
-        delete this._events[type];
-      }
-    }
-  }, {
-    key: "trigger",
-    value: function trigger(type) {
-      var _this4 = this;
-
-      var eventArgs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var handlers = this._events[type] || [];
-      handlers.forEach(function (handler) {
-        handler.call(_this4, Object.assign({
-          target: _this4,
-          type: type
-        }, eventArgs));
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref11$clearBuffer = _ref11.clearBuffer,
-          clearBuffer = _ref11$clearBuffer === void 0 ? true : _ref11$clearBuffer;
+      var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref12$clearBuffer = _ref12.clearBuffer,
+          clearBuffer = _ref12$clearBuffer === void 0 ? true : _ref12$clearBuffer;
 
       this.startRender = true;
-      this.trigger('beforeRender');
       var gl = this.gl;
       var program = this.program;
 
@@ -1772,8 +1764,6 @@ function () {
       if (this[_renderFrameID] === lastFrameID) {
         this[_renderFrameID] = null;
       }
-
-      this.trigger('rendered');
     }
   }, {
     key: "update",
@@ -1783,6 +1773,11 @@ function () {
       if (this[_renderFrameID] == null) {
         this[_renderFrameID] = requestAnimationFrame(this.render.bind(this));
       }
+    }
+  }, {
+    key: "isWebGL2",
+    get: function get() {
+      return typeof WebGL2RenderingContext !== 'undefined' && this.gl instanceof WebGL2RenderingContext;
     }
   }, {
     key: "enableTextures",
@@ -1809,7 +1804,8 @@ _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Ren
   preserveDrawingBuffer: true,
   autoUpdate: true,
   vertexPosition: 'a_vertexPosition',
-  vertexTextureCoord: 'a_vertexTextureCoord'
+  vertexTextureCoord: 'a_vertexTextureCoord',
+  webgl2: false
 });
 
 _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "UBYTE", Renderer.UNSIGNED_BYTE);

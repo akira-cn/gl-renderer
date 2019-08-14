@@ -80,6 +80,7 @@ The options:
 - vertexPosition: Attribute name of position in vertex shader. Default value is 'a_vertexPosition'.
 - vertexTextureCoord: Attribute name of texture coordinate in vertext shader. Default value is 'a_vertexTextureCoord'.
 - Other webgl context options: [See MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/getContext).
+- webgl2: Use webgl2 context. Default value is false.
 
 ### renderer.createProgram(fragment[, vertex])
 
@@ -242,6 +243,7 @@ A mesh object contains the following properties:
 - textureCoord: The texture coordinates.
 - attributes: The attributes passed into the shaders.
 - uniforms: The changed uniform values.
+- instanceCount: Set instanceCount for webgl2 context to draw instanced arrays.
 
 index.vert
 
