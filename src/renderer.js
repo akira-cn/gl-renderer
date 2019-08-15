@@ -364,7 +364,7 @@ export default class Renderer {
 
           if(type === 'mat') size **= 2;
           program._buffers[name] = gl.createBuffer();
-          program._attribute[name] = {name, type, size: Number(size)};
+          program._attribute[name] = {name, type, size: Number(size) || 1};
         }
       }
     }

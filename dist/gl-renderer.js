@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "da64b09164db94830ab9";
+/******/ 	var hotCurrentHash = "328622eb79e79ce8ea18";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1305,7 +1305,7 @@ function () {
             program._attribute[name] = {
               name: name,
               type: type,
-              size: Number(size)
+              size: Number(size) || 1
             };
           }
         }
