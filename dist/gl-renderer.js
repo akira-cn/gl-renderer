@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "328622eb79e79ce8ea18";
+/******/ 	var hotCurrentHash = "a7d10b5e6f9dc708ac32";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1001,6 +1001,7 @@ function () {
       gl = canvas.getContext('webgl2');
     } else {
       gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["setupWebGL"])(canvas, this.options);
+      this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
     }
 
     this.gl = gl;
@@ -1101,7 +1102,12 @@ function () {
             if (divisor != null) {
               var location = gl.getAttribLocation(program, name);
               gl.enableVertexAttribArray(location);
-              gl.vertexAttribDivisor(location, divisor);
+
+              if (gl.vertexAttribDivisor) {
+                gl.vertexAttribDivisor(location, divisor);
+              } else if (_this.aia_ext) {
+                _this.aia_ext.vertexAttribDivisorANGLE(location, divisor);
+              }
             }
           });
         }
@@ -1123,7 +1129,11 @@ function () {
         }
 
         if (instanceCount != null) {
-          gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          if (gl.drawElementsInstanced) {
+            gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          } else if (_this.aia_ext) {
+            _this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          }
         } else {
           gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
         }
@@ -1219,7 +1229,7 @@ function () {
         };
 
         if (instanceCount != null) {
-          if (!_this2.isWebGL2) throw new Error('Cannot use instanceCount in webgl context, use webgl2 context instead.');else meshData.instanceCount = instanceCount;
+          if (!_this2.isWebGL2 && !_this2.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');else meshData.instanceCount = instanceCount;
         }
 
         if (attributes) {
@@ -1244,7 +1254,7 @@ function () {
             };
 
             if (value.divisor != null) {
-              if (!_this2.isWebGL2) throw new Error('Cannot use divisor in webgl context, use webgl2 context instead.');else attributes[key].divisor = value.divisor;
+              if (!_this2.isWebGL2 && !_this2.aia_ext) throw new Error('Cannot use divisor in this rendering context, use webgl2 context instead.');else attributes[key].divisor = value.divisor;
             }
           });
           meshData.attributes = attributes;

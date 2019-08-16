@@ -108,6 +108,7 @@ export default class Renderer {
       gl = canvas.getContext('webgl2');
     } else {
       gl = setupWebGL(canvas, this.options);
+      this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
     }
     this.gl = gl;
 
@@ -193,7 +194,11 @@ export default class Renderer {
           if(divisor != null) {
             const location = gl.getAttribLocation(program, name);
             gl.enableVertexAttribArray(location);
-            gl.vertexAttribDivisor(location, divisor);
+            if(gl.vertexAttribDivisor) {
+              gl.vertexAttribDivisor(location, divisor);
+            } else if(this.aia_ext) {
+              this.aia_ext.vertexAttribDivisorANGLE(location, divisor);
+            }
           }
         });
       }
@@ -210,7 +215,11 @@ export default class Renderer {
         gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
       }
       if(instanceCount != null) {
-        gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+        if(gl.drawElementsInstanced) {
+          gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+        } else if(this.aia_ext) {
+          this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+        }
       } else {
         gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
       }
@@ -300,7 +309,7 @@ export default class Renderer {
         textureCoord: Renderer.FLOAT(textureCoord),
       };
       if(instanceCount != null) {
-        if(!this.isWebGL2) throw new Error('Cannot use instanceCount in webgl context, use webgl2 context instead.');
+        if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');
         else meshData.instanceCount = instanceCount;
       }
       if(attributes) {
@@ -315,7 +324,7 @@ export default class Renderer {
 
           attributes[key] = {name, data: buffer};
           if(value.divisor != null) {
-            if(!this.isWebGL2) throw new Error('Cannot use divisor in webgl context, use webgl2 context instead.');
+            if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use divisor in this rendering context, use webgl2 context instead.');
             else attributes[key].divisor = value.divisor;
           }
         });
