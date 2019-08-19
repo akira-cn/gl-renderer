@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "7e1c2e1554de46b59979";
+/******/ 	var hotCurrentHash = "6e44314681dc69280065";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -996,7 +996,7 @@ function () {
     var gl;
 
     if (this.options.webgl2) {
-      gl = canvas.getContext('webgl2');
+      gl = canvas.getContext('webgl2', this.options);
     } else {
       gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["setupWebGL"])(canvas, this.options);
       this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
