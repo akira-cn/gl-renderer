@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "a7d10b5e6f9dc708ac32";
+/******/ 	var hotCurrentHash = "7e1c2e1554de46b59979";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -852,8 +852,6 @@ __webpack_require__.r(__webpack_exports__);
 
 var GLSL_LIBS = {};
 
-var _enableTextures = Symbol('enableTextures');
-
 var _renderFrameID = Symbol('renderFrameID');
 
 var shaderCache = {};
@@ -1122,7 +1120,7 @@ function () {
           });
         }
 
-        if (_this[_enableTextures] && program._buffers.texCoordBuffer) {
+        if (program._enableTextures && program._buffers.texCoordBuffer) {
           var texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
           gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
           gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
@@ -1271,9 +1269,9 @@ function () {
 
       // this.deleteProgram();
       // this._events = {};
-      this[_enableTextures] = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
+      var enableTextures = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
       if (fragmentShader == null) fragmentShader = _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default.a;
-      if (vertexShader == null) vertexShader = this[_enableTextures] ? _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10___default.a : _default_vert_glsl__WEBPACK_IMPORTED_MODULE_8___default.a;
+      if (vertexShader == null) vertexShader = enableTextures ? _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10___default.a : _default_vert_glsl__WEBPACK_IMPORTED_MODULE_8___default.a;
       var gl = this.gl;
 
       var program = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["createProgram"])(gl, vertexShader, fragmentShader);
@@ -1286,7 +1284,8 @@ function () {
       program._attribute = {};
       program.uniforms = {};
       program._samplerMap = {};
-      program._bindTextures = []; // console.log(vertexShader);
+      program._bindTextures = [];
+      program._enableTextures = enableTextures; // console.log(vertexShader);
 
       var pattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexPosition), 'im');
       var matched = vertexShader.match(pattern);
@@ -1345,7 +1344,7 @@ function () {
       program._buffers.verticesBuffer = gl.createBuffer();
       program._buffers.cellsBuffer = gl.createBuffer();
 
-      if (this[_enableTextures]) {
+      if (program._enableTextures) {
         program._buffers.texCoordBuffer = gl.createBuffer();
       }
 
@@ -1372,7 +1371,7 @@ function () {
       gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(vPosition);
 
-      if (this[_enableTextures]) {
+      if (program._enableTextures) {
         gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
         var vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
         gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
@@ -1792,7 +1791,7 @@ function () {
   }, {
     key: "enableTextures",
     get: function get() {
-      return !!this[_enableTextures];
+      return this.program && this.program._enableTextures;
     }
   }, {
     key: "uniforms",

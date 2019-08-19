@@ -6,7 +6,6 @@ import DEFAULT_FEEDBACK_VERT from './default_feeback_vert.glsl';
 
 const GLSL_LIBS = {};
 
-const _enableTextures = Symbol('enableTextures');
 const _renderFrameID = Symbol('renderFrameID');
 
 const shaderCache = {};
@@ -209,7 +208,7 @@ export default class Renderer {
         });
       }
 
-      if(this[_enableTextures] && program._buffers.texCoordBuffer) {
+      if(program._enableTextures && program._buffers.texCoordBuffer) {
         const texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
         gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
@@ -231,7 +230,7 @@ export default class Renderer {
   }
 
   get enableTextures() {
-    return !!this[_enableTextures];
+    return this.program && this.program._enableTextures;
   }
 
   get uniforms() {
@@ -340,9 +339,9 @@ export default class Renderer {
     // this.deleteProgram();
     // this._events = {};
 
-    this[_enableTextures] = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
+    const enableTextures = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
     if(fragmentShader == null) fragmentShader = DEFAULT_FRAG;
-    if(vertexShader == null) vertexShader = this[_enableTextures] ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
+    if(vertexShader == null) vertexShader = enableTextures ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
 
     const gl = this.gl;
 
@@ -353,6 +352,7 @@ export default class Renderer {
     program.uniforms = {};
     program._samplerMap = {};
     program._bindTextures = [];
+    program._enableTextures = enableTextures;
 
     // console.log(vertexShader);
     const pattern = new RegExp(`attribute vec(\\d) ${this.options.vertexPosition}`, 'im');
@@ -396,7 +396,7 @@ export default class Renderer {
     program._buffers.verticesBuffer = gl.createBuffer();
     program._buffers.cellsBuffer = gl.createBuffer();
 
-    if(this[_enableTextures]) {
+    if(program._enableTextures) {
       program._buffers.texCoordBuffer = gl.createBuffer();
     }
 
@@ -424,7 +424,7 @@ export default class Renderer {
     gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
 
-    if(this[_enableTextures]) {
+    if(program._enableTextures) {
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
       const vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
       gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
