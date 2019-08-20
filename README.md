@@ -172,7 +172,7 @@ const program = await renderer.load('./index.glsl');
 renderer.useProgram(program);
 ```
 
-### renderer.useProgram(program)
+### renderer.useProgram(program[, attributeDescriptor])
 
 Sets the specified Program as part of the current rendering state.
 
@@ -248,14 +248,15 @@ A mesh object contains the following properties:
 index.vert
 
 ```glsl
-attribute vec4 a_vertexPosition;
+attribute vec3 a_vertexPosition;
 attribute vec3 a_color;
 
 varying vec3 vColor;
 
 void main() {
   gl_PointSize = 1.0;
-  gl_Position = a_vertexPosition;
+  gl_Position.xyz = a_vertexPosition;
+  gl_Position.w = 1.0;
   vColor = a_color;
 }
 ```
@@ -280,7 +281,12 @@ void main() {
   const renderer = new GlRenderer(glCanvas);
 
   const program = await renderer.load('./index.frag', './index.vert');
-  renderer.useProgram(program);
+  renderer.useProgram(program, {
+    a_color: {
+      type: 'UNSIGNED_BYTE',
+      normalize: true,
+    },
+  });
 
   const vertexColors = [
     [255, 0, 0],
@@ -293,14 +299,14 @@ void main() {
       positions: [[-1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
       cells: [[0, 1, 2]],
       attributes: {
-        a_color: {data: vertexColors, type: 'UNSIGNED_BYTE', normalize: true},
+        a_color: vertexColors,
       },
     },
     {
       positions: [[0.5, 0.5, 0], [-0.5, 0.8, 0], [1, -1, 0]],
       cells: [[0, 1, 2]],
       attributes: {
-        a_color: {data: vertexColors, type: 'UNSIGNED_BYTE', normalize: true},
+        a_color: vertexColors,
       },
     },
   ]);
