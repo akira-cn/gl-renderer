@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "484ce26c1954ad6d89fe";
+/******/ 	var hotCurrentHash = "96caa0df2d78d9358711";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2811,30 +2811,11 @@ function create3DContext(canvas, opt_attribs) {
   return context;
 }
 
-function makeFailHTML(msg) {
-  return "<table style=\"background-color: #8CE; width: 100%; height: 100%;\"><tr>\n    <td align=\"center\">\n    <div style=\"display: table-cell; vertical-align: middle;\">\n    <div>".concat(msg, "</div>\n    </div>\n    </td></tr></table>");
-}
-
-var GET_A_WEBGL_BROWSER = "This page requires a browser that supports WebGL.<br/>\n<a href=\"http://get.webgl.org\">Click here to upgrade your browser.</a>";
-var OTHER_PROBLEM = "It doesn't appear your computer can support WebGL.<br/>\n<a href=\"http://get.webgl.org/troubleshooting/\">Click here for more information.</a>";
 function setupWebGL(canvas, opt_attribs) {
-  function showLink(str) {
-    var container = canvas.parentNode;
-
-    if (container) {
-      container.innerHTML = makeFailHTML(str);
-    }
-  }
-
-  if (!window.WebGLRenderingContext) {
-    showLink(GET_A_WEBGL_BROWSER);
-    return null;
-  }
-
   var context = create3DContext(canvas, opt_attribs);
 
   if (!context) {
-    showLink(OTHER_PROBLEM);
+    throw new Error('Sorry, your browser doesn\'t support WebGL.');
   }
 
   return context;

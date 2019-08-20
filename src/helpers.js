@@ -14,37 +14,10 @@ function create3DContext(canvas, opt_attribs) {
   return context;
 }
 
-function makeFailHTML(msg) {
-  return `<table style="background-color: #8CE; width: 100%; height: 100%;"><tr>
-    <td align="center">
-    <div style="display: table-cell; vertical-align: middle;">
-    <div>${msg}</div>
-    </div>
-    </td></tr></table>`;
-}
-
-const GET_A_WEBGL_BROWSER = `This page requires a browser that supports WebGL.<br/>
-<a href="http://get.webgl.org">Click here to upgrade your browser.</a>`;
-
-const OTHER_PROBLEM = `It doesn't appear your computer can support WebGL.<br/>
-<a href="http://get.webgl.org/troubleshooting/">Click here for more information.</a>`;
-
 export function setupWebGL(canvas, opt_attribs) {
-  function showLink(str) {
-    const container = canvas.parentNode;
-    if(container) {
-      container.innerHTML = makeFailHTML(str);
-    }
-  }
-
-  if(!window.WebGLRenderingContext) {
-    showLink(GET_A_WEBGL_BROWSER);
-    return null;
-  }
-
   const context = create3DContext(canvas, opt_attribs);
   if(!context) {
-    showLink(OTHER_PROBLEM);
+    throw new Error('Sorry, your browser doesn\'t support WebGL.');
   }
   return context;
 }
