@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = function (env = {}) {
   const filename = env.production ? 'gl-renderer.min.js' : 'gl-renderer.js';
   return {
-    mode: env.production ? 'production' : 'none',
+    mode: env.mode || 'none',
     entry: './src/index',
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -59,6 +59,9 @@ module.exports = function (env = {}) {
     plugins: [
       new webpack.HotModuleReplacementPlugin({
         multiStep: true,
+      }),
+      new webpack.DefinePlugin({
+        __DEV__: env.mode !== 'production',
       }),
     ],
     // list of additional plugins

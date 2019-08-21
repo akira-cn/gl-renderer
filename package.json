@@ -1,13 +1,13 @@
 {
   "name": "gl-renderer",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Drawing patterns with glsl shaders on modern browsers.",
   "main": "dist/gl-renderer.min.js",
   "module": "dist/gl-renderer.js",
   "scripts": {
     "start": "webpack-dev-server --env.server=examples --watch-poll",
     "build:dev": "webpack",
-    "build": "webpack --env.production=true",
+    "build": "webpack --env.mode=production",
     "prepublishOnly": "npm run build:dev && npm run build",
     "lint": "eslint 'src/**/*.js' --fix",
     "test": "echo \"Error: no test specified\" && exit 1"

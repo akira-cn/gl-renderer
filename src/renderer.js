@@ -315,18 +315,23 @@ export default class Renderer {
       }
       if(attributes) {
         Object.entries(attributes).forEach(([key, value]) => {
-          if(!program._attribute[key]) throw new Error(`Invalid attribute ${key}.`);
-          const {name, type} = program._attribute[key];
+          if(!program._attribute[key]) {
+            // throw new Error(`Invalid attribute ${key}.`);
+            if(__DEV__) console.warn(`Ignored attribute ${key}.`);
+            program._attribute[key] = 'ignored';
+          } else if(program._attribute[key] !== 'ignored') {
+            const {name, type} = program._attribute[key];
 
-          let buffer = value.data || value;
-          if(Array.isArray(buffer)) {
-            buffer = Renderer[type](buffer);
-          }
+            let buffer = value.data || value;
+            if(Array.isArray(buffer)) {
+              buffer = Renderer[type](buffer);
+            }
 
-          attributes[key] = {name, data: buffer};
-          if(value.divisor != null) {
-            if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use divisor in this rendering context, use webgl2 context instead.');
-            else attributes[key].divisor = value.divisor;
+            attributes[key] = {name, data: buffer};
+            if(value.divisor != null) {
+              if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use divisor in this rendering context, use webgl2 context instead.');
+              else attributes[key].divisor = value.divisor;
+            }
           }
         });
         meshData.attributes = attributes;
