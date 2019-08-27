@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = function (env = {}) {
-  const filename = env.production ? 'gl-renderer.min.js' : 'gl-renderer.js';
+  const filename = env.mode === 'production' ? 'gl-renderer.min.js' : 'gl-renderer.js';
   return {
     mode: env.mode || 'none',
     entry: './src/index',

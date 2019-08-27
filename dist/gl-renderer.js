@@ -1,1 +1,2934 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.GlRenderer=t():e.GlRenderer=t()}(window,function(){return function(e){var t=window.webpackHotUpdate;window.webpackHotUpdate=function(e,r){!function(e,t){if(!_[e]||!x[e])return;for(var r in x[e]=!1,t)Object.prototype.hasOwnProperty.call(t,r)&&(v[r]=t[r]);0==--g&&0===y&&A()}(e,r),t&&t(e,r)};var r,n=!0,o="b67813d1bd306eea49c4",i=1e4,a={},u=[],c=[];function s(e){var t=R[e];if(!t)return S;var n=function(n){return t.hot.active?(R[n]?-1===R[n].parents.indexOf(e)&&R[n].parents.push(e):(u=[e],r=n),-1===t.children.indexOf(n)&&t.children.push(n)):(console.warn("[HMR] unexpected require("+n+") from disposed module "+e),u=[]),S(n)},o=function(e){return{configurable:!0,enumerable:!0,get:function(){return S[e]},set:function(t){S[e]=t}}};for(var i in S)Object.prototype.hasOwnProperty.call(S,i)&&"e"!==i&&"t"!==i&&Object.defineProperty(n,i,o(i));return n.e=function(e){return"ready"===d&&p("prepare"),y++,S.e(e).then(t,function(e){throw t(),e});function t(){y--,"prepare"===d&&(b[e]||T(e),0===y&&0===g&&A())}},n.t=function(e,t){return 1&t&&(e=n(e)),S.t(e,-2&t)},n}function f(e){var t={_acceptedDependencies:{},_declinedDependencies:{},_selfAccepted:!1,_selfDeclined:!1,_disposeHandlers:[],_main:r!==e,active:!0,accept:function(e,r){if(void 0===e)t._selfAccepted=!0;else if("function"==typeof e)t._selfAccepted=e;else if("object"==typeof e)for(var n=0;n<e.length;n++)t._acceptedDependencies[e[n]]=r||function(){};else t._acceptedDependencies[e]=r||function(){}},decline:function(e){if(void 0===e)t._selfDeclined=!0;else if("object"==typeof e)for(var r=0;r<e.length;r++)t._declinedDependencies[e[r]]=!0;else t._declinedDependencies[e]=!0},dispose:function(e){t._disposeHandlers.push(e)},addDisposeHandler:function(e){t._disposeHandlers.push(e)},removeDisposeHandler:function(e){var r=t._disposeHandlers.indexOf(e);r>=0&&t._disposeHandlers.splice(r,1)},check:w,apply:O,status:function(e){if(!e)return d;l.push(e)},addStatusHandler:function(e){l.push(e)},removeStatusHandler:function(e){var t=l.indexOf(e);t>=0&&l.splice(t,1)},data:a[e]};return r=void 0,t}var l=[],d="idle";function p(e){d=e;for(var t=0;t<l.length;t++)l[t].call(null,e)}var h,v,m,g=0,y=0,b={},x={},_={};function E(e){return+e+""===e?+e:e}function w(e){if("idle"!==d)throw new Error("check() is only allowed in idle status");return n=e,p("check"),(t=i,t=t||1e4,new Promise(function(e,r){if("undefined"==typeof XMLHttpRequest)return r(new Error("No browser support"));try{var n=new XMLHttpRequest,i=S.p+""+o+".hot-update.json";n.open("GET",i,!0),n.timeout=t,n.send(null)}catch(e){return r(e)}n.onreadystatechange=function(){if(4===n.readyState)if(0===n.status)r(new Error("Manifest request to "+i+" timed out."));else if(404===n.status)e();else if(200!==n.status&&304!==n.status)r(new Error("Manifest request to "+i+" failed."));else{try{var t=JSON.parse(n.responseText)}catch(e){return void r(e)}e(t)}}})).then(function(e){if(!e)return p("idle"),null;x={},b={},_=e.c,m=e.h,p("prepare");var t=new Promise(function(e,t){h={resolve:e,reject:t}});v={};return T(0),"prepare"===d&&0===y&&0===g&&A(),t});var t}function T(e){_[e]?(x[e]=!0,g++,function(e){var t=document.createElement("script");t.charset="utf-8",t.src=S.p+""+e+"."+o+".hot-update.js",document.head.appendChild(t)}(e)):b[e]=!0}function A(){p("ready");var e=h;if(h=null,e)if(n)Promise.resolve().then(function(){return O(n)}).then(function(t){e.resolve(t)},function(t){e.reject(t)});else{var t=[];for(var r in v)Object.prototype.hasOwnProperty.call(v,r)&&t.push(E(r));e.resolve(t)}}function O(t){if("ready"!==d)throw new Error("apply() is only allowed in ready status");var r,n,i,c,s;function f(e){for(var t=[e],r={},n=t.slice().map(function(e){return{chain:[e],id:e}});n.length>0;){var o=n.pop(),i=o.id,a=o.chain;if((c=R[i])&&!c.hot._selfAccepted){if(c.hot._selfDeclined)return{type:"self-declined",chain:a,moduleId:i};if(c.hot._main)return{type:"unaccepted",chain:a,moduleId:i};for(var u=0;u<c.parents.length;u++){var s=c.parents[u],f=R[s];if(f){if(f.hot._declinedDependencies[i])return{type:"declined",chain:a.concat([s]),moduleId:i,parentId:s};-1===t.indexOf(s)&&(f.hot._acceptedDependencies[i]?(r[s]||(r[s]=[]),l(r[s],[i])):(delete r[s],t.push(s),n.push({chain:a.concat([s]),id:s})))}}}}return{type:"accepted",moduleId:e,outdatedModules:t,outdatedDependencies:r}}function l(e,t){for(var r=0;r<t.length;r++){var n=t[r];-1===e.indexOf(n)&&e.push(n)}}t=t||{};var h={},g=[],y={},b=function(){console.warn("[HMR] unexpected require("+w.moduleId+") to disposed module")};for(var x in v)if(Object.prototype.hasOwnProperty.call(v,x)){var w;s=E(x);var T=!1,A=!1,O=!1,P="";switch((w=v[x]?f(s):{type:"disposed",moduleId:x}).chain&&(P="\nUpdate propagation: "+w.chain.join(" -> ")),w.type){case"self-declined":t.onDeclined&&t.onDeclined(w),t.ignoreDeclined||(T=new Error("Aborted because of self decline: "+w.moduleId+P));break;case"declined":t.onDeclined&&t.onDeclined(w),t.ignoreDeclined||(T=new Error("Aborted because of declined dependency: "+w.moduleId+" in "+w.parentId+P));break;case"unaccepted":t.onUnaccepted&&t.onUnaccepted(w),t.ignoreUnaccepted||(T=new Error("Aborted because "+s+" is not accepted"+P));break;case"accepted":t.onAccepted&&t.onAccepted(w),A=!0;break;case"disposed":t.onDisposed&&t.onDisposed(w),O=!0;break;default:throw new Error("Unexception type "+w.type)}if(T)return p("abort"),Promise.reject(T);if(A)for(s in y[s]=v[s],l(g,w.outdatedModules),w.outdatedDependencies)Object.prototype.hasOwnProperty.call(w.outdatedDependencies,s)&&(h[s]||(h[s]=[]),l(h[s],w.outdatedDependencies[s]));O&&(l(g,[w.moduleId]),y[s]=b)}var L,k=[];for(n=0;n<g.length;n++)s=g[n],R[s]&&R[s].hot._selfAccepted&&k.push({module:s,errorHandler:R[s].hot._selfAccepted});p("dispose"),Object.keys(_).forEach(function(e){!1===_[e]&&function(e){delete installedChunks[e]}(e)});for(var D,I,U=g.slice();U.length>0;)if(s=U.pop(),c=R[s]){var j={},B=c.hot._disposeHandlers;for(i=0;i<B.length;i++)(r=B[i])(j);for(a[s]=j,c.hot.active=!1,delete R[s],delete h[s],i=0;i<c.children.length;i++){var N=R[c.children[i]];N&&((L=N.parents.indexOf(s))>=0&&N.parents.splice(L,1))}}for(s in h)if(Object.prototype.hasOwnProperty.call(h,s)&&(c=R[s]))for(I=h[s],i=0;i<I.length;i++)D=I[i],(L=c.children.indexOf(D))>=0&&c.children.splice(L,1);for(s in p("apply"),o=m,y)Object.prototype.hasOwnProperty.call(y,s)&&(e[s]=y[s]);var F=null;for(s in h)if(Object.prototype.hasOwnProperty.call(h,s)&&(c=R[s])){I=h[s];var C=[];for(n=0;n<I.length;n++)if(D=I[n],r=c.hot._acceptedDependencies[D]){if(-1!==C.indexOf(r))continue;C.push(r)}for(n=0;n<C.length;n++){r=C[n];try{r(I)}catch(e){t.onErrored&&t.onErrored({type:"accept-errored",moduleId:s,dependencyId:I[n],error:e}),t.ignoreErrored||F||(F=e)}}}for(n=0;n<k.length;n++){var G=k[n];s=G.module,u=[s];try{S(s)}catch(e){if("function"==typeof G.errorHandler)try{G.errorHandler(e)}catch(r){t.onErrored&&t.onErrored({type:"self-accept-error-handler-errored",moduleId:s,error:r,originalError:e}),t.ignoreErrored||F||(F=r),F||(F=e)}else t.onErrored&&t.onErrored({type:"self-accept-errored",moduleId:s,error:e}),t.ignoreErrored||F||(F=e)}}return F?(p("fail"),Promise.reject(F)):(p("idle"),new Promise(function(e){e(g)}))}var R={};function S(t){if(R[t])return R[t].exports;var r=R[t]={i:t,l:!1,exports:{},hot:f(t),parents:(c=u,u=[],c),children:[]};return e[t].call(r.exports,r,r.exports,s(t)),r.l=!0,r.exports}return S.m=e,S.c=R,S.d=function(e,t,r){S.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},S.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},S.t=function(e,t){if(1&t&&(e=S(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(S.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)S.d(r,n,function(t){return e[t]}.bind(null,n));return r},S.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return S.d(t,"a",t),t},S.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},S.p="/js/",S.h=function(){return o},s(17)(S.s=17)}([function(e,t,r){e.exports=r(10)},function(e,t,r){var n=r(11),o=r(12),i=r(13);e.exports=function(e,t){return n(e)||o(e,t)||i()}},function(e,t){function r(e,t,r,n,o,i,a){try{var u=e[i](a),c=u.value}catch(e){return void r(e)}u.done?t(c):Promise.resolve(c).then(n,o)}e.exports=function(e){return function(){var t=this,n=arguments;return new Promise(function(o,i){var a=e.apply(t,n);function u(e){r(a,o,i,u,c,"next",e)}function c(e){r(a,o,i,u,c,"throw",e)}u(void 0)})}}},function(e,t){e.exports=function(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}},function(e,t){e.exports="#ifdef GL_ES\nprecision mediump float;\n#endif\nvoid main() {\n\tgl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);\n}\n"},function(e,t){function r(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}e.exports=function(e,t,n){return t&&r(e.prototype,t),n&&r(e,n),e}},function(e,t,r){var n=r(14),o=r(15),i=r(16);e.exports=function(e){return n(e)||o(e)||i()}},function(e,t){e.exports=function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}},function(e,t){e.exports="attribute vec3 a_vertexPosition;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = vec4(a_vertexPosition, 1);\n}\n"},function(e,t){e.exports="attribute vec4 a_vertexPosition;\nattribute vec2 a_vertexTextureCoord;\nvarying vec2 vTextureCoord;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = a_vertexPosition;\n\tvTextureCoord = a_vertexTextureCoord;\n}\n"},function(e,t,r){var n=function(e){"use strict";var t,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",u=o.toStringTag||"@@toStringTag";function c(e,t,r,n){var o=t&&t.prototype instanceof v?t:v,i=Object.create(o.prototype),a=new R(n||[]);return i._invoke=function(e,t,r){var n=f;return function(o,i){if(n===d)throw new Error("Generator is already running");if(n===p){if("throw"===o)throw i;return P()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=T(a,r);if(u){if(u===h)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=p,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=d;var c=s(e,t,r);if("normal"===c.type){if(n=r.done?p:l,c.arg===h)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n=p,r.method="throw",r.arg=c.arg)}}}(e,r,a),i}function s(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=c;var f="suspendedStart",l="suspendedYield",d="executing",p="completed",h={};function v(){}function m(){}function g(){}var y={};y[i]=function(){return this};var b=Object.getPrototypeOf,x=b&&b(b(S([])));x&&x!==r&&n.call(x,i)&&(y=x);var _=g.prototype=v.prototype=Object.create(y);function E(e){["next","throw","return"].forEach(function(t){e[t]=function(e){return this._invoke(t,e)}})}function w(e){var t;this._invoke=function(r,o){function i(){return new Promise(function(t,i){!function t(r,o,i,a){var u=s(e[r],e,o);if("throw"!==u.type){var c=u.arg,f=c.value;return f&&"object"==typeof f&&n.call(f,"__await")?Promise.resolve(f.__await).then(function(e){t("next",e,i,a)},function(e){t("throw",e,i,a)}):Promise.resolve(f).then(function(e){c.value=e,i(c)},function(e){return t("throw",e,i,a)})}a(u.arg)}(r,o,t,i)})}return t=t?t.then(i,i):i()}}function T(e,r){var n=e.iterator[r.method];if(n===t){if(r.delegate=null,"throw"===r.method){if(e.iterator.return&&(r.method="return",r.arg=t,T(e,r),"throw"===r.method))return h;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return h}var o=s(n,e.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,h;var i=o.arg;return i?i.done?(r[e.resultName]=i.value,r.next=e.nextLoc,"return"!==r.method&&(r.method="next",r.arg=t),r.delegate=null,h):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,h)}function A(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function O(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function R(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(A,this),this.reset(!0)}function S(e){if(e){var r=e[i];if(r)return r.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var o=-1,a=function r(){for(;++o<e.length;)if(n.call(e,o))return r.value=e[o],r.done=!1,r;return r.value=t,r.done=!0,r};return a.next=a}}return{next:P}}function P(){return{value:t,done:!0}}return m.prototype=_.constructor=g,g.constructor=m,g[u]=m.displayName="GeneratorFunction",e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===m||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,g):(e.__proto__=g,u in e||(e[u]="GeneratorFunction")),e.prototype=Object.create(_),e},e.awrap=function(e){return{__await:e}},E(w.prototype),w.prototype[a]=function(){return this},e.AsyncIterator=w,e.async=function(t,r,n,o){var i=new w(c(t,r,n,o));return e.isGeneratorFunction(r)?i:i.next().then(function(e){return e.done?e.value:i.next()})},E(_),_[u]="Generator",_[i]=function(){return this},_.toString=function(){return"[object Generator]"},e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=S,R.prototype={constructor:R,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=t,this.done=!1,this.delegate=null,this.method="next",this.arg=t,this.tryEntries.forEach(O),!e)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=t)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var r=this;function o(n,o){return u.type="throw",u.arg=e,r.next=n,o&&(r.method="next",r.arg=t),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],u=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=n.call(a,"catchLoc"),s=n.call(a,"finallyLoc");if(c&&s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!s)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(e,t){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===e||"continue"===e)&&i.tryLoc<=t&&t<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=e,a.arg=t,i?(this.method="next",this.next=i.finallyLoc,h):this.complete(a)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),h},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),O(r),h}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var o=n.arg;O(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(e,r,n){return this.delegate={iterator:S(e),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=t),h}},e}(e.exports);try{regeneratorRuntime=n}catch(e){Function("r","regeneratorRuntime = r")(n)}},function(e,t){e.exports=function(e){if(Array.isArray(e))return e}},function(e,t){e.exports=function(e,t){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=e[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!t||r.length!==t);n=!0);}catch(e){o=!0,i=e}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}},function(e,t){e.exports=function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}},function(e,t){e.exports=function(e){if(Array.isArray(e)){for(var t=0,r=new Array(e.length);t<e.length;t++)r[t]=e[t];return r}}},function(e,t){e.exports=function(e){if(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e))return Array.from(e)}},function(e,t){e.exports=function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}},function(e,t,r){"use strict";r.r(t);var n=r(0),o=r.n(n),i=r(1),a=r.n(i),u=r(6),c=r.n(u),s=r(7),f=r.n(s),l=r(5),d=r.n(l),p=r(3),h=r.n(p),v=r(2),m=r.n(v);function g(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:Float32Array;if(null==e)return e;if(e instanceof t)return e;if(null==e[0]||null==e[0].length)return new t(e);for(var r=e[0].length,n=e.length,o=new t(r*n),i=0,a=0;a<n;a++)for(var u=0;u<r;u++)o[i++]=e[a][u];return o}var y={};function b(e){var t=!(arguments.length>1&&void 0!==arguments[1])||arguments[1];if(!y[e]){var r=new Image;r.crossOrigin="anonymous",y[e]=new Promise(function(n){r.onload=function(){t&&"function"==typeof createImageBitmap?createImageBitmap(r,{imageOrientation:"flipY"}).then(function(t){y[e]=t,n(t)}):(y[e]=r,n(r))},r.src=e})}return Promise.resolve(y[e])}var x=r(8),_=r.n(x),E=r(4),w=r.n(E),T=r(9),A=r.n(T),O={},R=Symbol("renderFrameID"),S={};function P(e){return L.apply(this,arguments)}function L(){return(L=m()(o.a.mark(function e(t){var r,n;return o.a.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:if(!S[t]){e.next=2;break}return e.abrupt("return",S[t]);case 2:return e.next=4,fetch(t);case 4:if(!((r=e.sent).status>=200&&r.status<300)){e.next=11;break}return e.next=8,r.text();case 8:return n=e.sent,S[t]=n,e.abrupt("return",n);case 11:return e.abrupt("return",null);case 12:case"end":return e.stop()}},e)}))).apply(this,arguments)}var k={int:"1i",ivec2:"2i",ivec3:"3i",ivec4:"4i",float:"1f",vec2:"2f",vec3:"3f",vec4:"4f",mat2:"Matrix2fv",mat3:"Matrix3fv",mat4:"Matrix4fv",sampler2D:"sampler2D"},D=function(){function e(t){var r,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};f()(this,e),this.options=Object.assign({},e.defaultOptions,n),this.canvas=t,this.options.webgl2?r=t.getContext("webgl2",this.options):(r=function(e,t){var r=function(e,t){for(var r=["webgl","experimental-webgl","webkit-3d","moz-webgl"],n=null,o=0;o<r.length;++o){try{n=e.getContext(r[o],t)}catch(e){}if(n)break}return n}(e,t);if(!r)throw new Error("Sorry, your browser doesn't support WebGL.");return r}(t,this.options),this.aia_ext=r.getExtension("ANGLE_instanced_arrays")),this.gl=r,r.viewport(0,0,t.width,t.height),r.clearColor(0,0,0,0),r.blendFuncSeparate(r.SRC_ALPHA,r.ONE_MINUS_SRC_ALPHA,r.ONE,r.ONE_MINUS_SRC_ALPHA),this.textures=[],this.programs=[],this._events={}}return d()(e,null,[{key:"addLibs",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};Object.assign(O,e)}},{key:"FLOAT",value:function(e){return g(e)}},{key:"UNSIGNED_BYTE",value:function(e){return g(e,Uint8Array)}},{key:"UNSIGNED_SHORT",value:function(e){return g(e,Uint16Array)}},{key:"BYTE",value:function(e){return g(e,Int8Array)}},{key:"SHORT",value:function(e){return g(e,Int16Array)}}]),d()(e,[{key:"_declareUniform",value:function(e,t){var r,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"1f",o=this.gl,i=o.getUniformLocation(e,t),a=this;if("sampler2D"===n){var u=e._samplerMap,s=e._bindTextures;Object.defineProperty(e.uniforms,t,{get:function(){return r},set:function(e){r=e;var n=null!=u[t]?u[t]:s.length;s[n]=e,function(e,t,r){e.activeTexture(e.TEXTURE0+r),e.bindTexture(e.TEXTURE_2D,t)}(o,e,n),u[t]||(u[t]=n,o.uniform1i(i,n)),a.options.autoUpdate&&a.update()},configurable:!1,enumerable:!0})}else{var f=0===n.indexOf("Matrix"),l=!f&&/v$/.test(n),d=o["uniform".concat(n)].bind(o);Object.defineProperty(e.uniforms,t,{get:function(){return r},set:function(e){r=e,"number"==typeof e&&(e=[e]),f?d(i,!1,e):l?d(i,e):d.apply(void 0,[i].concat(c()(e))),a.options.autoUpdate&&a.update()},configurable:!1,enumerable:!0})}}},{key:"_draw",value:function(){var t=this,r=this.program;r.meshData.forEach(function(n,o){var i=n.positions,u=n.cells,c=n.instanceCount,s=n.attributes,f=n.uniforms,l=n.textureCoord,d=n.enableBlend,p=t.gl;if(d?p.enable(p.BLEND):p.disable(p.BLEND),p.bindBuffer(p.ARRAY_BUFFER,r._buffers.verticesBuffer),p.bufferData(p.ARRAY_BUFFER,i,p.STATIC_DRAW),p.bindBuffer(p.ELEMENT_ARRAY_BUFFER,r._buffers.cellsBuffer),p.bufferData(p.ELEMENT_ARRAY_BUFFER,u,p.STATIC_DRAW),s&&Object.values(s).forEach(function(e){var n=e.name,o=e.data,i=e.divisor;if(p.bindBuffer(p.ARRAY_BUFFER,r._buffers[n]),p.bufferData(p.ARRAY_BUFFER,o,p.STATIC_DRAW),null!=i){var a=p.getAttribLocation(r,n);p.enableVertexAttribArray(a),p.vertexAttribDivisor?p.vertexAttribDivisor(a,i):t.aia_ext&&t.aia_ext.vertexAttribDivisorANGLE(a,i)}}),f&&Object.entries(f).forEach(function(e){var r=a()(e,2),n=r[0],o=r[1];t.uniforms[n]=o}),r._enableTextures&&r._buffers.texCoordBuffer){var h=l||function(e){for(var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:3,r=[],n=e.length,o=0;o<n;o++)o%t<2&&r.push(.5*(e[o]+1));return r}(i,r._dimension);p.bindBuffer(p.ARRAY_BUFFER,r._buffers.texCoordBuffer),p.bufferData(p.ARRAY_BUFFER,e.FLOAT(h),p.STATIC_DRAW)}null!=c?p.drawElementsInstanced?p.drawElementsInstanced(p.TRIANGLES,u.length,p.UNSIGNED_SHORT,0,c):t.aia_ext&&t.aia_ext.drawElementsInstancedANGLE(p.TRIANGLES,u.length,p.UNSIGNED_SHORT,0,c):p.drawElements(p.TRIANGLES,u.length,p.UNSIGNED_SHORT,0)})}},{key:"deleteProgram",value:function(e){var t=this.gl;this.program===e&&(this.startRender=!1,this[R]&&(cancelAnimationFrame(this[R]),delete this[R]),t.useProgram(null));var r=this.programs.indexOf(e);r>=0&&this.programs.splice(r,1),function(e,t){var r=t._buffers;Object.values(r).forEach(function(t){e.deleteBuffer(t)}),t._buffers={}}(t,e),t.deleteProgram(e)}},{key:"clearTextures",value:function(){var e=this.gl;this.textures.forEach(function(t){e.deleteTexture(t)}),this.textures=[]}},{key:"deleteTexture",value:function(e){var t=this.textures,r=t.indexOf(e);if(r>=0){var n=e._img;t.splice(r,1),this.gl.deleteTexture(e),"function"==typeof n.close&&n.close()}return e}},{key:"setMeshData",value:function(t){var r=this;Array.isArray(t)||(t=[t]);var n=this.program;n.meshData=t.map(function(t){var o=t.positions,i=t.instanceCount,u=t.cells,c=t.attributes,s=t.uniforms,f=t.textureCoord,l=t.enableBlend,d={positions:e.FLOAT(o),cells:e.USHORT(u),uniforms:s,enableBlend:!!l,textureCoord:e.FLOAT(f)};if(null!=i){if(!r.isWebGL2&&!r.aia_ext)throw new Error("Cannot use instanceCount in this rendering context, use webgl2 context instead.");d.instanceCount=i}if(c){var p={};Object.entries(c).forEach(function(t){var o=a()(t,2),i=o[0],u=o[1];if(n._attribute[i]){if("ignored"!==n._attribute[i]){var c=n._attribute[i],s=c.name,f=c.type,l=u.data||u;if(Array.isArray(l)&&(l=e[f](l)),p[i]={name:s,data:l},null!=u.divisor){if(!r.isWebGL2&&!r.aia_ext)throw new Error("Cannot use divisor in this rendering context, use webgl2 context instead.");p[i].divisor=u.divisor}}}else n._attribute[i]="ignored"}),d.attributes=p}return d}),this.options.autoUpdate&&this.update()}},{key:"createProgram",value:function(e,t){var r=this,n=/^\s*uniform\s+sampler2D/gm.test(e);null==e&&(e=w.a),null==t&&(t=n?A.a:_.a);var o=this.gl,i=function(e,t,r){var n=e.createShader(e.VERTEX_SHADER);if(e.shaderSource(n,t),e.compileShader(n),!e.getShaderParameter(n,e.COMPILE_STATUS)){var o="Vertex shader failed to compile.  The error log is:".concat(e.getShaderInfoLog(n));return console.error(o),-1}var i=e.createShader(e.FRAGMENT_SHADER);if(e.shaderSource(i,r),e.compileShader(i),!e.getShaderParameter(i,e.COMPILE_STATUS)){var a="Fragment shader failed to compile.  The error log is:".concat(e.getShaderInfoLog(i));return console.error(a),-1}var u=e.createProgram();if(e.attachShader(u,n),e.attachShader(u,i),e.linkProgram(u),!e.getProgramParameter(u,e.LINK_STATUS)){var c="Shader program failed to link.  The error log is:".concat(e.getProgramInfoLog(u));return console.error(c),-1}return e.deleteShader(n),e.deleteShader(i),u}(o,t,e);i.shaderText={vertexShader:t,fragmentShader:e},i._buffers={},i._attribute={},i.uniforms={},i._samplerMap={},i._bindTextures=[],i._enableTextures=n;var u=new RegExp("attribute vec(\\d) ".concat(this.options.vertexPosition),"im"),c=t.match(u);c&&(i._dimension=Number(c[1]));if(c=t.match(/^\s*attribute (\w+?)(\d*) (\w+)/gim))for(var s=0;s<c.length;s++){var f=c[s].match(/^\s*attribute (\w+?)(\d*) (\w+)/im);if(f&&f[3]!==this.options.vertexPosition&&f[3]!==this.options.vertexTextureCoord){var l=a()(f,4),d=l[1],p=l[2],h=l[3];"mat"===d&&(p=Math.pow(p,2)),i._buffers[h]=o.createBuffer(),i._attribute[h]={name:h,type:d,size:Number(p)||1}}}var v=/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/gm;return(c=(c=t.match(v)||[]).concat(e.match(v)||[])).forEach(function(e){var t=e.match(/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/).slice(1),n=a()(t,3),o=n[0],u=n[1],c=n[2];c=!!c,0!==(o=k[o]).indexOf("Matrix")&&c&&(o+="v"),r._declareUniform(i,u,o)}),i._buffers.verticesBuffer=o.createBuffer(),i._buffers.cellsBuffer=o.createBuffer(),i._enableTextures&&(i._buffers.texCoordBuffer=o.createBuffer()),this.programs.push(i),i}},{key:"useProgram",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};this.startRender=!1,this[R]&&(cancelAnimationFrame(this[R]),delete this[R]);var r=this.gl;r.useProgram(e),this.program=e;var n=e._dimension;r.bindBuffer(r.ARRAY_BUFFER,e._buffers.verticesBuffer);var o=r.getAttribLocation(e,this.options.vertexPosition);if(r.vertexAttribPointer(o,n,r.FLOAT,!1,0,0),r.enableVertexAttribArray(o),e._enableTextures){r.bindBuffer(r.ARRAY_BUFFER,e._buffers.texCoordBuffer);var i=r.getAttribLocation(e,this.options.vertexTextureCoord);r.vertexAttribPointer(i,2,r.FLOAT,!1,0,0),r.enableVertexAttribArray(i)}if(Object.entries(e._attribute).forEach(function(n){var o=a()(n,2),i=o[0],u=o[1],c=u.size,s=t[i]||{},f=!!s.normalize,l=s.type||"FLOAT",d=s.key||i;"UBYTE"===l&&(l="UNSIGNED_BYTE"),"USHORT"===l&&(l="UNSIGNED_SHORT"),u.type=l,d&&d!==i&&(e._attribute[d]=u),r.bindBuffer(r.ARRAY_BUFFER,e._buffers[i]);var p=r.getAttribLocation(e,i);r.vertexAttribPointer(p,c,r[l],f,0,0),r.enableVertexAttribArray(p)}),!e.meshData){var u=[[-1,-1,0,1].slice(0,n),[1,-1,0,1].slice(0,n),[1,1,0,1].slice(0,n),[-1,1,0,1].slice(0,n)];this.setMeshData({positions:u,cells:[[0,1,3],[3,1,2]]})}return e}},{key:"compileSync",value:function(e,t){e=e||w.a;var r={};function n(e){var t=[],o=(e=e.replace(/^\s*/gm,"")).match(/^#pragma\s+include\s+.*/gm);if(o){for(var i=0;i<o.length;i++){var a=o[i].match(/(?:<|")(.*)(?:>|")/);if(a){var u=0===a[0].indexOf("<")?"lib":"link",c=a[1];if("graph"===c&&(c="graphics"),r[c])t.push("/* included ".concat(c," */"));else if(r[c]=!0,"lib"===u){var s=n(O[c]);t.push(s)}else if("link"===u)throw new Error("Cannot load external links synchronously. Use compile instead of compileSync.")}}t.forEach(function(t){e=e.replace(/^#pragma\s+include\s+.*/m,t)})}return e}var o=n(e),i=t?n(t):null;return this.createProgram(o,i)}},{key:"compile",value:function(){var e=m()(o.a.mark(function e(t,r){var n,i,a,u,c,s;return o.a.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return a=function(){return(a=m()(o.a.mark(function e(t){var r,a,u,c,s,f,l,d,p;return o.a.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:if(t=t.replace(/^\s*/gm,""),r=[],!(a=t.match(/^#pragma\s+include\s+.*/gm))){e.next=36;break}u=0;case 5:if(!(u<a.length)){e.next=35;break}if(c=a[u],!(s=c.match(/(?:<|")(.*)(?:>|")/))){e.next=32;break}if(f=0===s[0].indexOf("<")?"lib":"link","graph"===(l=s[1])&&(l="graphics"),n[l]){e.next=31;break}if(n[l]=!0,"lib"!==f){e.next=21;break}return e.next=17,i(O[l]);case 17:d=e.sent,r.push(d),e.next=29;break;case 21:if("link"!==f){e.next=29;break}return e.next=24,P(l);case 24:return p=e.sent,e.next=27,i(p);case 27:p=e.sent,r.push(p);case 29:e.next=32;break;case 31:r.push("/* included ".concat(l," */"));case 32:u++,e.next=5;break;case 35:r.forEach(function(e){t=t.replace(/^#pragma\s+include\s+.*/m,e)});case 36:return e.abrupt("return",t);case 37:case"end":return e.stop()}},e)}))).apply(this,arguments)},i=function(e){return a.apply(this,arguments)},t=t||w.a,n={},e.next=6,i(t);case 6:if(u=e.sent,!r){e.next=13;break}return e.next=10,i(r);case 10:e.t0=e.sent,e.next=14;break;case 13:e.t0=null;case 14:return c=e.t0,s=this.createProgram(u,c),e.abrupt("return",s);case 17:case"end":return e.stop()}},e,this)}));return function(t,r){return e.apply(this,arguments)}}()},{key:"load",value:function(){var e=m()(o.a.mark(function e(t){var r,n=arguments;return o.a.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return r=n.length>1&&void 0!==n[1]?n[1]:null,e.next=3,P(t);case 3:if(t=e.sent,!r){e.next=8;break}return e.next=7,P(r);case 7:r=e.sent;case 8:return e.abrupt("return",this.compile(t,r));case 9:case"end":return e.stop()}},e,this)}));return function(t){return e.apply(this,arguments)}}()},{key:"createTexture",value:function(e){var t=this,r=this.gl;r.activeTexture(r.TEXTURE15);var n=r.createTexture();return r.bindTexture(r.TEXTURE_2D,n),r.pixelStorei(r.UNPACK_FLIP_Y_WEBGL,!0),r.texImage2D(r.TEXTURE_2D,0,r.RGBA,r.RGBA,r.UNSIGNED_BYTE,e),r.texParameteri(r.TEXTURE_2D,r.TEXTURE_MAG_FILTER,r.LINEAR),r.texParameteri(r.TEXTURE_2D,r.TEXTURE_MIN_FILTER,r.LINEAR),r.texParameteri(r.TEXTURE_2D,r.TEXTURE_WRAP_S,r.CLAMP_TO_EDGE),r.texParameteri(r.TEXTURE_2D,r.TEXTURE_WRAP_T,r.CLAMP_TO_EDGE),n._img=e,this.textures.push(n),n.delete=function(){t.deleteTexture(n)},n}},{key:"loadTexture",value:function(){var e=m()(o.a.mark(function e(t){var r,n,i,a,u=arguments;return o.a.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return r=u.length>1&&void 0!==u[1]?u[1]:{},n=r.useImageBitmap,i=void 0===n||n,e.next=3,b(t,i);case 3:return a=e.sent,e.abrupt("return",this.createTexture(a));case 5:case"end":return e.stop()}},e,this)}));return function(t){return e.apply(this,arguments)}}()},{key:"render",value:function(){var e=(arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}).clearBuffer,t=void 0===e||e;this.startRender=!0;var r=this.gl,n=this.program;n||(n=this.createProgram(),this.useProgram(n)),t&&r.clear(r.COLOR_BUFFER_BIT);var o=this[R];this._draw(),this[R]===o&&(this[R]=null)}},{key:"update",value:function(){this.startRender&&null==this[R]&&(this[R]=requestAnimationFrame(this.render.bind(this)))}},{key:"isWebGL2",get:function(){return"undefined"!=typeof WebGL2RenderingContext&&this.gl instanceof WebGL2RenderingContext}},{key:"enableTextures",get:function(){return this.program&&this.program._enableTextures}},{key:"uniforms",get:function(){var e=this.program;if(!e||!e.uniforms)throw Error("No avaliable program.");return e.uniforms}}]),e}();h()(D,"defaultOptions",{preserveDrawingBuffer:!0,autoUpdate:!0,vertexPosition:"a_vertexPosition",vertexTextureCoord:"a_vertexTextureCoord",webgl2:!1}),h()(D,"UBYTE",D.UNSIGNED_BYTE),h()(D,"USHORT",D.UNSIGNED_SHORT),h()(D,"fetchShader",P);t.default=D}]).default});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["GlRenderer"] = factory();
+	else
+		root["GlRenderer"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	function hotDisposeChunk(chunkId) {
+/******/ 		delete installedChunks[chunkId];
+/******/ 	}
+/******/ 	var parentHotUpdateCallback = window["webpackHotUpdate"];
+/******/ 	window["webpackHotUpdate"] = // eslint-disable-next-line no-unused-vars
+/******/ 	function webpackHotUpdateCallback(chunkId, moreModules) {
+/******/ 		hotAddUpdateChunk(chunkId, moreModules);
+/******/ 		if (parentHotUpdateCallback) parentHotUpdateCallback(chunkId, moreModules);
+/******/ 	} ;
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotDownloadUpdateChunk(chunkId) {
+/******/ 		var script = document.createElement("script");
+/******/ 		script.charset = "utf-8";
+/******/ 		script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
+/******/ 		if (null) script.crossOrigin = null;
+/******/ 		document.head.appendChild(script);
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotDownloadManifest(requestTimeout) {
+/******/ 		requestTimeout = requestTimeout || 10000;
+/******/ 		return new Promise(function(resolve, reject) {
+/******/ 			if (typeof XMLHttpRequest === "undefined") {
+/******/ 				return reject(new Error("No browser support"));
+/******/ 			}
+/******/ 			try {
+/******/ 				var request = new XMLHttpRequest();
+/******/ 				var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
+/******/ 				request.open("GET", requestPath, true);
+/******/ 				request.timeout = requestTimeout;
+/******/ 				request.send(null);
+/******/ 			} catch (err) {
+/******/ 				return reject(err);
+/******/ 			}
+/******/ 			request.onreadystatechange = function() {
+/******/ 				if (request.readyState !== 4) return;
+/******/ 				if (request.status === 0) {
+/******/ 					// timeout
+/******/ 					reject(
+/******/ 						new Error("Manifest request to " + requestPath + " timed out.")
+/******/ 					);
+/******/ 				} else if (request.status === 404) {
+/******/ 					// no update available
+/******/ 					resolve();
+/******/ 				} else if (request.status !== 200 && request.status !== 304) {
+/******/ 					// other failure
+/******/ 					reject(new Error("Manifest request to " + requestPath + " failed."));
+/******/ 				} else {
+/******/ 					// success
+/******/ 					try {
+/******/ 						var update = JSON.parse(request.responseText);
+/******/ 					} catch (e) {
+/******/ 						reject(e);
+/******/ 						return;
+/******/ 					}
+/******/ 					resolve(update);
+/******/ 				}
+/******/ 			};
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	var hotApplyOnUpdate = true;
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentHash = "d917e7b164187065d6eb";
+/******/ 	var hotRequestTimeout = 10000;
+/******/ 	var hotCurrentModuleData = {};
+/******/ 	var hotCurrentChildModule;
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentParents = [];
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	var hotCurrentParentsTemp = [];
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotCreateRequire(moduleId) {
+/******/ 		var me = installedModules[moduleId];
+/******/ 		if (!me) return __webpack_require__;
+/******/ 		var fn = function(request) {
+/******/ 			if (me.hot.active) {
+/******/ 				if (installedModules[request]) {
+/******/ 					if (installedModules[request].parents.indexOf(moduleId) === -1) {
+/******/ 						installedModules[request].parents.push(moduleId);
+/******/ 					}
+/******/ 				} else {
+/******/ 					hotCurrentParents = [moduleId];
+/******/ 					hotCurrentChildModule = request;
+/******/ 				}
+/******/ 				if (me.children.indexOf(request) === -1) {
+/******/ 					me.children.push(request);
+/******/ 				}
+/******/ 			} else {
+/******/ 				console.warn(
+/******/ 					"[HMR] unexpected require(" +
+/******/ 						request +
+/******/ 						") from disposed module " +
+/******/ 						moduleId
+/******/ 				);
+/******/ 				hotCurrentParents = [];
+/******/ 			}
+/******/ 			return __webpack_require__(request);
+/******/ 		};
+/******/ 		var ObjectFactory = function ObjectFactory(name) {
+/******/ 			return {
+/******/ 				configurable: true,
+/******/ 				enumerable: true,
+/******/ 				get: function() {
+/******/ 					return __webpack_require__[name];
+/******/ 				},
+/******/ 				set: function(value) {
+/******/ 					__webpack_require__[name] = value;
+/******/ 				}
+/******/ 			};
+/******/ 		};
+/******/ 		for (var name in __webpack_require__) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(__webpack_require__, name) &&
+/******/ 				name !== "e" &&
+/******/ 				name !== "t"
+/******/ 			) {
+/******/ 				Object.defineProperty(fn, name, ObjectFactory(name));
+/******/ 			}
+/******/ 		}
+/******/ 		fn.e = function(chunkId) {
+/******/ 			if (hotStatus === "ready") hotSetStatus("prepare");
+/******/ 			hotChunksLoading++;
+/******/ 			return __webpack_require__.e(chunkId).then(finishChunkLoading, function(err) {
+/******/ 				finishChunkLoading();
+/******/ 				throw err;
+/******/ 			});
+/******/
+/******/ 			function finishChunkLoading() {
+/******/ 				hotChunksLoading--;
+/******/ 				if (hotStatus === "prepare") {
+/******/ 					if (!hotWaitingFilesMap[chunkId]) {
+/******/ 						hotEnsureUpdateChunk(chunkId);
+/******/ 					}
+/******/ 					if (hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 						hotUpdateDownloaded();
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 		fn.t = function(value, mode) {
+/******/ 			if (mode & 1) value = fn(value);
+/******/ 			return __webpack_require__.t(value, mode & ~1);
+/******/ 		};
+/******/ 		return fn;
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotCreateModule(moduleId) {
+/******/ 		var hot = {
+/******/ 			// private stuff
+/******/ 			_acceptedDependencies: {},
+/******/ 			_declinedDependencies: {},
+/******/ 			_selfAccepted: false,
+/******/ 			_selfDeclined: false,
+/******/ 			_disposeHandlers: [],
+/******/ 			_main: hotCurrentChildModule !== moduleId,
+/******/
+/******/ 			// Module API
+/******/ 			active: true,
+/******/ 			accept: function(dep, callback) {
+/******/ 				if (dep === undefined) hot._selfAccepted = true;
+/******/ 				else if (typeof dep === "function") hot._selfAccepted = dep;
+/******/ 				else if (typeof dep === "object")
+/******/ 					for (var i = 0; i < dep.length; i++)
+/******/ 						hot._acceptedDependencies[dep[i]] = callback || function() {};
+/******/ 				else hot._acceptedDependencies[dep] = callback || function() {};
+/******/ 			},
+/******/ 			decline: function(dep) {
+/******/ 				if (dep === undefined) hot._selfDeclined = true;
+/******/ 				else if (typeof dep === "object")
+/******/ 					for (var i = 0; i < dep.length; i++)
+/******/ 						hot._declinedDependencies[dep[i]] = true;
+/******/ 				else hot._declinedDependencies[dep] = true;
+/******/ 			},
+/******/ 			dispose: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			addDisposeHandler: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			removeDisposeHandler: function(callback) {
+/******/ 				var idx = hot._disposeHandlers.indexOf(callback);
+/******/ 				if (idx >= 0) hot._disposeHandlers.splice(idx, 1);
+/******/ 			},
+/******/
+/******/ 			// Management API
+/******/ 			check: hotCheck,
+/******/ 			apply: hotApply,
+/******/ 			status: function(l) {
+/******/ 				if (!l) return hotStatus;
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			addStatusHandler: function(l) {
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			removeStatusHandler: function(l) {
+/******/ 				var idx = hotStatusHandlers.indexOf(l);
+/******/ 				if (idx >= 0) hotStatusHandlers.splice(idx, 1);
+/******/ 			},
+/******/
+/******/ 			//inherit from previous dispose call
+/******/ 			data: hotCurrentModuleData[moduleId]
+/******/ 		};
+/******/ 		hotCurrentChildModule = undefined;
+/******/ 		return hot;
+/******/ 	}
+/******/
+/******/ 	var hotStatusHandlers = [];
+/******/ 	var hotStatus = "idle";
+/******/
+/******/ 	function hotSetStatus(newStatus) {
+/******/ 		hotStatus = newStatus;
+/******/ 		for (var i = 0; i < hotStatusHandlers.length; i++)
+/******/ 			hotStatusHandlers[i].call(null, newStatus);
+/******/ 	}
+/******/
+/******/ 	// while downloading
+/******/ 	var hotWaitingFiles = 0;
+/******/ 	var hotChunksLoading = 0;
+/******/ 	var hotWaitingFilesMap = {};
+/******/ 	var hotRequestedFilesMap = {};
+/******/ 	var hotAvailableFilesMap = {};
+/******/ 	var hotDeferred;
+/******/
+/******/ 	// The update info
+/******/ 	var hotUpdate, hotUpdateNewHash;
+/******/
+/******/ 	function toModuleId(id) {
+/******/ 		var isNumber = +id + "" === id;
+/******/ 		return isNumber ? +id : id;
+/******/ 	}
+/******/
+/******/ 	function hotCheck(apply) {
+/******/ 		if (hotStatus !== "idle") {
+/******/ 			throw new Error("check() is only allowed in idle status");
+/******/ 		}
+/******/ 		hotApplyOnUpdate = apply;
+/******/ 		hotSetStatus("check");
+/******/ 		return hotDownloadManifest(hotRequestTimeout).then(function(update) {
+/******/ 			if (!update) {
+/******/ 				hotSetStatus("idle");
+/******/ 				return null;
+/******/ 			}
+/******/ 			hotRequestedFilesMap = {};
+/******/ 			hotWaitingFilesMap = {};
+/******/ 			hotAvailableFilesMap = update.c;
+/******/ 			hotUpdateNewHash = update.h;
+/******/
+/******/ 			hotSetStatus("prepare");
+/******/ 			var promise = new Promise(function(resolve, reject) {
+/******/ 				hotDeferred = {
+/******/ 					resolve: resolve,
+/******/ 					reject: reject
+/******/ 				};
+/******/ 			});
+/******/ 			hotUpdate = {};
+/******/ 			var chunkId = 0;
+/******/ 			// eslint-disable-next-line no-lone-blocks
+/******/ 			{
+/******/ 				/*globals chunkId */
+/******/ 				hotEnsureUpdateChunk(chunkId);
+/******/ 			}
+/******/ 			if (
+/******/ 				hotStatus === "prepare" &&
+/******/ 				hotChunksLoading === 0 &&
+/******/ 				hotWaitingFiles === 0
+/******/ 			) {
+/******/ 				hotUpdateDownloaded();
+/******/ 			}
+/******/ 			return promise;
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	// eslint-disable-next-line no-unused-vars
+/******/ 	function hotAddUpdateChunk(chunkId, moreModules) {
+/******/ 		if (!hotAvailableFilesMap[chunkId] || !hotRequestedFilesMap[chunkId])
+/******/ 			return;
+/******/ 		hotRequestedFilesMap[chunkId] = false;
+/******/ 		for (var moduleId in moreModules) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				hotUpdate[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if (--hotWaitingFiles === 0 && hotChunksLoading === 0) {
+/******/ 			hotUpdateDownloaded();
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotEnsureUpdateChunk(chunkId) {
+/******/ 		if (!hotAvailableFilesMap[chunkId]) {
+/******/ 			hotWaitingFilesMap[chunkId] = true;
+/******/ 		} else {
+/******/ 			hotRequestedFilesMap[chunkId] = true;
+/******/ 			hotWaitingFiles++;
+/******/ 			hotDownloadUpdateChunk(chunkId);
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotUpdateDownloaded() {
+/******/ 		hotSetStatus("ready");
+/******/ 		var deferred = hotDeferred;
+/******/ 		hotDeferred = null;
+/******/ 		if (!deferred) return;
+/******/ 		if (hotApplyOnUpdate) {
+/******/ 			// Wrap deferred object in Promise to mark it as a well-handled Promise to
+/******/ 			// avoid triggering uncaught exception warning in Chrome.
+/******/ 			// See https://bugs.chromium.org/p/chromium/issues/detail?id=465666
+/******/ 			Promise.resolve()
+/******/ 				.then(function() {
+/******/ 					return hotApply(hotApplyOnUpdate);
+/******/ 				})
+/******/ 				.then(
+/******/ 					function(result) {
+/******/ 						deferred.resolve(result);
+/******/ 					},
+/******/ 					function(err) {
+/******/ 						deferred.reject(err);
+/******/ 					}
+/******/ 				);
+/******/ 		} else {
+/******/ 			var outdatedModules = [];
+/******/ 			for (var id in hotUpdate) {
+/******/ 				if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 					outdatedModules.push(toModuleId(id));
+/******/ 				}
+/******/ 			}
+/******/ 			deferred.resolve(outdatedModules);
+/******/ 		}
+/******/ 	}
+/******/
+/******/ 	function hotApply(options) {
+/******/ 		if (hotStatus !== "ready")
+/******/ 			throw new Error("apply() is only allowed in ready status");
+/******/ 		options = options || {};
+/******/
+/******/ 		var cb;
+/******/ 		var i;
+/******/ 		var j;
+/******/ 		var module;
+/******/ 		var moduleId;
+/******/
+/******/ 		function getAffectedStuff(updateModuleId) {
+/******/ 			var outdatedModules = [updateModuleId];
+/******/ 			var outdatedDependencies = {};
+/******/
+/******/ 			var queue = outdatedModules.slice().map(function(id) {
+/******/ 				return {
+/******/ 					chain: [id],
+/******/ 					id: id
+/******/ 				};
+/******/ 			});
+/******/ 			while (queue.length > 0) {
+/******/ 				var queueItem = queue.pop();
+/******/ 				var moduleId = queueItem.id;
+/******/ 				var chain = queueItem.chain;
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (!module || module.hot._selfAccepted) continue;
+/******/ 				if (module.hot._selfDeclined) {
+/******/ 					return {
+/******/ 						type: "self-declined",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				if (module.hot._main) {
+/******/ 					return {
+/******/ 						type: "unaccepted",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				for (var i = 0; i < module.parents.length; i++) {
+/******/ 					var parentId = module.parents[i];
+/******/ 					var parent = installedModules[parentId];
+/******/ 					if (!parent) continue;
+/******/ 					if (parent.hot._declinedDependencies[moduleId]) {
+/******/ 						return {
+/******/ 							type: "declined",
+/******/ 							chain: chain.concat([parentId]),
+/******/ 							moduleId: moduleId,
+/******/ 							parentId: parentId
+/******/ 						};
+/******/ 					}
+/******/ 					if (outdatedModules.indexOf(parentId) !== -1) continue;
+/******/ 					if (parent.hot._acceptedDependencies[moduleId]) {
+/******/ 						if (!outdatedDependencies[parentId])
+/******/ 							outdatedDependencies[parentId] = [];
+/******/ 						addAllToSet(outdatedDependencies[parentId], [moduleId]);
+/******/ 						continue;
+/******/ 					}
+/******/ 					delete outdatedDependencies[parentId];
+/******/ 					outdatedModules.push(parentId);
+/******/ 					queue.push({
+/******/ 						chain: chain.concat([parentId]),
+/******/ 						id: parentId
+/******/ 					});
+/******/ 				}
+/******/ 			}
+/******/
+/******/ 			return {
+/******/ 				type: "accepted",
+/******/ 				moduleId: updateModuleId,
+/******/ 				outdatedModules: outdatedModules,
+/******/ 				outdatedDependencies: outdatedDependencies
+/******/ 			};
+/******/ 		}
+/******/
+/******/ 		function addAllToSet(a, b) {
+/******/ 			for (var i = 0; i < b.length; i++) {
+/******/ 				var item = b[i];
+/******/ 				if (a.indexOf(item) === -1) a.push(item);
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// at begin all updates modules are outdated
+/******/ 		// the "outdated" status can propagate to parents if they don't accept the children
+/******/ 		var outdatedDependencies = {};
+/******/ 		var outdatedModules = [];
+/******/ 		var appliedUpdate = {};
+/******/
+/******/ 		var warnUnexpectedRequire = function warnUnexpectedRequire() {
+/******/ 			console.warn(
+/******/ 				"[HMR] unexpected require(" + result.moduleId + ") to disposed module"
+/******/ 			);
+/******/ 		};
+/******/
+/******/ 		for (var id in hotUpdate) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 				moduleId = toModuleId(id);
+/******/ 				/** @type {TODO} */
+/******/ 				var result;
+/******/ 				if (hotUpdate[id]) {
+/******/ 					result = getAffectedStuff(moduleId);
+/******/ 				} else {
+/******/ 					result = {
+/******/ 						type: "disposed",
+/******/ 						moduleId: id
+/******/ 					};
+/******/ 				}
+/******/ 				/** @type {Error|false} */
+/******/ 				var abortError = false;
+/******/ 				var doApply = false;
+/******/ 				var doDispose = false;
+/******/ 				var chainInfo = "";
+/******/ 				if (result.chain) {
+/******/ 					chainInfo = "\nUpdate propagation: " + result.chain.join(" -> ");
+/******/ 				}
+/******/ 				switch (result.type) {
+/******/ 					case "self-declined":
+/******/ 						if (options.onDeclined) options.onDeclined(result);
+/******/ 						if (!options.ignoreDeclined)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because of self decline: " +
+/******/ 									result.moduleId +
+/******/ 									chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "declined":
+/******/ 						if (options.onDeclined) options.onDeclined(result);
+/******/ 						if (!options.ignoreDeclined)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because of declined dependency: " +
+/******/ 									result.moduleId +
+/******/ 									" in " +
+/******/ 									result.parentId +
+/******/ 									chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "unaccepted":
+/******/ 						if (options.onUnaccepted) options.onUnaccepted(result);
+/******/ 						if (!options.ignoreUnaccepted)
+/******/ 							abortError = new Error(
+/******/ 								"Aborted because " + moduleId + " is not accepted" + chainInfo
+/******/ 							);
+/******/ 						break;
+/******/ 					case "accepted":
+/******/ 						if (options.onAccepted) options.onAccepted(result);
+/******/ 						doApply = true;
+/******/ 						break;
+/******/ 					case "disposed":
+/******/ 						if (options.onDisposed) options.onDisposed(result);
+/******/ 						doDispose = true;
+/******/ 						break;
+/******/ 					default:
+/******/ 						throw new Error("Unexception type " + result.type);
+/******/ 				}
+/******/ 				if (abortError) {
+/******/ 					hotSetStatus("abort");
+/******/ 					return Promise.reject(abortError);
+/******/ 				}
+/******/ 				if (doApply) {
+/******/ 					appliedUpdate[moduleId] = hotUpdate[moduleId];
+/******/ 					addAllToSet(outdatedModules, result.outdatedModules);
+/******/ 					for (moduleId in result.outdatedDependencies) {
+/******/ 						if (
+/******/ 							Object.prototype.hasOwnProperty.call(
+/******/ 								result.outdatedDependencies,
+/******/ 								moduleId
+/******/ 							)
+/******/ 						) {
+/******/ 							if (!outdatedDependencies[moduleId])
+/******/ 								outdatedDependencies[moduleId] = [];
+/******/ 							addAllToSet(
+/******/ 								outdatedDependencies[moduleId],
+/******/ 								result.outdatedDependencies[moduleId]
+/******/ 							);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 				if (doDispose) {
+/******/ 					addAllToSet(outdatedModules, [result.moduleId]);
+/******/ 					appliedUpdate[moduleId] = warnUnexpectedRequire;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Store self accepted outdated modules to require them later by the module system
+/******/ 		var outdatedSelfAcceptedModules = [];
+/******/ 		for (i = 0; i < outdatedModules.length; i++) {
+/******/ 			moduleId = outdatedModules[i];
+/******/ 			if (
+/******/ 				installedModules[moduleId] &&
+/******/ 				installedModules[moduleId].hot._selfAccepted
+/******/ 			)
+/******/ 				outdatedSelfAcceptedModules.push({
+/******/ 					module: moduleId,
+/******/ 					errorHandler: installedModules[moduleId].hot._selfAccepted
+/******/ 				});
+/******/ 		}
+/******/
+/******/ 		// Now in "dispose" phase
+/******/ 		hotSetStatus("dispose");
+/******/ 		Object.keys(hotAvailableFilesMap).forEach(function(chunkId) {
+/******/ 			if (hotAvailableFilesMap[chunkId] === false) {
+/******/ 				hotDisposeChunk(chunkId);
+/******/ 			}
+/******/ 		});
+/******/
+/******/ 		var idx;
+/******/ 		var queue = outdatedModules.slice();
+/******/ 		while (queue.length > 0) {
+/******/ 			moduleId = queue.pop();
+/******/ 			module = installedModules[moduleId];
+/******/ 			if (!module) continue;
+/******/
+/******/ 			var data = {};
+/******/
+/******/ 			// Call dispose handlers
+/******/ 			var disposeHandlers = module.hot._disposeHandlers;
+/******/ 			for (j = 0; j < disposeHandlers.length; j++) {
+/******/ 				cb = disposeHandlers[j];
+/******/ 				cb(data);
+/******/ 			}
+/******/ 			hotCurrentModuleData[moduleId] = data;
+/******/
+/******/ 			// disable module (this disables requires from this module)
+/******/ 			module.hot.active = false;
+/******/
+/******/ 			// remove module from cache
+/******/ 			delete installedModules[moduleId];
+/******/
+/******/ 			// when disposing there is no need to call dispose handler
+/******/ 			delete outdatedDependencies[moduleId];
+/******/
+/******/ 			// remove "parents" references from all children
+/******/ 			for (j = 0; j < module.children.length; j++) {
+/******/ 				var child = installedModules[module.children[j]];
+/******/ 				if (!child) continue;
+/******/ 				idx = child.parents.indexOf(moduleId);
+/******/ 				if (idx >= 0) {
+/******/ 					child.parents.splice(idx, 1);
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// remove outdated dependency from module children
+/******/ 		var dependency;
+/******/ 		var moduleOutdatedDependencies;
+/******/ 		for (moduleId in outdatedDependencies) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
+/******/ 			) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (module) {
+/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 					for (j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 						dependency = moduleOutdatedDependencies[j];
+/******/ 						idx = module.children.indexOf(dependency);
+/******/ 						if (idx >= 0) module.children.splice(idx, 1);
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Not in "apply" phase
+/******/ 		hotSetStatus("apply");
+/******/
+/******/ 		hotCurrentHash = hotUpdateNewHash;
+/******/
+/******/ 		// insert new code
+/******/ 		for (moduleId in appliedUpdate) {
+/******/ 			if (Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
+/******/ 				modules[moduleId] = appliedUpdate[moduleId];
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// call accept handlers
+/******/ 		var error = null;
+/******/ 		for (moduleId in outdatedDependencies) {
+/******/ 			if (
+/******/ 				Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)
+/******/ 			) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				if (module) {
+/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 					var callbacks = [];
+/******/ 					for (i = 0; i < moduleOutdatedDependencies.length; i++) {
+/******/ 						dependency = moduleOutdatedDependencies[i];
+/******/ 						cb = module.hot._acceptedDependencies[dependency];
+/******/ 						if (cb) {
+/******/ 							if (callbacks.indexOf(cb) !== -1) continue;
+/******/ 							callbacks.push(cb);
+/******/ 						}
+/******/ 					}
+/******/ 					for (i = 0; i < callbacks.length; i++) {
+/******/ 						cb = callbacks[i];
+/******/ 						try {
+/******/ 							cb(moduleOutdatedDependencies);
+/******/ 						} catch (err) {
+/******/ 							if (options.onErrored) {
+/******/ 								options.onErrored({
+/******/ 									type: "accept-errored",
+/******/ 									moduleId: moduleId,
+/******/ 									dependencyId: moduleOutdatedDependencies[i],
+/******/ 									error: err
+/******/ 								});
+/******/ 							}
+/******/ 							if (!options.ignoreErrored) {
+/******/ 								if (!error) error = err;
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// Load self accepted modules
+/******/ 		for (i = 0; i < outdatedSelfAcceptedModules.length; i++) {
+/******/ 			var item = outdatedSelfAcceptedModules[i];
+/******/ 			moduleId = item.module;
+/******/ 			hotCurrentParents = [moduleId];
+/******/ 			try {
+/******/ 				__webpack_require__(moduleId);
+/******/ 			} catch (err) {
+/******/ 				if (typeof item.errorHandler === "function") {
+/******/ 					try {
+/******/ 						item.errorHandler(err);
+/******/ 					} catch (err2) {
+/******/ 						if (options.onErrored) {
+/******/ 							options.onErrored({
+/******/ 								type: "self-accept-error-handler-errored",
+/******/ 								moduleId: moduleId,
+/******/ 								error: err2,
+/******/ 								originalError: err
+/******/ 							});
+/******/ 						}
+/******/ 						if (!options.ignoreErrored) {
+/******/ 							if (!error) error = err2;
+/******/ 						}
+/******/ 						if (!error) error = err;
+/******/ 					}
+/******/ 				} else {
+/******/ 					if (options.onErrored) {
+/******/ 						options.onErrored({
+/******/ 							type: "self-accept-errored",
+/******/ 							moduleId: moduleId,
+/******/ 							error: err
+/******/ 						});
+/******/ 					}
+/******/ 					if (!options.ignoreErrored) {
+/******/ 						if (!error) error = err;
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/
+/******/ 		// handle errors in accept handlers and self accepted module load
+/******/ 		if (error) {
+/******/ 			hotSetStatus("fail");
+/******/ 			return Promise.reject(error);
+/******/ 		}
+/******/
+/******/ 		hotSetStatus("idle");
+/******/ 		return new Promise(function(resolve) {
+/******/ 			resolve(outdatedModules);
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {},
+/******/ 			hot: hotCreateModule(moduleId),
+/******/ 			parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),
+/******/ 			children: []
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/js/";
+/******/
+/******/ 	// __webpack_hash__
+/******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return hotCreateRequire(0)(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+
+/* harmony default export */ __webpack_exports__["default"] = (_renderer__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Renderer; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(14);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(16);
+/* harmony import */ var _default_vert_glsl__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(17);
+/* harmony import */ var _default_vert_glsl__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_default_vert_glsl__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(18);
+/* harmony import */ var _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_default_frag_glsl__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(19);
+/* harmony import */ var _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10__);
+
+
+
+
+
+
+
+
+
+
+
+var GLSL_LIBS = {};
+
+var _renderFrameID = Symbol('renderFrameID');
+
+var shaderCache = {};
+
+function fetchShader(_x) {
+  return _fetchShader.apply(this, arguments);
+}
+
+function _fetchShader() {
+  _fetchShader = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
+  /*#__PURE__*/
+  _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(url) {
+    var res, content;
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            if (!shaderCache[url]) {
+              _context5.next = 2;
+              break;
+            }
+
+            return _context5.abrupt("return", shaderCache[url]);
+
+          case 2:
+            _context5.next = 4;
+            return fetch(url);
+
+          case 4:
+            res = _context5.sent;
+
+            if (!(res.status >= 200 && res.status < 300)) {
+              _context5.next = 11;
+              break;
+            }
+
+            _context5.next = 8;
+            return res.text();
+
+          case 8:
+            content = _context5.sent;
+            shaderCache[url] = content;
+            return _context5.abrupt("return", content);
+
+          case 11:
+            return _context5.abrupt("return", null);
+
+          case 12:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _fetchShader.apply(this, arguments);
+}
+
+function mapTextureCoordinate(positions) {
+  var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+  var texVertexData = [];
+  var len = positions.length;
+
+  for (var i = 0; i < len; i++) {
+    if (i % size < 2) texVertexData.push(0.5 * (positions[i] + 1));
+  }
+
+  return texVertexData;
+}
+
+function clearBuffers(gl, program) {
+  var buffers = program._buffers;
+  Object.values(buffers).forEach(function (buffer) {
+    gl.deleteBuffer(buffer);
+  });
+  program._buffers = {};
+}
+
+function bindTexture(gl, texture, i) {
+  gl.activeTexture(gl.TEXTURE0 + i);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  return texture;
+}
+
+var uniformTypeMap = {
+  int: '1i',
+  ivec2: '2i',
+  ivec3: '3i',
+  ivec4: '4i',
+  float: '1f',
+  vec2: '2f',
+  vec3: '3f',
+  vec4: '4f',
+  mat2: 'Matrix2fv',
+  mat3: 'Matrix3fv',
+  mat4: 'Matrix4fv',
+  sampler2D: 'sampler2D'
+};
+
+var Renderer =
+/*#__PURE__*/
+function () {
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(Renderer, null, [{
+    key: "addLibs",
+    value: function addLibs() {
+      var libs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      Object.assign(GLSL_LIBS, libs);
+    }
+  }, {
+    key: "FLOAT",
+    value: function FLOAT(points) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points);
+    }
+  }, {
+    key: "UNSIGNED_BYTE",
+    value: function UNSIGNED_BYTE(points) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint8Array);
+    }
+  }, {
+    key: "UNSIGNED_SHORT",
+    value: function UNSIGNED_SHORT(points) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint16Array);
+    }
+  }, {
+    key: "BYTE",
+    value: function BYTE(points) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int8Array);
+    }
+  }, {
+    key: "SHORT",
+    value: function SHORT(points) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int16Array);
+    }
+  }]);
+
+  function Renderer(canvas) {
+    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default()(this, Renderer);
+
+    this.options = Object.assign({}, Renderer.defaultOptions, opts);
+    this.canvas = canvas;
+    var gl;
+
+    if (this.options.webgl2) {
+      gl = canvas.getContext('webgl2', this.options);
+    } else {
+      gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["setupWebGL"])(canvas, this.options);
+      this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
+    }
+
+    this.gl = gl;
+    gl.viewport(0, 0, canvas.width, canvas.height); // gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    this.textures = [];
+    this.programs = [];
+    this._events = {};
+  } // WebGLRenderingContext.uniform[1234][fi][v]()
+  // WebGLRenderingContext.uniformMatrix[234]fv()
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(Renderer, [{
+    key: "_declareUniform",
+    value: function _declareUniform(program, name) {
+      var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '1f';
+      var gl = this.gl;
+      var uniform = gl.getUniformLocation(program, name);
+      var value;
+      var that = this;
+
+      if (type === 'sampler2D') {
+        var samplerMap = program._samplerMap;
+        var textures = program._bindTextures;
+        Object.defineProperty(program.uniforms, name, {
+          get: function get() {
+            return value;
+          },
+          set: function set(v) {
+            value = v;
+            var idx = samplerMap[name] != null ? samplerMap[name] : textures.length;
+            textures[idx] = v;
+            bindTexture(gl, v, idx);
+
+            if (!samplerMap[name]) {
+              samplerMap[name] = idx;
+              gl.uniform1i(uniform, idx);
+            }
+
+            if (that.options.autoUpdate) that.update();
+          },
+          configurable: false,
+          enumerable: true
+        });
+      } else {
+        var isMatrix = type.indexOf('Matrix') === 0;
+        var isTypeV = !isMatrix && /v$/.test(type);
+        var setUniform = gl["uniform".concat(type)].bind(gl);
+        Object.defineProperty(program.uniforms, name, {
+          get: function get() {
+            return value;
+          },
+          set: function set(v) {
+            value = v;
+
+            if (typeof v === 'number') {
+              v = [v];
+            }
+
+            if (isMatrix) setUniform(uniform, false, v);else if (isTypeV) setUniform(uniform, v);else setUniform.apply(void 0, [uniform].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(v)));
+            if (that.options.autoUpdate) that.update();
+          },
+          configurable: false,
+          enumerable: true
+        });
+      }
+    }
+  }, {
+    key: "_draw",
+    value: function _draw() {
+      var _this = this;
+
+      var program = this.program;
+      program.meshData.forEach(function (meshData, meshIndex) {
+        var positions = meshData.positions,
+            cells = meshData.cells,
+            instanceCount = meshData.instanceCount,
+            attributes = meshData.attributes,
+            uniforms = meshData.uniforms,
+            textureCoord = meshData.textureCoord,
+            enableBlend = meshData.enableBlend;
+        var gl = _this.gl;
+        if (enableBlend) gl.enable(gl.BLEND);else gl.disable(gl.BLEND);
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+
+        if (attributes) {
+          Object.values(attributes).forEach(function (_ref) {
+            var name = _ref.name,
+                data = _ref.data,
+                divisor = _ref.divisor;
+            gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+            if (divisor != null) {
+              var location = gl.getAttribLocation(program, name);
+              gl.enableVertexAttribArray(location);
+
+              if (gl.vertexAttribDivisor) {
+                gl.vertexAttribDivisor(location, divisor);
+              } else if (_this.aia_ext) {
+                _this.aia_ext.vertexAttribDivisorANGLE(location, divisor);
+              }
+            }
+          });
+        }
+
+        if (uniforms) {
+          Object.entries(uniforms).forEach(function (_ref2) {
+            var _ref3 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref2, 2),
+                key = _ref3[0],
+                value = _ref3[1];
+
+            _this.uniforms[key] = value;
+          });
+        }
+
+        if (program._enableTextures && program._buffers.texCoordBuffer) {
+          var texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
+          gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
+        }
+
+        if (instanceCount != null) {
+          if (gl.drawElementsInstanced) {
+            gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          } else if (_this.aia_ext) {
+            _this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          }
+        } else {
+          gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+        }
+      });
+    }
+  }, {
+    key: "deleteProgram",
+    value: function deleteProgram(program) {
+      var gl = this.gl;
+
+      if (this.program === program) {
+        this.startRender = false;
+
+        if (this[_renderFrameID]) {
+          cancelAnimationFrame(this[_renderFrameID]);
+          delete this[_renderFrameID];
+        }
+
+        gl.useProgram(null);
+      }
+
+      var idx = this.programs.indexOf(program);
+
+      if (idx >= 0) {
+        this.programs.splice(idx, 1);
+      }
+
+      clearBuffers(gl, program);
+      gl.deleteProgram(program);
+    }
+  }, {
+    key: "clearTextures",
+    value: function clearTextures() {
+      var gl = this.gl;
+      this.textures.forEach(function (texture) {
+        gl.deleteTexture(texture);
+      });
+      this.textures = [];
+    }
+  }, {
+    key: "deleteTexture",
+    value: function deleteTexture(texture) {
+      var textures = this.textures;
+      var idx = textures.indexOf(texture);
+
+      if (idx >= 0) {
+        var image = texture._img;
+        textures.splice(idx, 1);
+        this.gl.deleteTexture(texture);
+
+        if (typeof image.close === 'function') {
+          // release ImageBitmap
+          image.close();
+        }
+      }
+
+      return texture;
+    }
+    /**
+      [{
+        positions: ...
+        cells: ...
+        textureCoord: ...
+        attributes: {name: {data:..., normalize: true}},
+        uniforms: ...
+      }]
+     */
+
+  }, {
+    key: "setMeshData",
+    value: function setMeshData(data) {
+      var _this2 = this;
+
+      if (!Array.isArray(data)) {
+        data = [data];
+      }
+
+      var program = this.program;
+      program.meshData = data.map(function (_ref4) {
+        var positions = _ref4.positions,
+            instanceCount = _ref4.instanceCount,
+            cells = _ref4.cells,
+            attributes = _ref4.attributes,
+            uniforms = _ref4.uniforms,
+            textureCoord = _ref4.textureCoord,
+            enableBlend = _ref4.enableBlend;
+        var meshData = {
+          positions: Renderer.FLOAT(positions),
+          cells: Renderer.USHORT(cells),
+          uniforms: uniforms,
+          enableBlend: !!enableBlend,
+          textureCoord: Renderer.FLOAT(textureCoord)
+        };
+
+        if (instanceCount != null) {
+          if (!_this2.isWebGL2 && !_this2.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');else meshData.instanceCount = instanceCount;
+        }
+
+        if (attributes) {
+          var copied = {};
+          Object.entries(attributes).forEach(function (_ref5) {
+            var _ref6 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref5, 2),
+                key = _ref6[0],
+                value = _ref6[1];
+
+            if (!program._attribute[key]) {
+              // throw new Error(`Invalid attribute ${key}.`);
+              if (true) console.warn("Ignored attribute ".concat(key, "."));
+              program._attribute[key] = 'ignored';
+            } else if (program._attribute[key] !== 'ignored') {
+              var _program$_attribute$k = program._attribute[key],
+                  name = _program$_attribute$k.name,
+                  type = _program$_attribute$k.type;
+              var buffer = value.data || value;
+
+              if (Array.isArray(buffer)) {
+                buffer = Renderer[type](buffer);
+              }
+
+              copied[key] = {
+                name: name,
+                data: buffer
+              };
+
+              if (value.divisor != null) {
+                if (!_this2.isWebGL2 && !_this2.aia_ext) throw new Error('Cannot use divisor in this rendering context, use webgl2 context instead.');else copied[key].divisor = value.divisor;
+              }
+            }
+          });
+          meshData.attributes = copied;
+        }
+
+        return meshData;
+      });
+      if (this.options.autoUpdate) this.update();
+    }
+  }, {
+    key: "createProgram",
+    value: function createProgram(fragmentShader, vertexShader) {
+      var _this3 = this;
+
+      // this.deleteProgram();
+      // this._events = {};
+      var enableTextures = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
+      if (fragmentShader == null) fragmentShader = _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default.a;
+      if (vertexShader == null) vertexShader = enableTextures ? _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_10___default.a : _default_vert_glsl__WEBPACK_IMPORTED_MODULE_8___default.a;
+      var gl = this.gl;
+
+      var program = Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["createProgram"])(gl, vertexShader, fragmentShader);
+
+      program.shaderText = {
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader
+      };
+      program._buffers = {};
+      program._attribute = {};
+      program.uniforms = {};
+      program._samplerMap = {};
+      program._bindTextures = [];
+      program._enableTextures = enableTextures; // console.log(vertexShader);
+
+      var pattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexPosition), 'im');
+      var matched = vertexShader.match(pattern);
+
+      if (matched) {
+        program._dimension = Number(matched[1]);
+      }
+
+      var attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
+      matched = vertexShader.match(attributePattern);
+
+      if (matched) {
+        for (var i = 0; i < matched.length; i++) {
+          var patt = /^\s*attribute (\w+?)(\d*) (\w+)/im;
+
+          var _matched = matched[i].match(patt);
+
+          if (_matched && _matched[3] !== this.options.vertexPosition && _matched[3] !== this.options.vertexTextureCoord) {
+            var _matched2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_matched, 4),
+                type = _matched2[1],
+                size = _matched2[2],
+                name = _matched2[3];
+
+            if (type === 'mat') size = Math.pow(size, 2);
+            program._buffers[name] = gl.createBuffer();
+            program._attribute[name] = {
+              name: name,
+              type: type,
+              size: Number(size) || 1
+            };
+          }
+        }
+      }
+
+      var uniformPattern = /^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/mg;
+      matched = vertexShader.match(uniformPattern) || [];
+      matched = matched.concat(fragmentShader.match(uniformPattern) || []);
+      matched.forEach(function (m) {
+        var _matched = m.match(/^\s*uniform\s+(\w+)\s+(\w+)(\[\d+\])?/);
+
+        var _matched$slice = _matched.slice(1),
+            _matched$slice2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_matched$slice, 3),
+            type = _matched$slice2[0],
+            name = _matched$slice2[1],
+            isTypeV = _matched$slice2[2];
+
+        type = uniformTypeMap[type];
+        isTypeV = !!isTypeV;
+
+        if (type.indexOf('Matrix') !== 0 && isTypeV) {
+          type += 'v';
+        }
+
+        _this3._declareUniform(program, name, type);
+      });
+      program._buffers.verticesBuffer = gl.createBuffer();
+      program._buffers.cellsBuffer = gl.createBuffer();
+
+      if (program._enableTextures) {
+        program._buffers.texCoordBuffer = gl.createBuffer();
+      }
+
+      this.programs.push(program);
+      return program;
+    }
+  }, {
+    key: "useProgram",
+    value: function useProgram(program) {
+      var attrOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      this.startRender = false;
+
+      if (this[_renderFrameID]) {
+        cancelAnimationFrame(this[_renderFrameID]);
+        delete this[_renderFrameID];
+      }
+
+      var gl = this.gl;
+      gl.useProgram(program);
+      this.program = program;
+      var dimension = program._dimension;
+      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
+      var vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
+      gl.vertexAttribPointer(vPosition, dimension, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(vPosition);
+
+      if (program._enableTextures) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
+        var vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
+        gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(vTexCoord);
+      }
+
+      Object.entries(program._attribute).forEach(function (_ref7) {
+        var _ref8 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_ref7, 2),
+            name = _ref8[0],
+            item = _ref8[1];
+
+        var size = item.size;
+        var options = attrOptions[name] || {};
+        var normalize = !!options.normalize;
+        var bufferType = options.type || 'FLOAT';
+        var key = options.key || name;
+        if (bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
+        if (bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
+        item.type = bufferType;
+
+        if (key && key !== name) {
+          program._attribute[key] = item;
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+        var attrib = gl.getAttribLocation(program, name); // console.log(size, gl[bufferType]);
+
+        gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+        gl.enableVertexAttribArray(attrib);
+      });
+
+      if (!program.meshData) {
+        var positions = [[-1, -1, 0, 1].slice(0, dimension), [1, -1, 0, 1].slice(0, dimension), [1, 1, 0, 1].slice(0, dimension), [-1, 1, 0, 1].slice(0, dimension)];
+        var cells = [[0, 1, 3], [3, 1, 2]];
+        this.setMeshData({
+          positions: positions,
+          cells: cells
+        });
+      }
+
+      return program;
+    }
+  }, {
+    key: "compileSync",
+    value: function compileSync(frag, vert) {
+      frag = frag || _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default.a;
+      var loaded = {};
+
+      function _compile(content) {
+        content = content.replace(/^\s*/mg, '');
+        var includes = [];
+        var matched = content.match(/^#pragma\s+include\s+.*/mg);
+
+        if (matched) {
+          // console.log(matched, url);
+          for (var i = 0; i < matched.length; i++) {
+            var m = matched[i];
+
+            var _matched = m.match(/(?:<|")(.*)(?:>|")/);
+
+            if (_matched) {
+              var type = _matched[0].indexOf('<') === 0 ? 'lib' : 'link';
+              var name = _matched[1];
+              if (name === 'graph') name = 'graphics';
+
+              if (!loaded[name]) {
+                loaded[name] = true;
+
+                if (type === 'lib') {
+                  var c = _compile(GLSL_LIBS[name]); // eslint-disable-line no-await-in-loop
+
+
+                  includes.push(c);
+                } else if (type === 'link') {
+                  throw new Error('Cannot load external links synchronously. Use compile instead of compileSync.');
+                }
+              } else {
+                includes.push("/* included ".concat(name, " */"));
+              }
+            }
+          }
+
+          includes.forEach(function (inc) {
+            content = content.replace(/^#pragma\s+include\s+.*/m, inc);
+          });
+        }
+
+        return content;
+      }
+
+      var fragmentShader = _compile(frag);
+
+      var vertexShader = vert ? _compile(vert) : null;
+      var program = this.createProgram(fragmentShader, vertexShader);
+      return program;
+    }
+  }, {
+    key: "compile",
+    value: function () {
+      var _compile2 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(frag, vert) {
+        var loaded, _compile, _compile3, fragmentShader, vertexShader, program;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _compile3 = function _ref10() {
+                  _compile3 = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
+                  /*#__PURE__*/
+                  _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(content) {
+                    var includes, matched, i, m, _matched, type, name, c, _c;
+
+                    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            content = content.replace(/^\s*/mg, '');
+                            includes = [];
+                            matched = content.match(/^#pragma\s+include\s+.*/mg);
+
+                            if (!matched) {
+                              _context.next = 36;
+                              break;
+                            }
+
+                            i = 0;
+
+                          case 5:
+                            if (!(i < matched.length)) {
+                              _context.next = 35;
+                              break;
+                            }
+
+                            m = matched[i];
+                            _matched = m.match(/(?:<|")(.*)(?:>|")/);
+
+                            if (!_matched) {
+                              _context.next = 32;
+                              break;
+                            }
+
+                            type = _matched[0].indexOf('<') === 0 ? 'lib' : 'link';
+                            name = _matched[1];
+                            if (name === 'graph') name = 'graphics';
+
+                            if (loaded[name]) {
+                              _context.next = 31;
+                              break;
+                            }
+
+                            loaded[name] = true; // TODO: 这里可以优化成异步加载
+
+                            if (!(type === 'lib')) {
+                              _context.next = 21;
+                              break;
+                            }
+
+                            _context.next = 17;
+                            return _compile(GLSL_LIBS[name]);
+
+                          case 17:
+                            c = _context.sent;
+                            // eslint-disable-line no-await-in-loop
+                            includes.push(c);
+                            _context.next = 29;
+                            break;
+
+                          case 21:
+                            if (!(type === 'link')) {
+                              _context.next = 29;
+                              break;
+                            }
+
+                            _context.next = 24;
+                            return fetchShader(name);
+
+                          case 24:
+                            _c = _context.sent;
+                            _context.next = 27;
+                            return _compile(_c);
+
+                          case 27:
+                            _c = _context.sent;
+                            // eslint-disable-line no-await-in-loop
+                            includes.push(_c);
+
+                          case 29:
+                            _context.next = 32;
+                            break;
+
+                          case 31:
+                            includes.push("/* included ".concat(name, " */"));
+
+                          case 32:
+                            i++;
+                            _context.next = 5;
+                            break;
+
+                          case 35:
+                            includes.forEach(function (inc) {
+                              content = content.replace(/^#pragma\s+include\s+.*/m, inc);
+                            });
+
+                          case 36:
+                            return _context.abrupt("return", content);
+
+                          case 37:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee);
+                  }));
+                  return _compile3.apply(this, arguments);
+                };
+
+                _compile = function _ref9(_x4) {
+                  return _compile3.apply(this, arguments);
+                };
+
+                frag = frag || _default_frag_glsl__WEBPACK_IMPORTED_MODULE_9___default.a;
+                loaded = {};
+                _context2.next = 6;
+                return _compile(frag);
+
+              case 6:
+                fragmentShader = _context2.sent;
+
+                if (!vert) {
+                  _context2.next = 13;
+                  break;
+                }
+
+                _context2.next = 10;
+                return _compile(vert);
+
+              case 10:
+                _context2.t0 = _context2.sent;
+                _context2.next = 14;
+                break;
+
+              case 13:
+                _context2.t0 = null;
+
+              case 14:
+                vertexShader = _context2.t0;
+                program = this.createProgram(fragmentShader, vertexShader);
+                return _context2.abrupt("return", program);
+
+              case 17:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function compile(_x2, _x3) {
+        return _compile2.apply(this, arguments);
+      }
+
+      return compile;
+    }()
+  }, {
+    key: "load",
+    value: function () {
+      var _load = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(frag) {
+        var vert,
+            _args3 = arguments;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                vert = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : null;
+                _context3.next = 3;
+                return fetchShader(frag);
+
+              case 3:
+                frag = _context3.sent;
+
+                if (!vert) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                _context3.next = 7;
+                return fetchShader(vert);
+
+              case 7:
+                vert = _context3.sent;
+
+              case 8:
+                return _context3.abrupt("return", this.compile(frag, vert));
+
+              case 9:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function load(_x5) {
+        return _load.apply(this, arguments);
+      }
+
+      return load;
+    }()
+  }, {
+    key: "createTexture",
+    value: function createTexture(img) {
+      var _this4 = this;
+
+      var gl = this.gl;
+      gl.activeTexture(gl.TEXTURE15);
+      var texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // Prevents s-coordinate wrapping (repeating).
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // Prevents t-coordinate wrapping (repeating).
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      texture._img = img;
+      this.textures.push(texture);
+
+      texture.delete = function () {
+        _this4.deleteTexture(texture);
+      };
+
+      return texture;
+    }
+  }, {
+    key: "loadTexture",
+    value: function () {
+      var _loadTexture = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(source) {
+        var _ref11,
+            _ref11$useImageBitmap,
+            useImageBitmap,
+            img,
+            _args4 = arguments;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _ref11 = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {}, _ref11$useImageBitmap = _ref11.useImageBitmap, useImageBitmap = _ref11$useImageBitmap === void 0 ? true : _ref11$useImageBitmap;
+                _context4.next = 3;
+                return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useImageBitmap);
+
+              case 3:
+                img = _context4.sent;
+                return _context4.abrupt("return", this.createTexture(img));
+
+              case 5:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function loadTexture(_x6) {
+        return _loadTexture.apply(this, arguments);
+      }
+
+      return loadTexture;
+    }()
+  }, {
+    key: "render",
+    value: function render() {
+      var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref12$clearBuffer = _ref12.clearBuffer,
+          clearBuffer = _ref12$clearBuffer === void 0 ? true : _ref12$clearBuffer;
+
+      this.startRender = true;
+      var gl = this.gl;
+      var program = this.program;
+
+      if (!program) {
+        program = this.createProgram();
+        this.useProgram(program);
+      }
+
+      if (clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
+      var lastFrameID = this[_renderFrameID];
+
+      this._draw();
+
+      if (this[_renderFrameID] === lastFrameID) {
+        this[_renderFrameID] = null;
+      }
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      if (!this.startRender) return;
+
+      if (this[_renderFrameID] == null) {
+        this[_renderFrameID] = requestAnimationFrame(this.render.bind(this));
+      }
+    }
+  }, {
+    key: "isWebGL2",
+    get: function get() {
+      return typeof WebGL2RenderingContext !== 'undefined' && this.gl instanceof WebGL2RenderingContext;
+    }
+  }, {
+    key: "enableTextures",
+    get: function get() {
+      return this.program && this.program._enableTextures;
+    }
+  }, {
+    key: "uniforms",
+    get: function get() {
+      var program = this.program;
+
+      if (!program || !program.uniforms) {
+        throw Error('No avaliable program.');
+      }
+
+      return program.uniforms;
+    }
+  }]);
+
+  return Renderer;
+}();
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "defaultOptions", {
+  preserveDrawingBuffer: true,
+  autoUpdate: true,
+  vertexPosition: 'a_vertexPosition',
+  vertexTextureCoord: 'a_vertexTextureCoord',
+  webgl2: false
+});
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "UBYTE", Renderer.UNSIGNED_BYTE);
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "USHORT", Renderer.UNSIGNED_SHORT);
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(Renderer, "fetchShader", fetchShader);
+
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(3);
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  IteratorPrototype[iteratorSymbol] = function () {
+    return this;
+  };
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunctionPrototype[toStringTagSymbol] =
+    GeneratorFunction.displayName = "GeneratorFunction";
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      prototype[method] = function(arg) {
+        return this._invoke(method, arg);
+      };
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      if (!(toStringTagSymbol in genFun)) {
+        genFun[toStringTagSymbol] = "GeneratorFunction";
+      }
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return Promise.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return Promise.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new Promise(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+    return this;
+  };
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList) {
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList)
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  Gp[toStringTagSymbol] = "Generator";
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  Gp[iteratorSymbol] = function() {
+    return this;
+  };
+
+  Gp.toString = function() {
+    return "[object Generator]";
+  };
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   true ? module.exports : undefined
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  Function("r", "regeneratorRuntime = r")(runtime);
+}
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithHoles = __webpack_require__(5);
+
+var iterableToArrayLimit = __webpack_require__(6);
+
+var nonIterableRest = __webpack_require__(7);
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || nonIterableRest();
+}
+
+module.exports = _slicedToArray;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+module.exports = _arrayWithHoles;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+function _iterableToArrayLimit(arr, i) {
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+module.exports = _iterableToArrayLimit;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+module.exports = _nonIterableRest;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(9);
+
+var iterableToArray = __webpack_require__(10);
+
+var nonIterableSpread = __webpack_require__(11);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+module.exports = _createClass;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+module.exports = _asyncToGenerator;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupWebGL", function() { return setupWebGL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProgram", function() { return createProgram; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pointsToBuffer", function() { return pointsToBuffer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadImage", function() { return loadImage; });
+function create3DContext(canvas, opt_attribs) {
+  var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
+  var context = null;
+
+  for (var ii = 0; ii < names.length; ++ii) {
+    try {
+      context = canvas.getContext(names[ii], opt_attribs);
+    } catch (e) {// no-empty
+    }
+
+    if (context) {
+      break;
+    }
+  }
+
+  return context;
+}
+
+function setupWebGL(canvas, opt_attribs) {
+  var context = create3DContext(canvas, opt_attribs);
+
+  if (!context) {
+    throw new Error('Sorry, your browser doesn\'t support WebGL.');
+  }
+
+  return context;
+}
+function createProgram(gl, vertex, fragment) {
+  var vertShdr = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertShdr, vertex);
+  gl.compileShader(vertShdr);
+
+  if (!gl.getShaderParameter(vertShdr, gl.COMPILE_STATUS)) {
+    var msg = "Vertex shader failed to compile.  The error log is:".concat(gl.getShaderInfoLog(vertShdr));
+    console.error(msg);
+    return -1;
+  }
+
+  var fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragShdr, fragment);
+  gl.compileShader(fragShdr);
+
+  if (!gl.getShaderParameter(fragShdr, gl.COMPILE_STATUS)) {
+    var _msg = "Fragment shader failed to compile.  The error log is:".concat(gl.getShaderInfoLog(fragShdr));
+
+    console.error(_msg);
+    return -1;
+  }
+
+  var program = gl.createProgram();
+  gl.attachShader(program, vertShdr);
+  gl.attachShader(program, fragShdr);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    var _msg2 = "Shader program failed to link.  The error log is:".concat(gl.getProgramInfoLog(program));
+
+    console.error(_msg2);
+    return -1;
+  }
+
+  gl.deleteShader(vertShdr);
+  gl.deleteShader(fragShdr);
+  return program;
+}
+function pointsToBuffer(points) {
+  var Type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Float32Array;
+  if (points == null) return points;
+  if (points instanceof Type) return points;
+  if (points[0] == null || points[0].length == null) return new Type(points);
+  var deminsion = points[0].length;
+  var len = points.length;
+  var buffer = new Type(deminsion * len);
+  var idx = 0;
+
+  for (var i = 0; i < len; i++) {
+    for (var j = 0; j < deminsion; j++) {
+      buffer[idx++] = points[i][j];
+    }
+  }
+
+  return buffer;
+}
+var imageCache = {};
+function loadImage(src) {
+  var useImageBitmap = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+  if (!imageCache[src]) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    imageCache[src] = new Promise(function (resolve) {
+      img.onload = function () {
+        if (useImageBitmap && typeof createImageBitmap === 'function') {
+          createImageBitmap(img, {
+            imageOrientation: 'flipY'
+          }).then(function (bitmap) {
+            imageCache[src] = bitmap;
+            resolve(bitmap);
+          });
+        } else {
+          imageCache[src] = img;
+          resolve(img);
+        }
+      };
+
+      img.src = src;
+    });
+  }
+
+  return Promise.resolve(imageCache[src]);
+}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = "attribute vec3 a_vertexPosition;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = vec4(a_vertexPosition, 1);\n}\n"
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#endif\nvoid main() {\n\tgl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);\n}\n"
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = "attribute vec4 a_vertexPosition;\nattribute vec2 a_vertexTextureCoord;\nvarying vec2 vTextureCoord;\nvoid main() {\n\tgl_PointSize = 1.0;\n\tgl_Position = a_vertexPosition;\n\tvTextureCoord = a_vertexTextureCoord;\n}\n"
+
+/***/ })
+/******/ ])["default"];
+});
