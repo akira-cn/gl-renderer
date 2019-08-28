@@ -102,7 +102,10 @@ export function loadImage(src, useImageBitmap = true) {
       }).then((response) => {
         return response.blob();
       }).then((blob) => {
-        return createImageBitmap(blob, {imageOrientation: 'flipY'});
+        return createImageBitmap(blob, {imageOrientation: 'flipY'}).then((bitmap) => {
+          imageCache[src] = bitmap;
+          return bitmap;
+        });
       });
     }
   }

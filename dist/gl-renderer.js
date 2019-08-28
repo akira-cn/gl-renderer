@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "06c67430c8a1052495b1";
+/******/ 	var hotCurrentHash = "f00898bc3804239950f2";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2918,6 +2918,9 @@ function loadImage(src) {
       }).then(function (blob) {
         return createImageBitmap(blob, {
           imageOrientation: 'flipY'
+        }).then(function (bitmap) {
+          imageCache[src] = bitmap;
+          return bitmap;
         });
       });
     }
