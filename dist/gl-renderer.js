@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "d917e7b164187065d6eb";
+/******/ 	var hotCurrentHash = "06c67430c8a1052495b1";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2887,25 +2887,40 @@ function loadImage(src) {
   var useImageBitmap = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
   if (!imageCache[src]) {
-    var img = new Image();
-    img.crossOrigin = 'anonymous';
-    imageCache[src] = new Promise(function (resolve) {
-      img.onload = function () {
-        if (useImageBitmap && typeof createImageBitmap === 'function') {
-          createImageBitmap(img, {
-            imageOrientation: 'flipY'
-          }).then(function (bitmap) {
-            imageCache[src] = bitmap;
-            resolve(bitmap);
-          });
-        } else {
-          imageCache[src] = img;
-          resolve(img);
-        }
-      };
+    if (typeof Image === 'function') {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+      imageCache[src] = new Promise(function (resolve) {
+        img.onload = function () {
+          if (useImageBitmap && typeof createImageBitmap === 'function') {
+            createImageBitmap(img, {
+              imageOrientation: 'flipY'
+            }).then(function (bitmap) {
+              imageCache[src] = bitmap;
+              resolve(bitmap);
+            });
+          } else {
+            imageCache[src] = img;
+            resolve(img);
+          }
+        };
 
-      img.src = src;
-    });
+        img.src = src;
+      });
+    } else {
+      // run in worker
+      return fetch(src, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default'
+      }).then(function (response) {
+        return response.blob();
+      }).then(function (blob) {
+        return createImageBitmap(blob, {
+          imageOrientation: 'flipY'
+        });
+      });
+    }
   }
 
   return Promise.resolve(imageCache[src]);

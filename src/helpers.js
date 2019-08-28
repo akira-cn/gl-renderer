@@ -77,22 +77,34 @@ export function pointsToBuffer(points, Type = Float32Array) {
 const imageCache = {};
 export function loadImage(src, useImageBitmap = true) {
   if(!imageCache[src]) {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    imageCache[src] = new Promise((resolve) => {
-      img.onload = function () {
-        if(useImageBitmap && typeof createImageBitmap === 'function') {
-          createImageBitmap(img, {imageOrientation: 'flipY'}).then((bitmap) => {
-            imageCache[src] = bitmap;
-            resolve(bitmap);
-          });
-        } else {
-          imageCache[src] = img;
-          resolve(img);
-        }
-      };
-      img.src = src;
-    });
+    if(typeof Image === 'function') {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      imageCache[src] = new Promise((resolve) => {
+        img.onload = function () {
+          if(useImageBitmap && typeof createImageBitmap === 'function') {
+            createImageBitmap(img, {imageOrientation: 'flipY'}).then((bitmap) => {
+              imageCache[src] = bitmap;
+              resolve(bitmap);
+            });
+          } else {
+            imageCache[src] = img;
+            resolve(img);
+          }
+        };
+        img.src = src;
+      });
+    } else { // run in worker
+      return fetch(src, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default',
+      }).then((response) => {
+        return response.blob();
+      }).then((blob) => {
+        return createImageBitmap(blob, {imageOrientation: 'flipY'});
+      });
+    }
   }
   return Promise.resolve(imageCache[src]);
 }
