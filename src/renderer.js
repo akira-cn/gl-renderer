@@ -440,26 +440,28 @@ export default class Renderer {
     }
 
     Object.entries(program._attribute).forEach(([name, item]) => {
-      const size = item.size;
-      const options = attrOptions[name] || {};
-      const normalize = !!options.normalize;
-      let bufferType = options.type || 'FLOAT';
-      const key = options.key || name;
+      if(item !== 'ignored') {
+        const size = item.size;
+        const options = attrOptions[name] || {};
+        const normalize = !!options.normalize;
+        let bufferType = options.type || 'FLOAT';
+        const key = options.key || name;
 
-      if(bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
-      if(bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
+        if(bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
+        if(bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
 
-      item.type = bufferType;
+        item.type = bufferType;
 
-      if(key && key !== name) {
-        program._attribute[key] = item;
+        if(key && key !== name) {
+          program._attribute[key] = item;
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+        const attrib = gl.getAttribLocation(program, name);
+        // console.log(size, gl[bufferType]);
+        gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+        gl.enableVertexAttribArray(attrib);
       }
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
-      const attrib = gl.getAttribLocation(program, name);
-      // console.log(size, gl[bufferType]);
-      gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
-      gl.enableVertexAttribArray(attrib);
     });
 
     if(!program.meshData) {

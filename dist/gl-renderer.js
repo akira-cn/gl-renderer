@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "f00898bc3804239950f2";
+/******/ 	var hotCurrentHash = "2803e3455bbbd2763f27";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1391,24 +1391,26 @@ function () {
             name = _ref8[0],
             item = _ref8[1];
 
-        var size = item.size;
-        var options = attrOptions[name] || {};
-        var normalize = !!options.normalize;
-        var bufferType = options.type || 'FLOAT';
-        var key = options.key || name;
-        if (bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
-        if (bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
-        item.type = bufferType;
+        if (item !== 'ignored') {
+          var size = item.size;
+          var options = attrOptions[name] || {};
+          var normalize = !!options.normalize;
+          var bufferType = options.type || 'FLOAT';
+          var key = options.key || name;
+          if (bufferType === 'UBYTE') bufferType = 'UNSIGNED_BYTE';
+          if (bufferType === 'USHORT') bufferType = 'UNSIGNED_SHORT';
+          item.type = bufferType;
 
-        if (key && key !== name) {
-          program._attribute[key] = item;
+          if (key && key !== name) {
+            program._attribute[key] = item;
+          }
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
+          var attrib = gl.getAttribLocation(program, name); // console.log(size, gl[bufferType]);
+
+          gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+          gl.enableVertexAttribArray(attrib);
         }
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
-        var attrib = gl.getAttribLocation(program, name); // console.log(size, gl[bufferType]);
-
-        gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
-        gl.enableVertexAttribArray(attrib);
       });
 
       if (!program.meshData) {
