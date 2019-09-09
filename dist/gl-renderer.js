@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "c2c9797f38c0d95f4054";
+/******/ 	var hotCurrentHash = "e8b2ab37d4dcea8ad587";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1080,6 +1080,7 @@ function () {
         var positions = meshData.positions,
             cells = meshData.cells,
             instanceCount = meshData.instanceCount,
+            cellsCount = meshData.cellsCount,
             attributes = meshData.attributes,
             uniforms = meshData.uniforms,
             textureCoord = meshData.textureCoord,
@@ -1130,12 +1131,12 @@ function () {
 
         if (instanceCount != null) {
           if (gl.drawElementsInstanced) {
-            gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+            gl.drawElementsInstanced(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
           } else if (_this.aia_ext) {
-            _this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+            _this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
           }
         } else {
-          gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+          gl.drawElements(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0);
         }
       });
     }
@@ -1216,6 +1217,7 @@ function () {
         var positions = _ref4.positions,
             instanceCount = _ref4.instanceCount,
             cells = _ref4.cells,
+            cellsCount = _ref4.cellsCount,
             attributes = _ref4.attributes,
             uniforms = _ref4.uniforms,
             textureCoord = _ref4.textureCoord,
@@ -1227,6 +1229,7 @@ function () {
           enableBlend: !!enableBlend,
           textureCoord: Renderer.FLOAT(textureCoord)
         };
+        meshData.cellsCount = cellsCount || meshData.cells.length;
 
         if (instanceCount != null) {
           if (!_this2.isWebGL2 && !_this2.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');else meshData.instanceCount = instanceCount;
