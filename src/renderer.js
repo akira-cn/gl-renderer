@@ -71,24 +71,24 @@ export default class Renderer {
     Object.assign(GLSL_LIBS, libs);
   }
 
-  static FLOAT(points) {
-    return pointsToBuffer(points);
+  static FLOAT(points, buffer) {
+    return pointsToBuffer(points, Float32Array, buffer);
   }
 
-  static UNSIGNED_BYTE(points) {
-    return pointsToBuffer(points, Uint8Array);
+  static UNSIGNED_BYTE(points, buffer) {
+    return pointsToBuffer(points, Uint8Array, buffer);
   }
 
-  static UNSIGNED_SHORT(points) {
-    return pointsToBuffer(points, Uint16Array);
+  static UNSIGNED_SHORT(points, buffer) {
+    return pointsToBuffer(points, Uint16Array, buffer);
   }
 
-  static BYTE(points) {
-    return pointsToBuffer(points, Int8Array);
+  static BYTE(points, buffer) {
+    return pointsToBuffer(points, Int8Array, buffer);
   }
 
-  static SHORT(points) {
-    return pointsToBuffer(points, Int16Array);
+  static SHORT(points, buffer) {
+    return pointsToBuffer(points, Int16Array, buffer);
   }
 
   static UBYTE = Renderer.UNSIGNED_BYTE;

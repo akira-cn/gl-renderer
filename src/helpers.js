@@ -58,13 +58,24 @@ export function createProgram(gl, vertex, fragment) {
   return program;
 }
 
-export function pointsToBuffer(points, Type = Float32Array) {
+export function pointsToBuffer(points, Type = Float32Array, buffer = null) {
+  if(buffer && !(buffer instanceof Type)) throw new TypeError('Wrong buffer type.');
   if(points == null) return points;
   if(points instanceof Type) return points;
-  if(points[0] == null || points[0].length == null) return new Type(points);
+  if(points[0] == null || points[0].length == null) {
+    if(buffer) {
+      for(let i = 0; i < points.length; i++) {
+        buffer[i] = points[i];
+      }
+      return buffer;
+    }
+    return new Type(points);
+  }
   const deminsion = points[0].length;
   const len = points.length;
-  const buffer = new Type(deminsion * len);
+  if(!buffer) {
+    buffer = new Type(deminsion * len);
+  }
   let idx = 0;
   for(let i = 0; i < len; i++) {
     for(let j = 0; j < deminsion; j++) {

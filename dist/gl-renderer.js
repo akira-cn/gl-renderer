@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "2803e3455bbbd2763f27";
+/******/ 	var hotCurrentHash = "c2c9797f38c0d95f4054";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -961,28 +961,28 @@ function () {
     }
   }, {
     key: "FLOAT",
-    value: function FLOAT(points) {
-      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points);
+    value: function FLOAT(points, buffer) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Float32Array, buffer);
     }
   }, {
     key: "UNSIGNED_BYTE",
-    value: function UNSIGNED_BYTE(points) {
-      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint8Array);
+    value: function UNSIGNED_BYTE(points, buffer) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint8Array, buffer);
     }
   }, {
     key: "UNSIGNED_SHORT",
-    value: function UNSIGNED_SHORT(points) {
-      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint16Array);
+    value: function UNSIGNED_SHORT(points, buffer) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Uint16Array, buffer);
     }
   }, {
     key: "BYTE",
-    value: function BYTE(points) {
-      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int8Array);
+    value: function BYTE(points, buffer) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int8Array, buffer);
     }
   }, {
     key: "SHORT",
-    value: function SHORT(points) {
-      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int16Array);
+    value: function SHORT(points, buffer) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int16Array, buffer);
     }
   }]);
 
@@ -2868,17 +2868,35 @@ function createProgram(gl, vertex, fragment) {
 }
 function pointsToBuffer(points) {
   var Type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Float32Array;
+  var buffer = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  if (buffer && !(buffer instanceof Type)) throw new TypeError('Wrong buffer type.');
   if (points == null) return points;
   if (points instanceof Type) return points;
-  if (points[0] == null || points[0].length == null) return new Type(points);
+
+  if (points[0] == null || points[0].length == null) {
+    if (buffer) {
+      for (var i = 0; i < points.length; i++) {
+        buffer[i] = points[i];
+      }
+
+      return buffer;
+    }
+
+    return new Type(points);
+  }
+
   var deminsion = points[0].length;
   var len = points.length;
-  var buffer = new Type(deminsion * len);
+
+  if (!buffer) {
+    buffer = new Type(deminsion * len);
+  }
+
   var idx = 0;
 
-  for (var i = 0; i < len; i++) {
+  for (var _i = 0; _i < len; _i++) {
     for (var j = 0; j < deminsion; j++) {
-      buffer[idx++] = points[i][j];
+      buffer[idx++] = points[_i][j];
     }
   }
 
