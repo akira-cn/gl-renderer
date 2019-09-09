@@ -179,7 +179,7 @@ export default class Renderer {
     const program = this.program;
 
     program.meshData.forEach((meshData, meshIndex) => {
-      const {positions, cells, instanceCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
+      const {positions, cells, instanceCount, cellsCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
       if(enableBlend) gl.enable(gl.BLEND);
       else gl.disable(gl.BLEND);
@@ -217,12 +217,12 @@ export default class Renderer {
       }
       if(instanceCount != null) {
         if(gl.drawElementsInstanced) {
-          gl.drawElementsInstanced(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          gl.drawElementsInstanced(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
         } else if(this.aia_ext) {
-          this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0, instanceCount);
+          this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
         }
       } else {
-        gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0);
       }
     });
   }
@@ -301,7 +301,7 @@ export default class Renderer {
 
     const program = this.program;
 
-    program.meshData = data.map(({positions, instanceCount, cells, attributes, uniforms, textureCoord, enableBlend}) => {
+    program.meshData = data.map(({positions, instanceCount, cells, cellsCount, attributes, uniforms, textureCoord, enableBlend}) => {
       const meshData = {
         positions: Renderer.FLOAT(positions),
         cells: Renderer.USHORT(cells),
@@ -309,6 +309,7 @@ export default class Renderer {
         enableBlend: !!enableBlend,
         textureCoord: Renderer.FLOAT(textureCoord),
       };
+      meshData.cellsCount = cellsCount || meshData.cells.length;
       if(instanceCount != null) {
         if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');
         else meshData.instanceCount = instanceCount;
