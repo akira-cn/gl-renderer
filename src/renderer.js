@@ -117,7 +117,6 @@ export default class Renderer {
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-    this.textures = [];
     this.programs = [];
     this._events = {};
   }
@@ -261,28 +260,6 @@ export default class Renderer {
 
     clearBuffers(gl, program);
     gl.deleteProgram(program);
-  }
-
-  clearTextures() {
-    const gl = this.gl;
-    this.textures.forEach((texture) => {
-      gl.deleteTexture(texture);
-    });
-    this.textures = [];
-  }
-
-  deleteTexture(texture) {
-    const textures = this.textures;
-    const idx = textures.indexOf(texture);
-    if(idx >= 0) {
-      const image = texture._img;
-      textures.splice(idx, 1);
-      this.gl.deleteTexture(texture);
-      if(typeof image.close === 'function') { // release ImageBitmap
-        image.close();
-      }
-    }
-    return texture;
   }
 
   /**
@@ -608,11 +585,18 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
     texture._img = img;
-    this.textures.push(texture);
     texture.delete = () => {
       this.deleteTexture(texture);
     };
     return texture;
+  }
+
+  deleteTexture(texture) {
+    const image = texture._img;
+    this.gl.deleteTexture(texture);
+    if(typeof image.close === 'function') { // release ImageBitmap
+      image.close();
+    }
   }
 
   async loadTexture(source, {useImageBitmap = true} = {}) {
