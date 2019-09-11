@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e8b2ab37d4dcea8ad587";
+/******/ 	var hotCurrentHash = "0db551b1be675da446f0";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1008,7 +1008,6 @@ function () {
 
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    this.textures = [];
     this.programs = [];
     this._events = {};
   } // WebGLRenderingContext.uniform[1234][fi][v]()
@@ -1164,34 +1163,6 @@ function () {
 
       clearBuffers(gl, program);
       gl.deleteProgram(program);
-    }
-  }, {
-    key: "clearTextures",
-    value: function clearTextures() {
-      var gl = this.gl;
-      this.textures.forEach(function (texture) {
-        gl.deleteTexture(texture);
-      });
-      this.textures = [];
-    }
-  }, {
-    key: "deleteTexture",
-    value: function deleteTexture(texture) {
-      var textures = this.textures;
-      var idx = textures.indexOf(texture);
-
-      if (idx >= 0) {
-        var image = texture._img;
-        textures.splice(idx, 1);
-        this.gl.deleteTexture(texture);
-
-        if (typeof image.close === 'function') {
-          // release ImageBitmap
-          image.close();
-        }
-      }
-
-      return texture;
     }
     /**
       [{
@@ -1716,13 +1687,23 @@ function () {
 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       texture._img = img;
-      this.textures.push(texture);
 
       texture.delete = function () {
         _this4.deleteTexture(texture);
       };
 
       return texture;
+    }
+  }, {
+    key: "deleteTexture",
+    value: function deleteTexture(texture) {
+      var image = texture._img;
+      this.gl.deleteTexture(texture);
+
+      if (typeof image.close === 'function') {
+        // release ImageBitmap
+        image.close();
+      }
     }
   }, {
     key: "loadTexture",
