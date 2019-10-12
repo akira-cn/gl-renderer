@@ -97,6 +97,10 @@ export default class Renderer {
 
   static fetchShader = fetchShader;
 
+  static loadImage(source, useImageBitmap) {
+    return loadImage(source, useImageBitmap);
+  }
+
   constructor(canvas, opts = {}) {
     this.options = Object.assign({}, Renderer.defaultOptions, opts);
 

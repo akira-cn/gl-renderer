@@ -277,6 +277,11 @@ function () {
     value: function SHORT(points, buffer) {
       return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["pointsToBuffer"])(points, Int16Array, buffer);
     }
+  }, {
+    key: "loadImage",
+    value: function loadImage(source, useImageBitmap) {
+      return Object(_helpers__WEBPACK_IMPORTED_MODULE_7__["loadImage"])(source, useImageBitmap);
+    }
   }]);
 
   function Renderer(canvas) {
