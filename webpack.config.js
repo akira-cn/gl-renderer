@@ -3,6 +3,18 @@ const path = require('path');
 
 module.exports = function (env = {}) {
   const filename = env.mode === 'production' ? 'gl-renderer.min.js' : 'gl-renderer.js';
+  const plugins = [];
+
+  if(env.mode === 'development') {
+    plugins.push(new webpack.HotModuleReplacementPlugin({
+      multiStep: true,
+    }));
+  }
+
+  plugins.push(new webpack.DefinePlugin({
+    __DEV__: env.mode !== 'production',
+  }));
+
   return {
     mode: env.mode || 'none',
     entry: './src/index',
@@ -13,6 +25,7 @@ module.exports = function (env = {}) {
       library: ['GlRenderer'],
       libraryTarget: 'umd',
       libraryExport: 'default',
+      globalObject: 'this',
     },
     // resolve: {
     //
@@ -56,14 +69,7 @@ module.exports = function (env = {}) {
       // ...
     },
 
-    plugins: [
-      new webpack.HotModuleReplacementPlugin({
-        multiStep: true,
-      }),
-      new webpack.DefinePlugin({
-        __DEV__: env.mode !== 'production',
-      }),
-    ],
+    plugins,
     // list of additional plugins
 
     /* Advanced configuration (click to show) */

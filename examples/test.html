@@ -22,8 +22,8 @@
       window.program2 = await doodle.load('./test2.glsl', './vert2.glsl');
       doodle.useProgram(program, {
         a_color: {
-          type: 'UNSIGNED_BYTE',
-          normalize: true,
+          // type: 'UNSIGNED_BYTE',
+          // normalize: true,
           key: 'colors',
         },
         a_translate: {
@@ -43,9 +43,9 @@
       ];
 
       const colors = [
-        [255, 0, 0],
-        [0, 255, 0],
-        [255, 255, 0],
+        [1, 0, 0],
+        [0, 1, 0],
+        [1, 1, 0],
       ];
 
 
