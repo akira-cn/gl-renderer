@@ -308,12 +308,12 @@ function () {
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     this.programs = [];
     this._events = {};
-  } // WebGLRenderingContext.uniform[1234][fi][v]()
-  // WebGLRenderingContext.uniformMatrix[234]fv()
-
+  }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(Renderer, [{
     key: "_declareUniform",
+    // WebGLRenderingContext.uniform[1234][fi][v]()
+    // WebGLRenderingContext.uniformMatrix[234]fv()
     value: function _declareUniform(program, name) {
       var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '1f';
       var gl = this.gl;
@@ -513,7 +513,7 @@ function () {
 
             if (!program._attribute[key]) {
               // throw new Error(`Invalid attribute ${key}.`);
-              if (true) console.warn("Ignored attribute ".concat(key, "."));
+              if (false) {}
               program._attribute[key] = 'ignored';
             } else if (program._attribute[key] !== 'ignored') {
               var _program$_attribute$k = program._attribute[key],
@@ -643,8 +643,8 @@ function () {
       }
 
       var gl = this.gl;
-      gl.useProgram(program);
-      this.program = program;
+      gl.useProgram(program); // this.program = program;
+
       var dimension = program._dimension;
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       var vPosition = gl.getAttribLocation(program, this.options.vertexPosition);
@@ -1074,6 +1074,12 @@ function () {
       if (this[_renderFrameID] == null) {
         this[_renderFrameID] = requestAnimationFrame(this.render.bind(this));
       }
+    }
+  }, {
+    key: "program",
+    get: function get() {
+      var gl = this.gl;
+      return gl.getParameter(gl.CURRENT_PROGRAM);
     }
   }, {
     key: "isWebGL2",
@@ -2083,6 +2089,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProgram", function() { return createProgram; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pointsToBuffer", function() { return pointsToBuffer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadImage", function() { return loadImage; });
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
+
+
 function create3DContext(canvas, opt_attribs) {
   var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
   var context = null;
@@ -2148,6 +2158,18 @@ function createProgram(gl, vertex, fragment) {
   gl.deleteShader(fragShdr);
   return program;
 }
+
+function flatPoints(points) {
+  if (points != null) {
+    var _ref;
+
+    if (typeof points.flat === 'function') return points.flat();
+    return (_ref = []).concat.apply(_ref, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(points));
+  }
+
+  return null;
+}
+
 function pointsToBuffer(points) {
   var Type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Float32Array;
   var buffer = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -2157,10 +2179,7 @@ function pointsToBuffer(points) {
 
   if (points[0] == null || points[0].length == null) {
     if (buffer) {
-      for (var i = 0; i < points.length; i++) {
-        buffer[i] = points[i];
-      }
-
+      buffer.set(points, 0);
       return buffer;
     }
 
@@ -2174,14 +2193,7 @@ function pointsToBuffer(points) {
     buffer = new Type(deminsion * len);
   }
 
-  var idx = 0;
-
-  for (var _i = 0; _i < len; _i++) {
-    for (var j = 0; j < deminsion; j++) {
-      buffer[idx++] = points[_i][j];
-    }
-  }
-
+  buffer.set(flatPoints(points), 0);
   return buffer;
 }
 var imageCache = {};
