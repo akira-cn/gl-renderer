@@ -2089,10 +2089,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProgram", function() { return createProgram; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pointsToBuffer", function() { return pointsToBuffer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadImage", function() { return loadImage; });
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-
-
 function create3DContext(canvas, opt_attribs) {
   var names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
   var context = null;
@@ -2158,18 +2154,6 @@ function createProgram(gl, vertex, fragment) {
   gl.deleteShader(fragShdr);
   return program;
 }
-
-function flatPoints(points) {
-  if (points != null) {
-    var _ref;
-
-    if (typeof points.flat === 'function') return points.flat();
-    return (_ref = []).concat.apply(_ref, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(points));
-  }
-
-  return null;
-}
-
 function pointsToBuffer(points) {
   var Type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Float32Array;
   var buffer = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -2193,7 +2177,14 @@ function pointsToBuffer(points) {
     buffer = new Type(deminsion * len);
   }
 
-  buffer.set(flatPoints(points), 0);
+  var idx = 0;
+
+  for (var i = 0; i < len; i++) {
+    for (var j = 0; j < deminsion; j++) {
+      buffer[idx++] = points[i][j];
+    }
+  }
+
   return buffer;
 }
 var imageCache = {};
