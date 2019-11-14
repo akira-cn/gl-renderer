@@ -125,6 +125,11 @@ export default class Renderer {
     this._events = {};
   }
 
+  get program() {
+    const gl = this.gl;
+    return gl.getParameter(gl.CURRENT_PROGRAM);
+  }
+
   // WebGLRenderingContext.uniform[1234][fi][v]()
   // WebGLRenderingContext.uniformMatrix[234]fv()
   _declareUniform(program, name, type = '1f') {
@@ -405,7 +410,7 @@ export default class Renderer {
     const gl = this.gl;
 
     gl.useProgram(program);
-    this.program = program;
+    // this.program = program;
 
     const dimension = program._dimension;
 
