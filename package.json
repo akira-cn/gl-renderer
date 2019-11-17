@@ -9,7 +9,8 @@
     "build": "webpack --env.mode=none && webpack --env.mode=production",
     "prepublishOnly": "npm run build",
     "lint": "eslint 'src/**/*.js' --fix",
-    "test": "cross-env NODE_ENV=test karma start"
+    "test": "cross-env NODE_ENV=test karma start",
+    "travis": "cross-env NODE_ENV=test karma start --single-run"
   },
   "keywords": [],
   "author": "",
