@@ -29,25 +29,25 @@ module.exports = function(config) {
           subdir: 'html'
         }
       },
-      thresholds: {
-        emitWarning: true,
-        each: {
-          overrides: {
-            'src/helpers.js': {
-              statements: 90,
-              lines: 90,
-              branches: 90,
-              functions: 90
-            },
-            'src/renderer.js': {
-              statements: 90,
-              lines: 90,
-              branches: 90,
-              functions: 90
-            }
-          }
-        }
-      },
+      // thresholds: {
+      //   emitWarning: true,
+      //   each: {
+      //     overrides: {
+      //       'src/helpers.js': {
+      //         statements: 90,
+      //         lines: 90,
+      //         branches: 90,
+      //         functions: 90
+      //       },
+      //       'src/renderer.js': {
+      //         statements: 90,
+      //         lines: 90,
+      //         branches: 90,
+      //         functions: 90
+      //       }
+      //     }
+      //   }
+      // },
       verbose: false,
       instrumentation: {
         'default-excludes': true
