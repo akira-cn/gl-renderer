@@ -7,9 +7,5 @@ describe('helpers', function() {
       assert.equal(foo, 'bar')
       assert.lengthOf(foo, 3)
     })
-    it('should not ok', function() {
-      let foo = 'bar'
-      assert.lengthOf(foo, 4)
-    })
   })
 })
