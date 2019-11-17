@@ -11,6 +11,6 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - 'npm travis'
+  - 'npm run travis'
 after_success:
   - './cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT'
