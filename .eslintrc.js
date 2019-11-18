@@ -11,4 +11,4 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-unused-vars': 'warn'
   }
-}
+};
