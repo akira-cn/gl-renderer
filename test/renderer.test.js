@@ -1,12 +1,12 @@
+import {expect} from 'chai';
 import Renderer from '../src/renderer';
-import { expect } from 'chai';
 
-describe('Renderer', function() {
-  describe('new renderer', function() {
-    it('should have webgl context', function() {
+describe('Renderer', () => {
+  describe('new renderer', () => {
+    it('should have webgl context', () => {
       const canvas = document.createElement('canvas');
       document.body.append(canvas);
-      let renderer = new Renderer(canvas);
+      const renderer = new Renderer(canvas);
       expect(typeof renderer.gl === 'object');
     });
   });

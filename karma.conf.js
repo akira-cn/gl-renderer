@@ -1,21 +1,21 @@
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     frameworks: ['mocha', 'chai'],
     files: [
       {
         pattern: 'src/**/*.js',
-        watch: false
+        watch: false,
       },
       {
-        pattern: 'test/**/*.js'
-      }
+        pattern: 'test/**/*.js',
+      },
     ],
     preprocessors: {
       'src/**/*.js': ['webpack'],
-      'test/**/*.js': ['webpack']
+      'test/**/*.js': ['webpack'],
     },
-    webpack: require('./webpack.config.js')({ env: 'development' }),
-    webpackMiddleware: { stats: 'errors-only' },
+    webpack: require('./webpack.config.js')({env: 'development'}),
+    webpackMiddleware: {stats: 'errors-only'},
     browsers: ['ChromeHeadless'],
     reporters: ['coverage-istanbul'],
     coverageIstanbulReporter: {
@@ -26,8 +26,8 @@ module.exports = function(config) {
       skipFilesWithNoCoverage: true,
       'report-config': {
         html: {
-          subdir: 'html'
-        }
+          subdir: 'html',
+        },
       },
       // thresholds: {
       //   emitWarning: true,
@@ -50,8 +50,8 @@ module.exports = function(config) {
       // },
       verbose: false,
       instrumentation: {
-        'default-excludes': true
-      }
-    }
-  })
-}
+        'default-excludes': true,
+      },
+    },
+  });
+};
