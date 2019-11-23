@@ -2,13 +2,13 @@ module.exports = {
   globals: {
     GlRenderer: true,
     glDoodle: true,
-    before: true,
-    after: true,
-    describe: true,
-    it: true,
     __DEV__: true
   },
   extends: 'eslint-config-sprite',
+  env: {
+    browser: true, 
+    mocha: true
+  },
   plugins: ['html'],
   rules: {
     complexity: ['warn', 25],
