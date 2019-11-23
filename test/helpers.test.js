@@ -168,6 +168,9 @@ describe('helpers', () => {
   });
 
   describe('invalid params loadImage', () => {
+    beforeEach(function () {
+      this.timeout(5000);
+    });
     // it('not image url', function() {
     //   function fn() {
     //     return loadImage('xxxx');
