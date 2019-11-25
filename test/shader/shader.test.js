@@ -4,14 +4,14 @@ import Renderer from '../../src/renderer';
 // libs
 import graphics from '../lib/graph.glsl';
 
-import vertShader from './default_vert.glsl';
-import fragShader from './default_frag.glsl';
+import vertShader from '../../src/default_vert.glsl';
+import fragShader from '../../src/default_frag.glsl';
 import fragShaderWithLink from './frag_with_link.glsl';
 import fragShaderWithLib from './frag_with_lib.glsl';
 
 describe('Shader', () => {
   /**
-   * load
+   * load shader
    * - 有效等价类
    *  1. valid frag shader url
    *  2. valid frag shader url and valid vert shader url
@@ -19,15 +19,37 @@ describe('Shader', () => {
    *  1. invalid frag shader url
    */
   describe('load shader', () => {
-    // let canvas;
-    // let renderer;
-    // before(() => {
-    //   canvas = document.createElement('canvas');
-    //   Renderer.addLibs({graphics});
-    //   renderer = new Renderer(canvas);
+    let canvas;
+    let renderer;
+    const fragShaderUrl = 'https://raw.githubusercontent.com/akira-cn/gl-renderer/master/src/default_frag.glsl';
+    const vertShaderUrl = 'https://raw.githubusercontent.com/akira-cn/gl-renderer/master/src/default_vert.glsl';
+    before(() => {
+      canvas = document.createElement('canvas');
+      Renderer.addLibs({graphics});
+      renderer = new Renderer(canvas);
+    });
+
+    beforeEach(function () {
+      this.timeout(5000);
+    });
+
+    it('valid frag shader url', async () => {
+      const program = await renderer.load(fragShaderUrl);
+      assert.instanceOf(program, WebGLProgram);
+    });
+
+    it('valud frag shader url and valid shader url', async () => {
+      const program = await renderer.load(fragShaderUrl, vertShaderUrl);
+      assert.instanceOf(program, WebGLProgram);
+    });
+
+    // it('invalid shader url will case an error', () => {
+    //   async function fn() {
+    //     await renderer.load('invalid shader url');
+    //   }
+    //   assert.throws(fn, TypeError, 'invalid shader url.');
     // });
   });
-
   /**
    * async compile
    * - 有效等价类
