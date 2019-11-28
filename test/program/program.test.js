@@ -13,19 +13,12 @@ describe('Program', () => {
     canvas = document.createElement('canvas');
     renderer = new Renderer(canvas);
   });
-  /**
-   * createProgram
-   * - fragmentShader and vertexShader
-   * - fragmentShader enable texture and vertexShader
-   * - null fragmentShader and null vertexShader
-   */
+
   describe('createProgram', () => {
     it('default fragment shader and default vertex shader', () => {
       const program = renderer.createProgram(fragShader, vertShader);
       assert.instanceOf(program, WebGLProgram);
       assert.hasAllKeys(program.shaderText, ['vertexShader', 'fragmentShader']);
-      assert.hasAllKeys(program._buffers, ['a_customMartix3', 'a_customVec3', 'verticesBuffer', 'cellsBuffer']);
-      assert.hasAllKeys(program._attribute, ['a_customMartix3', 'a_customVec3']);
       assert.hasAllKeys(program.uniforms, ['u_customUniform']);
     });
 
@@ -34,22 +27,31 @@ describe('Program', () => {
       assert.instanceOf(program, WebGLProgram);
       assert.isTrue(program._enableTextures);
       assert.hasAllKeys(program.shaderText, ['vertexShader', 'fragmentShader']);
-      assert.hasAllKeys(program._buffers, ['verticesBuffer', 'cellsBuffer', 'texCoordBuffer']);
-      assert.isEmpty(program._attribute);
       assert.hasAllKeys(program.uniforms, ['u_texture']);
     });
 
     it('null fragment shader and null vertex shader', () => {
       const program = renderer.createProgram(null, null);
       assert.instanceOf(program, WebGLProgram);
-      assert.isEmpty(program.uniforms);
       assert.hasAllKeys(program.shaderText, ['vertexShader', 'fragmentShader']);
-      assert.hasAllKeys(program._buffers, ['verticesBuffer', 'cellsBuffer']);
+      assert.isEmpty(program.uniforms);
     });
   });
 
   describe('useProgram', () => {
-
+    it('use Program with attr options', () => {
+      const program = renderer.createProgram(textureFragShader, textureVertShader);
+      assert.instanceOf(program, WebGLProgram);
+      renderer.useProgram(program, {
+        a_customVector4: {
+          key: 'acv4',
+          type: 'FLOAT',
+          normalize: true,
+        },
+      });
+      assert.isTrue(renderer.enableTextures);
+      assert.deepStrictEqual(renderer.program, program);
+    });
   });
 
   describe('deleteProgram', () => {
@@ -58,22 +60,17 @@ describe('Program', () => {
       assert.instanceOf(program, WebGLProgram);
       renderer.useProgram(program);
       assert.deepStrictEqual(program, renderer.program);
-
-      const program2 = renderer.createProgram(textureFragShader, textureVertShader);
-      assert.instanceOf(program2, WebGLProgram);
-      renderer.useProgram(program2);
-      assert.deepStrictEqual(program2, renderer.program);
-      renderer.deleteProgram(program2);
-      assert.isEmpty(program2._buffers);
+      renderer.deleteProgram(program);
+      assert.equal(renderer.program, null);
+      assert.equal(renderer.programs.indexOf(program), -1);
     });
 
     it('it will delete unused program', () => {
       const program = renderer.createProgram(null, null);
       assert.instanceOf(program, WebGLProgram);
       assert.equal(renderer.program, null);
-      assert.hasAllKeys(program._buffers, ['verticesBuffer', 'cellsBuffer']);
       renderer.deleteProgram(program);
-      assert.isEmpty(program._buffers);
+      assert.equal(renderer.programs.indexOf(program), -1);
     });
   });
 

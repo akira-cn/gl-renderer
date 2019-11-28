@@ -13,7 +13,10 @@
     "test": "cross-env NODE_ENV=test karma start",
     "travis": "cross-env NODE_ENV=test karma start --single-run"
   },
-  "pre-commit": ["travis"],
+  "pre-commit": [
+    "lint",
+    "travis"
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",
