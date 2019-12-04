@@ -138,9 +138,9 @@ describe('helpers', () => {
     });
 
     it('image2 do not useImageBitmap', async () => {
-      const image = await loadImage(image2Src, false);
+      const image = await loadImage(image2Src, {useImageBitmap: false});
       assert.instanceOf(image, Image);
-      const imageCached = await loadImage(image2Src, false);
+      const imageCached = await loadImage(image2Src, {useImageBitmap: false});
       assert.strictEqual(image, imageCached);
     });
   });
@@ -158,7 +158,7 @@ describe('helpers', () => {
     });
 
     it('image4 do not use imageBitmap', async () => {
-      const image = await loadImage(image4Src, false);
+      const image = await loadImage(image4Src, {useImageBitmap: false});
       assert.instanceOf(image, ImageBitmap);
       assert.notInstanceOf(image, Image);
     });
@@ -179,7 +179,7 @@ describe('helpers', () => {
     // });
 
     it('useImageBitmap with truely value', async () => {
-      const image = await loadImage(image5Src, 'true');
+      const image = await loadImage(image5Src, {useImageBitmap: true});
       assert.instanceOf(image, ImageBitmap);
     });
   });

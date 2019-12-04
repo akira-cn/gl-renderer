@@ -84,7 +84,7 @@ export function pointsToBuffer(points, Type = Float32Array, buffer = null) {
 }
 
 const imageCache = {};
-export function loadImage(src, useImageBitmap = true) {
+export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
   if(!imageCache[src]) {
     if(typeof Image === 'function') {
       const img = new Image();
@@ -94,6 +94,7 @@ export function loadImage(src, useImageBitmap = true) {
           if(useImageBitmap && typeof createImageBitmap === 'function') {
             createImageBitmap(img, {imageOrientation: 'flipY'}).then((bitmap) => {
               imageCache[src] = bitmap;
+              if(alias) imageCache[alias] = bitmap;
               resolve(bitmap);
             });
           } else {
@@ -116,10 +117,11 @@ export function loadImage(src, useImageBitmap = true) {
         .then((blob) => {
           return createImageBitmap(blob, {imageOrientation: 'flipY'}).then((bitmap) => {
             imageCache[src] = bitmap;
+            if(alias) imageCache[alias] = bitmap;
             return bitmap;
           });
         });
     }
   }
-  return Promise.resolve(imageCache[src]);
+  return imageCache[src];
 }

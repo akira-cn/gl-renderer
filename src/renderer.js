@@ -97,8 +97,8 @@ export default class Renderer {
 
   static fetchShader = fetchShader;
 
-  static loadImage(source, useImageBitmap) {
-    return loadImage(source, useImageBitmap);
+  static loadImage(source, {useImageBitmap, alias} = {}) {
+    return loadImage(source, {useImageBitmap, alias});
   }
 
   constructor(canvas, opts = {}) {
@@ -609,7 +609,7 @@ export default class Renderer {
   }
 
   async loadTexture(source, {useImageBitmap = true} = {}) {
-    const img = await loadImage(source, useImageBitmap);
+    const img = await Renderer.loadImage(source, {useImageBitmap});
     return this.createTexture(img);
   }
 
