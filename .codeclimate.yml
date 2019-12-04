@@ -24,9 +24,6 @@ checks:
   return-statements:
     config:
       threshold: 4
-  similar-code:
-    config:
-      threshold: 10
   identical-code:
     config:
       threshold:
