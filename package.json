@@ -11,6 +11,7 @@
     "lint": "eslint 'src/**/*.js' --fix",
     "lint:test": "eslint 'test/**/*.js' --fix",
     "test": "cross-env NODE_ENV=test karma start",
+    "test:chrome": "cross-env NODE_ENV=test karma start --browsers Chrome",
     "travis": "cross-env NODE_ENV=test karma start --single-run"
   },
   "keywords": [],

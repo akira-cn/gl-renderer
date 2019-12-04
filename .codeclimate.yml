@@ -30,3 +30,20 @@ checks:
   identical-code:
     config:
       threshold:
+exclude_patterns:
+- "config/"
+- "db/"
+- "dist/"
+- "lib/"
+- "example/"
+- "docs/"
+- "features/"
+- "**/node_modules/"
+- "script/"
+- "**/spec/"
+- "**/test/"
+- "**/tests/"
+- "**/vendor/"
+- "**/*.d.ts"
+- "**/.eslintrc.js"
+- "**/webpack.config.js"
