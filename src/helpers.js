@@ -96,12 +96,13 @@ export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
             });
           } else {
             imageCache[src] = img;
+            if(alias) imageCache[alias] = img;
             resolve(img);
           }
         };
         img.src = src;
       });
-    } else {
+    } else if(typeof fetch === 'function') {
       // run in worker
       return fetch(src, {
         method: 'GET',
@@ -119,6 +120,7 @@ export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
           });
         });
     }
+    return null;
   }
   return imageCache[src];
 }

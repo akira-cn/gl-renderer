@@ -2160,13 +2160,14 @@ function loadImage(src) {
             });
           } else {
             imageCache[src] = img;
+            if (alias) imageCache[alias] = img;
             resolve(img);
           }
         };
 
         img.src = src;
       });
-    } else {
+    } else if (typeof fetch === 'function') {
       // run in worker
       return fetch(src, {
         method: 'GET',
@@ -2184,6 +2185,8 @@ function loadImage(src) {
         });
       });
     }
+
+    return null;
   }
 
   return imageCache[src];
