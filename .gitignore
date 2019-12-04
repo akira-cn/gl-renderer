@@ -6,3 +6,4 @@ package-lock.json
 .docz
 .nyc_output
 coverage
+.vscode
