@@ -126,6 +126,10 @@ describe('helpers', () => {
   const image4Src = 'https://p0.ssl.qhimg.com/t011ee12f7af0ddeedc.png';
   const image5Src = 'https://p0.ssl.qhimg.com/t01c9a9db93c80f018c.png';
   describe('Image Class', () => {
+    beforeEach(function () {
+      this.timeout(5000);
+    });
+
     it('image1 useImageBitmap', async () => {
       const image = await loadImage(image1Src);
       assert.instanceOf(image, ImageBitmap);
@@ -164,6 +168,9 @@ describe('helpers', () => {
   });
 
   describe('invalid params loadImage', () => {
+    beforeEach(function () {
+      this.timeout(5000);
+    });
     // it('not image url', function() {
     //   function fn() {
     //     return loadImage('xxxx');
