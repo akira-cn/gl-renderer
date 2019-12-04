@@ -47,4 +47,4 @@ exclude_patterns:
 - "**/*.d.ts"
 - "**/.eslintrc.js"
 - "**/webpack.config.js"
-- "**/karma.config.js"
+- "**/karma.conf.js"
