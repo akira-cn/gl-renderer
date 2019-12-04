@@ -327,9 +327,6 @@ export default class Renderer {
     const gl = this.gl;
 
     const program = createProgram(gl, vertexShader, fragmentShader);
-    if(program === -1) {
-      throw new TypeError('Program compile error.');
-    }
     program.shaderText = {vertexShader, fragmentShader};
     program._buffers = {};
     program._attribute = {};

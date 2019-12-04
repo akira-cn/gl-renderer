@@ -248,15 +248,19 @@ describe('helpers', () => {
     it('gl context with invalid vertex', () => {
       const canvas = document.createElement('canvas');
       const gl = setupWebGL(canvas);
-      const result = createProgram(gl, '', DEFAULT_FRAG);
-      assert.equal(result, -1);
+      function fn() {
+        return createProgram(gl, '', DEFAULT_FRAG);
+      }
+      assert.throws(fn, Error);
     });
 
     it('gl context with invalid fragment', () => {
       const canvas = document.createElement('canvas');
       const gl = setupWebGL(canvas);
-      const result = createProgram(gl, DEFAULT_VERT, '');
-      assert.equal(result, -1);
+      function fn() {
+        return createProgram(gl, DEFAULT_VERT, '');
+      }
+      assert.throws(fn, Error);
     });
   });
 });
