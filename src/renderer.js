@@ -1,4 +1,4 @@
-import {setupWebGL, createProgram, pointsToBuffer, loadImage} from './helpers';
+import {setupWebGL, createProgram, pointsToBuffer, loadImage, fetchShader} from './helpers';
 
 import DEFAULT_VERT from './default_vert.glsl';
 import DEFAULT_FRAG from './default_frag.glsl';
@@ -7,18 +7,6 @@ import DEFAULT_FEEDBACK_VERT from './default_feeback_vert.glsl';
 const GLSL_LIBS = {};
 
 const _renderFrameID = Symbol('renderFrameID');
-
-const shaderCache = {};
-async function fetchShader(url) {
-  if(shaderCache[url]) return shaderCache[url];
-  const res = await fetch(url);
-  if(res.status >= 200 && res.status < 300) {
-    const content = await res.text();
-    shaderCache[url] = content;
-    return content;
-  }
-  return null;
-}
 
 function mapTextureCoordinate(positions, size = 3) {
   const texVertexData = [];
@@ -97,9 +85,7 @@ export default class Renderer {
 
   static fetchShader = fetchShader;
 
-  static loadImage(source, {useImageBitmap, alias} = {}) {
-    return loadImage(source, {useImageBitmap, alias});
-  }
+  static loadImage = loadImage;
 
   constructor(canvas, opts = {}) {
     this.options = Object.assign({}, Renderer.defaultOptions, opts);
@@ -341,6 +327,9 @@ export default class Renderer {
     const gl = this.gl;
 
     const program = createProgram(gl, vertexShader, fragmentShader);
+    if(program === -1) {
+      throw new TypeError('Program compile error.');
+    }
     program.shaderText = {vertexShader, fragmentShader};
     program._buffers = {};
     program._attribute = {};

@@ -125,3 +125,15 @@ export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
   }
   return imageCache[src];
 }
+
+const shaderCache = {};
+export async function fetchShader(url) {
+  if(shaderCache[url]) return shaderCache[url];
+  const res = await fetch(url);
+  if(res.status >= 200 && res.status < 300) {
+    const content = await res.text();
+    shaderCache[url] = content;
+    return content;
+  }
+  throw new Error('Shader loaded error.');
+}
