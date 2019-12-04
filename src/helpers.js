@@ -135,5 +135,6 @@ export async function fetchShader(url) {
     shaderCache[url] = content;
     return content;
   }
-  throw new Error('Shader loaded error.');
+  console.error('Shader loaded error.');
+  return null;
 }

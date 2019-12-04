@@ -535,7 +535,7 @@ export default class Renderer {
                 const c = await _compile(GLSL_LIBS[name]); // eslint-disable-line no-await-in-loop
                 includes.push(c);
               } else if(type === 'link') {
-                let c = await fetchShader(name); // eslint-disable-line no-await-in-loop
+                let c = await Renderer.fetchShader(name); // eslint-disable-line no-await-in-loop
                 c = await _compile(c); // eslint-disable-line no-await-in-loop
                 includes.push(c);
               }
@@ -561,8 +561,8 @@ export default class Renderer {
   }
 
   async load(frag, vert = null) {
-    frag = await fetchShader(frag);
-    if(vert) vert = await fetchShader(vert);
+    frag = await Renderer.fetchShader(frag);
+    if(vert) vert = await Renderer.fetchShader(vert);
     return this.compile(frag, vert);
   }
 
