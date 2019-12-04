@@ -2185,8 +2185,6 @@ function loadImage(src) {
         });
       });
     }
-
-    return null;
   }
 
   return imageCache[src];

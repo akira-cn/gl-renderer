@@ -120,7 +120,6 @@ export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
           });
         });
     }
-    return null;
   }
   return imageCache[src];
 }
