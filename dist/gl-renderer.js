@@ -514,6 +514,13 @@ function () {
         program._dimension = Number(matched[1]);
       }
 
+      var texCoordPattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexTextureCoord), 'im');
+      matched = vertexShader.match(texCoordPattern);
+
+      if (matched) {
+        program._texCoordSize = Number(matched[1]);
+      }
+
       var attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
       matched = vertexShader.match(attributePattern);
 
@@ -594,7 +601,7 @@ function () {
       if (program._enableTextures) {
         gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
         var vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
-        gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(vTexCoord, program._texCoordSize || 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(vTexCoord);
       }
 

@@ -342,6 +342,12 @@ export default class Renderer {
       program._dimension = Number(matched[1]);
     }
 
+    const texCoordPattern = new RegExp(`attribute vec(\\d) ${this.options.vertexTextureCoord}`, 'im');
+    matched = vertexShader.match(texCoordPattern);
+    if(matched) {
+      program._texCoordSize = Number(matched[1]);
+    }
+
     const attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
     matched = vertexShader.match(attributePattern);
     if(matched) {
@@ -408,7 +414,7 @@ export default class Renderer {
     if(program._enableTextures) {
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
       const vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
-      gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(vTexCoord, program._texCoordSize || 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(vTexCoord);
     }
 
