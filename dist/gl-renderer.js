@@ -620,8 +620,10 @@ function () {
           gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
           var attrib = gl.getAttribLocation(program, name); // console.log(size, gl[bufferType]);
 
-          gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
-          gl.enableVertexAttribArray(attrib);
+          if (attrib >= 0) {
+            gl.vertexAttribPointer(attrib, size, gl[bufferType], normalize, 0, 0);
+            gl.enableVertexAttribArray(attrib);
+          }
         }
       });
 
