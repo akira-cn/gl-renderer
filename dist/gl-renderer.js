@@ -328,6 +328,7 @@ function () {
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+        var locations = [];
 
         if (attributes) {
           Object.values(attributes).forEach(function (_ref) {
@@ -340,6 +341,7 @@ function () {
             if (divisor != null) {
               var location = gl.getAttribLocation(program, name);
               gl.enableVertexAttribArray(location);
+              locations.push(location);
 
               if (gl.vertexAttribDivisor) {
                 gl.vertexAttribDivisor(location, divisor);
@@ -372,6 +374,10 @@ function () {
           } else if (_this.aia_ext) {
             _this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
           }
+
+          locations.forEach(function (location) {
+            gl.vertexAttribDivisor(location, null);
+          });
         } else {
           gl.drawElements(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0);
         }

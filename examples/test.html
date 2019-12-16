@@ -51,21 +51,21 @@
 
       doodle.setMeshData([
         {
-          positions: [[-1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
-          cells: [[0, 1, 2]],
-          instanceCount: 1,
-          attributes: {
-            colors,
-            translates: {data: translates, divisor: 1},
-          },
-        },
-        {
           positions: [[0.5, 0.5, 0], [-0.5, 0.8, 0], [1, -1, 0]],
           cells: [[0, 1, 2]],
           instanceCount: 3,
           attributes: {
-            colors: {data: colors, divisor: 1},
-            translates: {data: translates, divisor: 1},
+            colors: {data: [...colors], divisor: 1},
+            translates: {data: [...translates], divisor: 1},
+          },
+        },
+        {
+          positions: [[-1.0, -1.0, 0.0], [-1.0, 1.0, 0.0], [1.0, 1.0, 0.0]],
+          cells: [[0, 1, 2]],
+          // instanceCount: 1,
+          attributes: {
+            colors: [[0, 0, 1], [0, 0, 0], [1, 0, 0]],
+            translates: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
           },
         },
       ]);

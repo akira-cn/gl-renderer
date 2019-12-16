@@ -182,6 +182,8 @@ export default class Renderer {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
 
+      const locations = [];
+
       if(attributes) {
         Object.values(attributes).forEach(({name, data, divisor}) => {
           gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers[name]);
@@ -189,6 +191,7 @@ export default class Renderer {
           if(divisor != null) {
             const location = gl.getAttribLocation(program, name);
             gl.enableVertexAttribArray(location);
+            locations.push(location);
             if(gl.vertexAttribDivisor) {
               gl.vertexAttribDivisor(location, divisor);
             } else if(this.aia_ext) {
@@ -215,6 +218,9 @@ export default class Renderer {
         } else if(this.aia_ext) {
           this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
         }
+        locations.forEach((location) => {
+          gl.vertexAttribDivisor(location, null);
+        });
       } else {
         gl.drawElements(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0);
       }
