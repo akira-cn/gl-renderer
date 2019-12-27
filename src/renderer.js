@@ -190,12 +190,14 @@ export default class Renderer {
           gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
           if(divisor != null) {
             const location = gl.getAttribLocation(program, name);
-            gl.enableVertexAttribArray(location);
-            locations.push(location);
-            if(gl.vertexAttribDivisor) {
-              gl.vertexAttribDivisor(location, divisor);
-            } else if(this.aia_ext) {
-              this.aia_ext.vertexAttribDivisorANGLE(location, divisor);
+            if(location >= 0) {
+              gl.enableVertexAttribArray(location);
+              locations.push(location);
+              if(gl.vertexAttribDivisor) {
+                gl.vertexAttribDivisor(location, divisor);
+              } else if(this.aia_ext) {
+                this.aia_ext.vertexAttribDivisorANGLE(location, divisor);
+              }
             }
           }
         });
