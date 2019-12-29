@@ -102,6 +102,7 @@ export function loadImage(src, {useImageBitmap = true, alias = null} = {}) {
         };
         img.src = src;
       });
+      if(alias) imageCache[alias] = imageCache[src];
     } else if(typeof fetch === 'function') {
       // run in worker
       return fetch(src, {
