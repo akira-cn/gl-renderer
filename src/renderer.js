@@ -95,7 +95,8 @@ export default class Renderer {
     let gl;
     if(this.options.webgl2) {
       gl = canvas.getContext('webgl2', this.options);
-    } else {
+    }
+    if(gl == null) {
       gl = setupWebGL(canvas, this.options);
       this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
     }

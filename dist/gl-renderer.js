@@ -232,7 +232,9 @@ function () {
 
     if (this.options.webgl2) {
       gl = canvas.getContext('webgl2', this.options);
-    } else {
+    }
+
+    if (gl == null) {
       gl = Object(_helpers__WEBPACK_IMPORTED_MODULE_6__["setupWebGL"])(canvas, this.options);
       this.aia_ext = gl.getExtension('ANGLE_instanced_arrays');
     }
