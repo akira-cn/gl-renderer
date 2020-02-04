@@ -141,6 +141,7 @@ export default class Renderer {
             samplerMap[name] = idx;
             gl.uniform1i(uniform, idx);
           }
+          // gl.bindTexture(gl.TEXTURE_2D, null);
           if(that.options.autoUpdate) that.update();
         },
         configurable: false,
@@ -580,14 +581,19 @@ export default class Renderer {
     return this.compile(frag, vert);
   }
 
-  createTexture(img) {
+  createTexture(img = null) {
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE15);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    if(img) {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    } else {
+      const {width, height} = this.canvas;
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    }
     // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -595,6 +601,7 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     // Prevents t-coordinate wrapping (repeating).
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
     texture._img = img;
     texture.delete = () => {
@@ -616,6 +623,49 @@ export default class Renderer {
     return this.createTexture(img);
   }
 
+  createFBO({color = 1, depth = this.options.depth !== false, stencil = !!this.options.stencil} = {}) {
+    const gl = this.gl;
+    const buffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
+    const textures = [];
+    for(let i = 0; i < color; i++) {
+      const texture = this.createTexture();
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, texture, 0 /* level */);
+      textures.push(texture);
+    }
+    buffer.textures = textures;
+    buffer.texture = textures[0];
+
+    const {width, height} = this.canvas;
+
+    // Render buffers
+    if(depth && !stencil) {
+      buffer.depthBuffer = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.depthBuffer);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, buffer.depthBuffer);
+    }
+
+    if(stencil && !depth) {
+      buffer.stencilBuffer = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.stencilBuffer);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.stencilBuffer);
+    }
+
+    if(depth && stencil) {
+      buffer.depthStencilBuffer = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.depthStencilBuffer);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
+    }
+    return buffer;
+  }
+
+  bindFBO(fbo = null) {
+    this.fbo = fbo;
+  }
+
   render({clearBuffer = true} = {}) {
     this.startRender = true;
 
@@ -626,11 +676,18 @@ export default class Renderer {
       program = this.createProgram();
       this.useProgram(program);
     }
+    if(this.fbo) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
+    }
 
     if(clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
 
     const lastFrameID = this[_renderFrameID];
     this._draw();
+
+    if(this.fbo) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
 
     if(this[_renderFrameID] === lastFrameID) {
       this[_renderFrameID] = null;

@@ -276,7 +276,8 @@ function () {
             if (!samplerMap[name]) {
               samplerMap[name] = idx;
               gl.uniform1i(uniform, idx);
-            }
+            } // gl.bindTexture(gl.TEXTURE_2D, null);
+
 
             if (that.options.autoUpdate) that.update();
           },
@@ -896,15 +897,25 @@ function () {
     }
   }, {
     key: "createTexture",
-    value: function createTexture(img) {
+    value: function createTexture() {
       var _this4 = this;
 
+      var img = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var gl = this.gl;
       gl.activeTexture(gl.TEXTURE15);
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+
+      if (img) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      } else {
+        var _this$canvas = this.canvas,
+            width = _this$canvas.width,
+            height = _this$canvas.height;
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      } // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
+
 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // Prevents s-coordinate wrapping (repeating).
@@ -912,6 +923,7 @@ function () {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // Prevents t-coordinate wrapping (repeating).
 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.bindTexture(gl.TEXTURE_2D, null);
       texture._img = img;
 
       texture.delete = function () {
@@ -962,11 +974,70 @@ function () {
       }, null, this);
     }
   }, {
+    key: "createFBO",
+    value: function createFBO() {
+      var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref11$color = _ref11.color,
+          color = _ref11$color === void 0 ? 1 : _ref11$color,
+          _ref11$depth = _ref11.depth,
+          depth = _ref11$depth === void 0 ? this.options.depth !== false : _ref11$depth,
+          _ref11$stencil = _ref11.stencil,
+          stencil = _ref11$stencil === void 0 ? !!this.options.stencil : _ref11$stencil;
+
+      var gl = this.gl;
+      var buffer = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
+      var textures = [];
+
+      for (var i = 0; i < color; i++) {
+        var texture = this.createTexture();
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, texture, 0
+        /* level */
+        );
+        textures.push(texture);
+      }
+
+      buffer.textures = textures;
+      buffer.texture = textures[0];
+      var _this$canvas2 = this.canvas,
+          width = _this$canvas2.width,
+          height = _this$canvas2.height; // Render buffers
+
+      if (depth && !stencil) {
+        buffer.depthBuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.depthBuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, buffer.depthBuffer);
+      }
+
+      if (stencil && !depth) {
+        buffer.stencilBuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.stencilBuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.stencilBuffer);
+      }
+
+      if (depth && stencil) {
+        buffer.depthStencilBuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, buffer.depthStencilBuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
+      }
+
+      return buffer;
+    }
+  }, {
+    key: "bindFBO",
+    value: function bindFBO() {
+      var fbo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      this.fbo = fbo;
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref11$clearBuffer = _ref11.clearBuffer,
-          clearBuffer = _ref11$clearBuffer === void 0 ? true : _ref11$clearBuffer;
+      var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref12$clearBuffer = _ref12.clearBuffer,
+          clearBuffer = _ref12$clearBuffer === void 0 ? true : _ref12$clearBuffer;
 
       this.startRender = true;
       var gl = this.gl;
@@ -977,10 +1048,18 @@ function () {
         this.useProgram(program);
       }
 
+      if (this.fbo) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
+      }
+
       if (clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
       var lastFrameID = this[_renderFrameID];
 
       this._draw();
+
+      if (this.fbo) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
 
       if (this[_renderFrameID] === lastFrameID) {
         this[_renderFrameID] = null;

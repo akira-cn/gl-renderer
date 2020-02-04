@@ -33,9 +33,11 @@
 
       const texture = await doodle.loadTexture('https://p4.ssl.qhimg.com/t012170360e1552ce17.png');
       window.texture2 = await doodle.loadTexture('http://res.junyux.com/images/course1/body-h1-nomargin.jpg');
-      // doodle.uniforms.samplerTest = texture;
+      doodle.uniforms.samplerTest = texture;
       doodle.uniforms.color = [1.0, 0, 0];
-
+      doodle.useProgram(window.program2);
+      doodle.uniforms.samplerTest = window.texture2;
+      doodle.useProgram(program);
       const translates = [
         [0, 0, 0],
         [0.1, 0.1, 0],
@@ -69,6 +71,13 @@
           },
         },
       ]);
+
+      const fbo = doodle.createFBO();
+      doodle.bindFBO(fbo);
+      doodle.render();
+      doodle.bindFBO(null);
+      doodle.useProgram(window.program2);
+      doodle.uniforms.samplerTest = fbo.texture;
       doodle.render();
     }());
   </script>
