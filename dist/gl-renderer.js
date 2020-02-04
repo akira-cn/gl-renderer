@@ -1024,6 +1024,7 @@ function () {
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
       }
 
+      this.gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       return buffer;
     }
   }, {

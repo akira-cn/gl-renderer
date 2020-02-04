@@ -659,6 +659,9 @@ export default class Renderer {
       gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
     }
+
+    this.gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
     return buffer;
   }
 
