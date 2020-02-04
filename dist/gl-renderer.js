@@ -323,7 +323,7 @@ function () {
             textureCoord = meshData.textureCoord,
             enableBlend = meshData.enableBlend;
         var gl = _this.gl;
-        if (enableBlend) gl.enable(gl.BLEND);else gl.disable(gl.BLEND);
+        if ((!_this.fbo || _this.fbo.blend) && enableBlend) gl.enable(gl.BLEND);else gl.disable(gl.BLEND);
         gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
@@ -982,6 +982,8 @@ function () {
       var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           _ref11$color = _ref11.color,
           color = _ref11$color === void 0 ? 1 : _ref11$color,
+          _ref11$blend = _ref11.blend,
+          blend = _ref11$blend === void 0 ? false : _ref11$blend,
           _ref11$depth = _ref11.depth,
           depth = _ref11$depth === void 0 ? this.options.depth !== false : _ref11$depth,
           _ref11$stencil = _ref11.stencil,
@@ -1002,6 +1004,7 @@ function () {
 
       buffer.textures = textures;
       buffer.texture = textures[0];
+      buffer.blend = blend;
       var _this$canvas2 = this.canvas,
           width = _this$canvas2.width,
           height = _this$canvas2.height; // Render buffers

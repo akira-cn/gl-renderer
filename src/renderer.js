@@ -177,7 +177,7 @@ export default class Renderer {
     program.meshData.forEach((meshData, meshIndex) => {
       const {positions, cells, instanceCount, cellsCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
-      if(enableBlend) gl.enable(gl.BLEND);
+      if((!this.fbo || this.fbo.blend) && enableBlend) gl.enable(gl.BLEND);
       else gl.disable(gl.BLEND);
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
@@ -624,7 +624,7 @@ export default class Renderer {
     return this.createTexture(img);
   }
 
-  createFBO({color = 1, depth = this.options.depth !== false, stencil = !!this.options.stencil} = {}) {
+  createFBO({color = 1, blend = false, depth = this.options.depth !== false, stencil = !!this.options.stencil} = {}) {
     const gl = this.gl;
     const buffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
@@ -636,6 +636,7 @@ export default class Renderer {
     }
     buffer.textures = textures;
     buffer.texture = textures[0];
+    buffer.blend = blend;
 
     const {width, height} = this.canvas;
 
