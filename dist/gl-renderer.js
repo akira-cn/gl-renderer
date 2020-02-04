@@ -906,13 +906,13 @@ function () {
       var texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      var _this$canvas = this.canvas,
+          width = _this$canvas.width,
+          height = _this$canvas.height;
 
       if (img) {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
       } else {
-        var _this$canvas = this.canvas,
-            width = _this$canvas.width,
-            height = _this$canvas.height;
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
       } // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
 
@@ -924,7 +924,10 @@ function () {
 
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.bindTexture(gl.TEXTURE_2D, null);
-      texture._img = img;
+      texture._img = img || {
+        width: width,
+        height: height
+      };
 
       texture.delete = function () {
         _this4.deleteTexture(texture);
@@ -1024,7 +1027,7 @@ function () {
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
       }
 
-      this.gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       return buffer;
     }
   }, {

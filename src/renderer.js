@@ -588,10 +588,11 @@ export default class Renderer {
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    const {width, height} = this.canvas;
     if(img) {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
     } else {
-      const {width, height} = this.canvas;
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     }
     // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
@@ -603,7 +604,7 @@ export default class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.bindTexture(gl.TEXTURE_2D, null);
 
-    texture._img = img;
+    texture._img = img || {width, height};
     texture.delete = () => {
       this.deleteTexture(texture);
     };
@@ -660,7 +661,7 @@ export default class Renderer {
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, buffer.depthStencilBuffer);
     }
 
-    this.gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     return buffer;
   }
