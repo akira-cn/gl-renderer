@@ -177,7 +177,7 @@ export default class Renderer {
     program.meshData.forEach((meshData, meshIndex) => {
       const {positions, cells, instanceCount, cellsCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
-      if((!this.fbo || this.fbo.blend) && enableBlend) gl.enable(gl.BLEND);
+      if(enableBlend) gl.enable(gl.BLEND);
       else gl.disable(gl.BLEND);
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
