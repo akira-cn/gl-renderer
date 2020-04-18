@@ -21,11 +21,21 @@
     // set color to RED
     renderer.uniforms.color = [1, 0, 0];
 
+
+    renderer.setMeshData([{
+      positions: [
+        [-0.5, -0.5, 0],
+        [0, 0.5, 0],
+        [0.5, -0.5, 0],
+      ],
+      cells: [[0, 1, 2]],
+    }]);
+  
     renderer.render();
 
-    setTimeout(() => {
-      renderer.uniforms.color = [0, 0, 1];
-    }, 2000);
+    // setTimeout(() => {
+    //   renderer.uniforms.color = [0, 0, 1];
+    // }, 2000);
   }());
   </script>
 </body>
