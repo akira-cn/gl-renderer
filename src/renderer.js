@@ -583,7 +583,7 @@ export default class Renderer {
 
   createTexture(img = null) {
     const gl = this.gl;
-    gl.activeTexture(gl.TEXTURE15);
+    gl.activeTexture(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
