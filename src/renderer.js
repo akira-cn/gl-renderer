@@ -6,8 +6,6 @@ import DEFAULT_FEEDBACK_VERT from './default_feeback_vert.glsl';
 
 const GLSL_LIBS = {};
 
-const _renderFrameID = Symbol('renderFrameID');
-
 function mapTextureCoordinate(positions, size = 3) {
   const texVertexData = [];
   const len = positions.length;
@@ -251,9 +249,9 @@ export default class Renderer {
     const gl = this.gl;
     if(this.program === program) {
       this.startRender = false;
-      if(this[_renderFrameID]) {
-        cancelAnimationFrame(this[_renderFrameID]);
-        delete this[_renderFrameID];
+      if(this._renderFrameID) {
+        cancelAnimationFrame(this._renderFrameID);
+        delete this._renderFrameID;
       }
       gl.useProgram(null);
     }
@@ -358,6 +356,8 @@ export default class Renderer {
       program._texCoordSize = Number(matched[1]);
     }
 
+    program._enableTextures = enableTextures && program._texCoordSize;
+
     const attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
     matched = vertexShader.match(attributePattern);
     if(matched) {
@@ -404,9 +404,9 @@ export default class Renderer {
 
   useProgram(program, attrOptions = {}) {
     this.startRender = false;
-    if(this[_renderFrameID]) {
-      cancelAnimationFrame(this[_renderFrameID]);
-      delete this[_renderFrameID];
+    if(this._renderFrameID) {
+      cancelAnimationFrame(this._renderFrameID);
+      delete this._renderFrameID;
     }
 
     const gl = this.gl;
@@ -583,7 +583,9 @@ export default class Renderer {
 
   createTexture(img = null) {
     const gl = this.gl;
-    gl.activeTexture(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1);
+    this._max_texture_image_units = this._max_texture_image_units
+      || gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+    gl.activeTexture(gl.TEXTURE0 + this._max_texture_image_units - 1);
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -687,22 +689,22 @@ export default class Renderer {
 
     if(clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
 
-    const lastFrameID = this[_renderFrameID];
+    const lastFrameID = this._renderFrameID;
     this._draw();
 
     if(this.fbo) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
 
-    if(this[_renderFrameID] === lastFrameID) {
-      this[_renderFrameID] = null;
+    if(this._renderFrameID === lastFrameID) {
+      this._renderFrameID = null;
     }
   }
 
   update() {
     if(!this.startRender) return;
-    if(this[_renderFrameID] == null) {
-      this[_renderFrameID] = requestAnimationFrame(this.render.bind(this));
+    if(this._renderFrameID == null) {
+      this._renderFrameID = requestAnimationFrame(this.render.bind(this));
     }
   }
 }
