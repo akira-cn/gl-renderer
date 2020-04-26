@@ -514,14 +514,14 @@ function () {
       program._bindTextures = [];
       program._enableTextures = enableTextures; // console.log(vertexShader);
 
-      var pattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexPosition), 'im');
+      var pattern = new RegExp("(?:attribute|in) vec(\\d) ".concat(this.options.vertexPosition), 'im');
       var matched = vertexShader.match(pattern);
 
       if (matched) {
         program._dimension = Number(matched[1]);
       }
 
-      var texCoordPattern = new RegExp("attribute vec(\\d) ".concat(this.options.vertexTextureCoord), 'im');
+      var texCoordPattern = new RegExp("(?:attribute|in) vec(\\d) ".concat(this.options.vertexTextureCoord), 'im');
       matched = vertexShader.match(texCoordPattern);
 
       if (matched) {
@@ -529,12 +529,12 @@ function () {
       }
 
       program._enableTextures = enableTextures && program._texCoordSize;
-      var attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
+      var attributePattern = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/gim;
       matched = vertexShader.match(attributePattern);
 
       if (matched) {
         for (var i = 0; i < matched.length; i++) {
-          var patt = /^\s*attribute (\w+?)(\d*) (\w+)/im;
+          var patt = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/im;
 
           var _matched = matched[i].match(patt);
 

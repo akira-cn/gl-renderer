@@ -344,25 +344,25 @@ export default class Renderer {
     program._enableTextures = enableTextures;
 
     // console.log(vertexShader);
-    const pattern = new RegExp(`attribute vec(\\d) ${this.options.vertexPosition}`, 'im');
+    const pattern = new RegExp(`(?:attribute|in) vec(\\d) ${this.options.vertexPosition}`, 'im');
     let matched = vertexShader.match(pattern);
     if(matched) {
       program._dimension = Number(matched[1]);
     }
 
-    const texCoordPattern = new RegExp(`attribute vec(\\d) ${this.options.vertexTextureCoord}`, 'im');
+    const texCoordPattern = new RegExp(`(?:attribute|in) vec(\\d) ${this.options.vertexTextureCoord}`, 'im');
     matched = vertexShader.match(texCoordPattern);
     if(matched) {
       program._texCoordSize = Number(matched[1]);
     }
 
-    program._enableTextures = enableTextures && program._texCoordSize;
+    program._enableTextures = enableTextures && !!program._texCoordSize;
 
-    const attributePattern = /^\s*attribute (\w+?)(\d*) (\w+)/gim;
+    const attributePattern = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/gim;
     matched = vertexShader.match(attributePattern);
     if(matched) {
       for(let i = 0; i < matched.length; i++) {
-        const patt = /^\s*attribute (\w+?)(\d*) (\w+)/im;
+        const patt = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/im;
         const _matched = matched[i].match(patt);
         if(_matched && _matched[3] !== this.options.vertexPosition
           && _matched[3] !== this.options.vertexTextureCoord) {

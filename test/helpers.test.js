@@ -40,7 +40,7 @@ describe('helpers', () => {
       function fn() {
         return pointsToBuffer(points, Float32Array, buffer);
       }
-      assert.throws(fn, RangeError, 'Source is too large');
+      assert.throws(fn, RangeError, 'offset is out of bounds');
     });
 
     it('default Type and enought length buffer', () => {
