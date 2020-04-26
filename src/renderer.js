@@ -41,7 +41,14 @@ const uniformTypeMap = {
   mat2: 'Matrix2fv',
   mat3: 'Matrix3fv',
   mat4: 'Matrix4fv',
+  sampler1D: 'sampler1D',
   sampler2D: 'sampler2D',
+  sampler3D: 'sampler3D',
+  samplerCube: 'samplerCube',
+  sampler1DShadow: 'sampler1DShadow',
+  sampler2DShadow: 'sampler2DShadow',
+  sampler2DRect: 'sampler2DRect',
+  sampler2DRectShadow: 'sampler2DRectShadow',
 };
 
 export default class Renderer {
@@ -328,7 +335,7 @@ export default class Renderer {
     // this.deleteProgram();
     // this._events = {};
 
-    const enableTextures = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
+    const enableTextures = /^\s*uniform\s+sampler/mg.test(fragmentShader);
     if(fragmentShader == null) fragmentShader = DEFAULT_FRAG;
     if(vertexShader == null) vertexShader = enableTextures ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
 

@@ -180,7 +180,14 @@ var uniformTypeMap = {
   mat2: 'Matrix2fv',
   mat3: 'Matrix3fv',
   mat4: 'Matrix4fv',
-  sampler2D: 'sampler2D'
+  sampler1D: 'sampler1D',
+  sampler2D: 'sampler2D',
+  sampler3D: 'sampler3D',
+  samplerCube: 'samplerCube',
+  sampler1DShadow: 'sampler1DShadow',
+  sampler2DShadow: 'sampler2DShadow',
+  sampler2DRect: 'sampler2DRect',
+  sampler2DRectShadow: 'sampler2DRectShadow'
 };
 
 var Renderer =
@@ -496,7 +503,7 @@ function () {
 
       // this.deleteProgram();
       // this._events = {};
-      var enableTextures = /^\s*uniform\s+sampler2D/mg.test(fragmentShader);
+      var enableTextures = /^\s*uniform\s+sampler/mg.test(fragmentShader);
       if (fragmentShader == null) fragmentShader = _default_frag_glsl__WEBPACK_IMPORTED_MODULE_8___default.a;
       if (vertexShader == null) vertexShader = enableTextures ? _default_feeback_vert_glsl__WEBPACK_IMPORTED_MODULE_9___default.a : _default_vert_glsl__WEBPACK_IMPORTED_MODULE_7___default.a;
       var gl = this.gl;
@@ -528,7 +535,7 @@ function () {
         program._texCoordSize = Number(matched[1]);
       }
 
-      program._enableTextures = enableTextures && program._texCoordSize;
+      program._enableTextures = enableTextures && !!program._texCoordSize;
       var attributePattern = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/gim;
       matched = vertexShader.match(attributePattern);
 
