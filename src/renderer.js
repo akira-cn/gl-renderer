@@ -25,7 +25,11 @@ function clearBuffers(gl, program) {
 
 function bindTexture(gl, texture, i) {
   gl.activeTexture(gl.TEXTURE0 + i);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+  if(Array.isArray(texture._img)) {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+  } else {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+  }
   return texture;
 }
 
@@ -130,7 +134,7 @@ export default class Renderer {
     let value;
 
     const that = this;
-    if(type === 'sampler2D') {
+    if(/^sampler/.test(type)) {
       const samplerMap = program._samplerMap;
       const textures = program._bindTextures;
       Object.defineProperty(program.uniforms, name, {
@@ -588,30 +592,73 @@ export default class Renderer {
     return this.compile(frag, vert);
   }
 
-  createTexture(img = null) {
+  createTexture(img = null, {
+    wrapS = this.gl.CLAMP_TO_EDGE,
+    wrapT = this.gl.CLAMP_TO_EDGE,
+    minFilter = this.gl.LINEAR,
+    magFilter = this.gl.LINEAR,
+  } = {}) {
     const gl = this.gl;
+    const target = Array.isArray(img) ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D;
     this._max_texture_image_units = this._max_texture_image_units
       || gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
     gl.activeTexture(gl.TEXTURE0 + this._max_texture_image_units - 1);
     const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.bindTexture(target, texture);
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     const {width, height} = this.canvas;
     if(img) {
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      if(target === gl.TEXTURE_CUBE_MAP) {
+        // For cube maps
+        for(let i = 0; i < 6; i++) {
+          gl.texImage2D(
+            gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+            0,
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            img[i]
+          );
+        }
+      } else {
+        gl.texImage2D(target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      }
+    } else if(target === gl.TEXTURE_CUBE_MAP) {
+      // For cube maps
+      for(let i = 0; i < 6; i++) {
+        this.gl.texImage2D(
+          this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + i,
+          0,
+          gl.RGBA,
+          width,
+          height,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          null,
+        );
+      }
     } else {
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texImage2D(target, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     }
+
     // gl.NEAREST is also allowed, instead of gl.LINEAR, as neither mipmap.
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, minFilter);
+    gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, magFilter);
     // Prevents s-coordinate wrapping (repeating).
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(target, gl.TEXTURE_WRAP_S, wrapS);
     // Prevents t-coordinate wrapping (repeating).
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.texParameteri(target, gl.TEXTURE_WRAP_T, wrapT);
+
+    if(target === gl.TEXTURE_CUBE_MAP) {
+      // gl.texParameteri(target, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+      img.width = img[0].width;
+      img.height = img[0].height;
+    }
+    gl.bindTexture(target, null);
 
     texture._img = img || {width, height};
     texture.delete = () => {
