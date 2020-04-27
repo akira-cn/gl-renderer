@@ -524,8 +524,7 @@ function () {
       program._attribute = {};
       program.uniforms = {};
       program._samplerMap = {};
-      program._bindTextures = [];
-      program._enableTextures = enableTextures; // console.log(vertexShader);
+      program._bindTextures = []; // console.log(vertexShader);
 
       var pattern = new RegExp("(?:attribute|in) vec(\\d) ".concat(this.options.vertexPosition), 'im');
       var matched = vertexShader.match(pattern);
@@ -541,7 +540,6 @@ function () {
         program._texCoordSize = Number(matched[1]);
       }
 
-      program._enableTextures = enableTextures && !!program._texCoordSize;
       var attributePattern = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/gim;
       matched = vertexShader.match(attributePattern);
 
@@ -591,6 +589,8 @@ function () {
       });
       program._buffers.verticesBuffer = gl.createBuffer();
       program._buffers.cellsBuffer = gl.createBuffer();
+      var vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
+      program._enableTextures = vTexCoord >= 0;
 
       if (program._enableTextures) {
         program._buffers.texCoordBuffer = gl.createBuffer();

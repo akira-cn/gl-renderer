@@ -352,7 +352,6 @@ export default class Renderer {
     program.uniforms = {};
     program._samplerMap = {};
     program._bindTextures = [];
-    program._enableTextures = enableTextures;
 
     // console.log(vertexShader);
     const pattern = new RegExp(`(?:attribute|in) vec(\\d) ${this.options.vertexPosition}`, 'im');
@@ -366,8 +365,6 @@ export default class Renderer {
     if(matched) {
       program._texCoordSize = Number(matched[1]);
     }
-
-    program._enableTextures = enableTextures && !!program._texCoordSize;
 
     const attributePattern = /^\s*(?:attribute|in) (\w+?)(\d*) (\w+)/gim;
     matched = vertexShader.match(attributePattern);
@@ -403,7 +400,8 @@ export default class Renderer {
 
     program._buffers.verticesBuffer = gl.createBuffer();
     program._buffers.cellsBuffer = gl.createBuffer();
-
+    const vTexCoord = gl.getAttribLocation(program, this.options.vertexTextureCoord);
+    program._enableTextures = vTexCoord >= 0;
     if(program._enableTextures) {
       program._buffers.texCoordBuffer = gl.createBuffer();
     }
