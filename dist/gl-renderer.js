@@ -1103,7 +1103,13 @@ function () {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
       }
 
-      if (clearBuffer) gl.clear(gl.COLOR_BUFFER_BIT);
+      var depth = this.options.depth;
+
+      if (depth) {
+        gl.enable(gl.DEPTH_TEST);
+      }
+
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT | (this.depth ? this.gl.DEPTH_BUFFER_BIT : 0) | (this.stencil ? this.gl.STENCIL_BUFFER_BIT : 0));
       var lastFrameID = this._renderFrameID;
 
       this._draw();
