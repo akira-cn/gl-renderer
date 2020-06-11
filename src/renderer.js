@@ -186,12 +186,20 @@ export default class Renderer {
     program.meshData.forEach((meshData, meshIndex) => {
       const {positions, cells, instanceCount, cellsCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
+      let mode = meshData.mode || gl.TRIANGLES;
+      if(typeof mode === 'string') {
+        mode = gl[mode];
+      }
+
       if(enableBlend) gl.enable(gl.BLEND);
       else gl.disable(gl.BLEND);
       gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.verticesBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+
+      if(cells) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, program._buffers.cellsBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
+      }
 
       const locations = [];
 
@@ -220,22 +228,36 @@ export default class Renderer {
         });
       }
 
+      let count;
+      if(!cells) {
+        const dimension = program._dimension;
+        count = positions.length / dimension;
+      }
+
       if(program._enableTextures && program._buffers.texCoordBuffer) {
         const texVertexData = textureCoord || mapTextureCoordinate(positions, program._dimension);
         gl.bindBuffer(gl.ARRAY_BUFFER, program._buffers.texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, Renderer.FLOAT(texVertexData), gl.STATIC_DRAW);
       }
       if(instanceCount != null) {
-        if(gl.drawElementsInstanced) {
-          gl.drawElementsInstanced(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
-        } else if(this.aia_ext) {
-          this.aia_ext.drawElementsInstancedANGLE(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
+        if(cells) {
+          if(gl.drawElementsInstanced) {
+            gl.drawElementsInstanced(mode, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
+          } else if(this.aia_ext) {
+            this.aia_ext.drawElementsInstancedANGLE(mode, cellsCount, gl.UNSIGNED_SHORT, 0, instanceCount);
+          }
+        } else if(gl.drawArraysInstanced) {
+          gl.drawArraysInstanced(mode, 0, count, instanceCount);
+        } else {
+          this.aia_ext.drawArraysInstancedANGLE(mode, 0, count, instanceCount);
         }
         locations.forEach((location) => {
           gl.vertexAttribDivisor(location, null);
         });
+      } else if(cells) {
+        gl.drawElements(mode, cellsCount, gl.UNSIGNED_SHORT, 0);
       } else {
-        gl.drawElements(gl.TRIANGLES, cellsCount, gl.UNSIGNED_SHORT, 0);
+        gl.drawArrays(mode, 0, count);
       }
     });
   }
@@ -292,15 +314,20 @@ export default class Renderer {
 
     const program = this.program;
 
-    program.meshData = data.map(({positions, instanceCount, cells, cellsCount, attributes, uniforms, textureCoord, enableBlend}) => {
+    program.meshData = data.map(({mode, positions, instanceCount, cells, cellsCount, attributes, uniforms, textureCoord, enableBlend}) => {
       const meshData = {
         positions: Renderer.FLOAT(positions),
-        cells: Renderer.USHORT(cells),
         uniforms,
         enableBlend: !!enableBlend,
         textureCoord: Renderer.FLOAT(textureCoord),
       };
-      meshData.cellsCount = cellsCount || meshData.cells.length;
+      if(cells) {
+        meshData.cells = Renderer.USHORT(cells);
+        meshData.cellsCount = cellsCount || meshData.cells.length;
+      }
+      if(mode) {
+        meshData.mode = mode;
+      }
       if(instanceCount != null) {
         if(!this.isWebGL2 && !this.aia_ext) throw new Error('Cannot use instanceCount in this rendering context, use webgl2 context instead.');
         else meshData.instanceCount = instanceCount;
