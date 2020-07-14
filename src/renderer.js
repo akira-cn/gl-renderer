@@ -252,7 +252,11 @@ export default class Renderer {
           this.aia_ext.drawArraysInstancedANGLE(mode, 0, count, instanceCount);
         }
         locations.forEach((location) => {
-          gl.vertexAttribDivisor(location, null);
+          if(gl.vertexAttribDivisor) {
+            gl.vertexAttribDivisor(location, null);
+          } else if(this.aia_ext) {
+            this.aia_ext.vertexAttribDivisorANGLE(location, null);
+          }
         });
       } else if(cells) {
         gl.drawElements(mode, cellsCount, gl.UNSIGNED_SHORT, 0);

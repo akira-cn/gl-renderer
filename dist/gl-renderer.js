@@ -413,7 +413,11 @@ function () {
           }
 
           locations.forEach(function (location) {
-            gl.vertexAttribDivisor(location, null);
+            if (gl.vertexAttribDivisor) {
+              gl.vertexAttribDivisor(location, null);
+            } else if (_this.aia_ext) {
+              _this.aia_ext.vertexAttribDivisorANGLE(location, null);
+            }
           });
         } else if (cells) {
           gl.drawElements(mode, cellsCount, gl.UNSIGNED_SHORT, 0);
