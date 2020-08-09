@@ -186,7 +186,7 @@ export default class Renderer {
     program.meshData.forEach((meshData, meshIndex) => {
       const {positions, cells, instanceCount, cellsCount, attributes, uniforms, textureCoord, enableBlend} = meshData;
       const gl = this.gl;
-      let mode = meshData.mode || gl.TRIANGLES;
+      let mode = meshData.mode != null ? meshData.mode : gl.TRIANGLES;
       if(typeof mode === 'string') {
         mode = gl[mode];
       }
@@ -329,7 +329,7 @@ export default class Renderer {
         meshData.cells = Renderer.USHORT(cells);
         meshData.cellsCount = cellsCount || meshData.cells.length;
       }
-      if(mode) {
+      if(mode != null) {
         meshData.mode = mode;
       }
       if(instanceCount != null) {
