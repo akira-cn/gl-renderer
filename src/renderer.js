@@ -4,6 +4,42 @@ import DEFAULT_VERT from './default_vert.glsl';
 import DEFAULT_FRAG from './default_frag.glsl';
 import DEFAULT_FEEDBACK_VERT from './default_feeback_vert.glsl';
 
+
+const DEFAULT_VERT_300 = `#version 300 es
+precision highp float;
+precision highp int;
+
+in vec3 a_vertexPosition;
+
+void main() {
+  gl_PointSize = 1.0;
+  gl_Position = vec4(a_vertexPosition, 1);
+}`;
+
+const DEFAULT_FEEDBACK_VERT_300 = `#version 300 es
+precision highp float;
+precision highp int;
+
+in vec4 a_vertexPosition;
+in vec2 a_vertexTextureCoord;
+
+out vec2 vTextureCoord;
+
+void main() {
+  gl_PointSize = 1.0;
+  gl_Position = a_vertexPosition;
+  vTextureCoord = a_vertexTextureCoord;
+}`;
+
+const DEFAULT_FRAG_300 = `#version 300 es
+precision highp float;
+precision highp int;
+
+out vec4 FragColor;
+void main() {
+  FragColor = vec4(0.0, 0.0, 0.0, 0.1);
+}`;
+
 const GLSL_LIBS = {};
 
 function mapTextureCoordinate(positions, size = 3) {
@@ -371,8 +407,11 @@ export default class Renderer {
     // this._events = {};
 
     const enableTextures = /^\s*uniform\s+sampler/mg.test(fragmentShader);
-    if(fragmentShader == null) fragmentShader = DEFAULT_FRAG;
-    if(vertexShader == null) vertexShader = enableTextures ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
+    if(fragmentShader == null) fragmentShader = this.options.webgl2 ? DEFAULT_FRAG_300 : DEFAULT_FRAG;
+    if(vertexShader == null) {
+      vertexShader = enableTextures ? DEFAULT_FEEDBACK_VERT : DEFAULT_VERT;
+      if(this.options.webgl2) vertexShader = enableTextures ? DEFAULT_FEEDBACK_VERT_300 : DEFAULT_VERT_300;
+    }
 
     const gl = this.gl;
 
