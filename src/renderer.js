@@ -795,7 +795,7 @@ export default class Renderer {
     this.fbo = fbo;
   }
 
-  render({clearBuffer = true} = {}) {
+  render(t) {
     this.startRender = true;
 
     const gl = this.gl;
